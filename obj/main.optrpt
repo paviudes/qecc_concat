@@ -1,0 +1,451 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.1.144 Build 20181018
+
+Compiler options: -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -c -o obj/main.o
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(29,2)
+   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/main.c(30,12) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(54,4)
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(55,15) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/main.c(58,4)
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(59,5) ]
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(59,15) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.092
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 12.250 
+   remark #15478: estimated potential speedup: 1.830 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(58,4)
+<Remainder loop for vectorization>
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(59,5) ]
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(59,15) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 2
+   remark #15427: loop was completely unrolled
+   remark #15309: vectorization support: normalized vectorization overhead 0.200
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 12.250 
+   remark #15478: estimated potential speedup: 1.830 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(77,4)
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(78,22) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/main.c(81,4)
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(82,5) ]
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(82,15) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.092
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 12.250 
+   remark #15478: estimated potential speedup: 1.830 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(81,4)
+<Remainder loop for vectorization>
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(82,5) ]
+   remark #15389: vectorization support: reference dist[i] has unaligned access   [ src/main.c(82,15) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 2
+   remark #15427: loop was completely unrolled
+   remark #15309: vectorization support: normalized vectorization overhead 0.200
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 12.250 
+   remark #15478: estimated potential speedup: 1.830 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(113,3)
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(115,17) ]
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(115,35) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:genrand_real3() (115:17) and call:genrand_real3() (115:35)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:genrand_real3() (115:35) and call:genrand_real3() (115:17)
+
+   LOOP BEGIN at src/main.c(114,4)
+      remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(115,17) ]
+      remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(115,35) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(125,5)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/main.c(126,16) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between (*(matP+i*8))[j] (128:7) and (*(matP+i*8))[j] (130:8)
+   remark #15346: vector dependence: assumed OUTPUT dependence between (*(matP+i*8))[j] (130:8) and (*(matP+i*8))[j] (128:7)
+
+   LOOP BEGIN at src/main.c(127,6)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between (*(matP+i*8))[j] (128:7) and (*(mat+i*8))[k] (130:8)
+      remark #15346: vector dependence: assumed ANTI dependence between (*(mat+i*8))[k] (130:8) and (*(matP+i*8))[j] (128:7)
+
+      LOOP BEGIN at src/main.c(129,7)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization
+         remark #15346: vector dependence: assumed ANTI dependence between (*(mat+j*8))[k] (130:34) and (*(matP+i*8))[j] (130:8)
+         remark #15346: vector dependence: assumed FLOW dependence between (*(matP+i*8))[j] (130:8) and (*(mat+j*8))[k] (130:34)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(127,6)
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(127,6)
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(127,6)
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(129,7)
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(140,5)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(141,6) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(154,5)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/main.c(155,16) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed ANTI dependence between (*(mat+j*8))[i] (157:32) and (*(matH+i*8))[j] (157:7)
+   remark #15346: vector dependence: assumed FLOW dependence between (*(matH+i*8))[j] (157:7) and (*(mat+j*8))[i] (157:32)
+
+   LOOP BEGIN at src/main.c(156,6)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed ANTI dependence between (*(mat+j*8))[i] (157:32) and (*(matH+i*8))[j] (157:7)
+      remark #15346: vector dependence: assumed FLOW dependence between (*(matH+i*8))[j] (157:7) and (*(mat+j*8))[i] (157:32)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(156,6)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(156,6)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(156,6)
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(166,5)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(167,6) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(180,5)
+   remark #15389: vectorization support: reference mat[i] has unaligned access   [ src/main.c(181,28) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(mat+i*8))[i]>, 64-bit indexed, part of address is read from memory   [ src/main.c(181,28) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15427: loop was completely unrolled
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.548
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 9 
+   remark #15477: vector cost: 10.500 
+   remark #15478: estimated potential speedup: 0.550 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(183,5)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/main.c(184,16) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between (*(matN+i*8))[j] (186:7) and (*(matN+i*8))[i] (187:6)
+   remark #15346: vector dependence: assumed OUTPUT dependence between (*(matN+i*8))[i] (187:6) and (*(matN+i*8))[j] (186:7)
+
+   LOOP BEGIN at src/main.c(185,6)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between (*(matN+i*8))[j] (186:7) and (*(mat+i*8))[j] (186:7)
+      remark #15346: vector dependence: assumed ANTI dependence between (*(mat+i*8))[j] (186:7) and (*(matN+i*8))[j] (186:7)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(185,6)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(185,6)
+   LOOP END
+
+   LOOP BEGIN at src/main.c(185,6)
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(196,5)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(197,6) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(213,4)
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(214,15) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/main.c(220,4)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/main.c(220,4)
+   remark #15388: vectorization support: reference dist[i] has aligned access   [ src/main.c(221,5) ]
+   remark #15388: vectorization support: reference dist[i] has aligned access   [ src/main.c(221,15) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.093
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.170 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(220,4)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference dist[i] has aligned access   [ src/main.c(221,5) ]
+   remark #15388: vectorization support: reference dist[i] has aligned access   [ src/main.c(221,15) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.371
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.170 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/main.c(220,4)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/main.c(241,4)
+   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/main.c(242,18) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(252,4)
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(254,18) ]
+   remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(254,36) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:genrand_real3() (254:18) and call:genrand_real3() (254:36)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:genrand_real3() (254:36) and call:genrand_real3() (254:18)
+
+   LOOP BEGIN at src/main.c(253,5)
+      remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(254,18) ]
+      remark #15382: vectorization support: call to function genrand_real3() cannot be vectorized   [ src/main.c(254,36) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(257,4)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/main.c(258,15) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (260:6) and (*(choi+i*8))[i] (264:5)
+   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[i] (264:5) and (*(choi+i*8))[j] (260:6)
+
+   LOOP BEGIN at src/main.c(259,5)
+      remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/main.c(261,6) ]
+
+      LOOP BEGIN at src/main.c(261,6)
+         remark #15389: vectorization support: reference (*(mat+j*8))[k] has unaligned access   [ src/main.c(262,38) ]
+         remark #15389: vectorization support: reference (*(mat+i*8))[k] has unaligned access   [ src/main.c(262,21) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+         remark #15305: vectorization support: vector length 1
+         remark #15427: loop was completely unrolled
+         remark #15399: vectorization support: unroll factor set to 4
+         remark #15309: vectorization support: normalized vectorization overhead 0.250
+         remark #15450: unmasked unaligned unit stride loads: 2 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 18 
+         remark #15477: vector cost: 20.000 
+         remark #15478: estimated potential speedup: 0.720 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(259,5)
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(259,5)
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/main.c(259,5)
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+
+      LOOP BEGIN at src/main.c(261,6)
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(266,4)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/main.c(267,5)
+      remark #15389: vectorization support: reference (*(choi+i*8))[j] has unaligned access   [ src/main.c(268,6) ]
+      remark #15389: vectorization support: reference (*(choi+i*8))[j] has unaligned access   [ src/main.c(268,19) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 2
+      remark #15427: loop was completely unrolled
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.211
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 67 
+      remark #15477: vector cost: 9.500 
+      remark #15478: estimated potential speedup: 5.820 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/main.c(282,4)
+   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ src/main.c(283,5) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/main.c(287,4)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(288,5) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(291,4)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(292,5) ]
+LOOP END
+
+LOOP BEGIN at src/main.c(453,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/main.c(454,3) ]
+LOOP END
+===========================================================================

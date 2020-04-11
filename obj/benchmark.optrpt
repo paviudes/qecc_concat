@@ -1,0 +1,323 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.1.144 Build 20181018
+
+Compiler options: -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -c -o obj/benchmark.o
+
+Begin optimization report for: Benchmark(int, int *, int *, int *, double *, double *, char *, int, double *, int, char **, int, int *, int *, int, int, long *, int, int, int, double *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/benchmark.c(79,2)
+   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
+
+   LOOP BEGIN at src/benchmark.c(86,3)
+      remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/benchmark.c(87,4)
+         remark #15523: loop was not vectorized: loop control variable g was found, but loop iteration count cannot be computed before executing the loop
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(93,3)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/benchmark.c(94,4)
+         remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+
+         LOOP BEGIN at src/benchmark.c(95,5)
+            remark #15523: loop was not vectorized: loop control variable q was found, but loop iteration count cannot be computed before executing the loop
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(101,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed OUTPUT dependence between (*((*(qcode+l*8))->phases+i*8))[s] (103:6) and (*((*(qcode+l*8))->phases+i*8))[s] (103:6)
+      remark #15346: vector dependence: assumed OUTPUT dependence between (*((*(qcode+l*8))->phases+i*8))[s] (103:6) and (*((*(qcode+l*8))->phases+i*8))[s] (103:6)
+
+      LOOP BEGIN at src/benchmark.c(102,4)
+         remark #15344: loop was not vectorized: vector dependence prevents vectorization
+         remark #15346: vector dependence: assumed FLOW dependence between (*((*(qcode+l*8))->phases+i*8))[s] (103:6) and normphases_real[norm_phcount+i*((*(qcode+l*8))->nstabs)+s] (103:6)
+         remark #15346: vector dependence: assumed ANTI dependence between normphases_real[norm_phcount+i*((*(qcode+l*8))->nstabs)+s] (103:6) and (*((*(qcode+l*8))->phases+i*8))[s] (103:6)
+      LOOP END
+
+      LOOP BEGIN at src/benchmark.c(102,4)
+      <Remainder>
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(118,2)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between nphys[l] (119:3) and (*(qcode+l*8))->N (119:3)
+   remark #15346: vector dependence: assumed ANTI dependence between (*(qcode+l*8))->N (119:3) and nphys[l] (119:3)
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(118,2)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(127,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/benchmark.c(145,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(145,4)
+      remark #15388: vectorization support: reference ((*(sims+s*8))->frames)[l] has aligned access   [ src/benchmark.c(146,6) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 4.333
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 3 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 3.640 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(145,4)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(148,4)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between ((*(sims+s*8))->frames)[l] (149:6) and consts->nclifford (149:6)
+      remark #15346: vector dependence: assumed ANTI dependence between consts->nclifford (149:6) and ((*(sims+s*8))->frames)[l] (149:6)
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(148,4)
+   <Remainder>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(151,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(151,4)
+      remark #15388: vectorization support: reference ((*(sims+s*8))->frames)[l] has aligned access   [ src/benchmark.c(152,6) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 4.333
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 3 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 3.640 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(151,4)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(162,4)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between (*((*(sims+s*8))->decbins+l*8))[c] (164:7) and ndecoderbins[l] (166:6)
+      remark #15346: vector dependence: assumed ANTI dependence between ndecoderbins[l] (166:6) and (*((*(sims+s*8))->decbins+l*8))[c] (164:7)
+
+      LOOP BEGIN at src/benchmark.c(163,5)
+         remark #15523: loop was not vectorized: loop control variable c was found, but loop iteration count cannot be computed before executing the loop
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(181,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between *sims->physical[i] (183:6) and ((*(sims+s*8))->physical)[i] (188:6)
+      remark #15346: vector dependence: assumed ANTI dependence between ((*(sims+s*8))->physical)[i] (188:6) and *sims->physical[i] (183:6)
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(181,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed ANTI dependence between refchan[i] (185:6) and (*(*((*(sims+s*8))->logical)+(i/nparams->nlogs)*8))[:] (188:6)
+      remark #15346: vector dependence: assumed FLOW dependence between (*(*((*(sims+s*8))->logical)+(i/nparams->nlogs)*8))[:] (188:6) and refchan[i] (185:6)
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(194,3)
+      remark #15382: vectorization support: call to function __builtin___sprintf_chk(char *, int, unsigned long, const char *, ...) cannot be vectorized   [ src/benchmark.c(195,4) ]
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed OUTPUT dependence between call:__builtin_object_size(const void *, int) (195:4) and call:__builtin___sprintf_chk(char *, int, unsigned long, const c (195:4)
+      remark #15346: vector dependence: assumed OUTPUT dependence between call:__builtin___sprintf_chk(char *, int, unsigned long, const c (195:4) and call:__builtin_object_size(const void *, int) (195:4)
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(203,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed FLOW dependence between ((*(sims+s*8))->runstats)[i] (204:5) and stats[i] (204:5)
+      remark #15346: vector dependence: assumed ANTI dependence between stats[i] (204:5) and ((*(sims+s*8))->runstats)[i] (204:5)
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(203,3)
+   <Remainder>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(236,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/benchmark.c(239,3)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/benchmark.c(240,4)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/benchmark.c(240,4)
+         remark #15389: vectorization support: reference bout.logchans[l*?+i*nlogs+j] has unaligned access   [ src/benchmark.c(241,6) ]
+         remark #15389: vectorization support: reference *sims->logical[l][i][j] has unaligned access   [ src/benchmark.c(241,72) ]
+         remark #15388: vectorization support: reference bout.chanvar[l*?+i*nlogs+j] has aligned access   [ src/benchmark.c(242,6) ]
+         remark #15389: vectorization support: reference *sims->variance[l][nlevels->nmetrics+i*nlogs+j] has unaligned access   [ src/benchmark.c(242,71) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 1.462
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15450: unmasked unaligned unit stride loads: 2 
+         remark #15451: unmasked unaligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 9 
+         remark #15477: vector cost: 6.500 
+         remark #15478: estimated potential speedup: 1.360 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/benchmark.c(240,4)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(248,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/benchmark.c(249,3)
+   <Distributed chunk1>
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/benchmark.c(252,4)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/benchmark.c(253,5)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/benchmark.c(253,5)
+               remark #15389: vectorization support: reference bout.bins[(m*(nlevels+1))*?+l*?+i*nbins+j] has unaligned access   [ src/benchmark.c(254,7) ]
+               remark #15389: vectorization support: reference *sims->bins[l][m][i][j] has unaligned access   [ src/benchmark.c(254,118) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 4
+               remark #15309: vectorization support: normalized vectorization overhead 0.750
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15451: unmasked unaligned unit stride stores: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 5 
+               remark #15477: vector cost: 2.000 
+               remark #15478: estimated potential speedup: 2.220 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/benchmark.c(253,5)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(249,3)
+   <Distributed chunk2>
+      remark #15389: vectorization support: reference bout.logerrs[m*(nlevels+1)+l] has unaligned access   [ src/benchmark.c(250,5) ]
+      remark #15389: vectorization support: reference *sims->metricValues[l] has unaligned access   [ src/benchmark.c(250,45) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15328: vectorization support: indirect load was emulated for the variable <*sims->metricValues[l][m]>, 64-bit indexed, part of address is read from memory   [ src/benchmark.c(250,45) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.133
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15462: unmasked indexed (or gather) loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 5 
+      remark #15477: vector cost: 7.500 
+      remark #15478: estimated potential speedup: 0.660 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(249,3)
+   <Remainder, Distributed chunk2>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(249,3)
+   <Distributed chunk3>
+      remark #15389: vectorization support: reference bout.logvars[m*(nlevels+1)+l] has unaligned access   [ src/benchmark.c(251,5) ]
+      remark #15389: vectorization support: reference *sims->variance[l] has unaligned access   [ src/benchmark.c(251,45) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15328: vectorization support: indirect load was emulated for the variable <*sims->variance[l][m]>, 64-bit indexed, part of address is read from memory   [ src/benchmark.c(251,45) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.133
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15451: unmasked unaligned unit stride stores: 1 
+      remark #15462: unmasked indexed (or gather) loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 5 
+      remark #15477: vector cost: 7.500 
+      remark #15478: estimated potential speedup: 0.660 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(249,3)
+   <Remainder, Distributed chunk3>
+   LOOP END
+
+   LOOP BEGIN at src/benchmark.c(256,3)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/benchmark.c(256,3)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/benchmark.c(256,3)
+         remark #15388: vectorization support: reference bout.running[m*nbreaks+i] has aligned access   [ src/benchmark.c(257,5) ]
+         remark #15389: vectorization support: reference *sims->runavg[m][i+1] has unaligned access   [ src/benchmark.c(257,39) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 2.600
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15450: unmasked unaligned unit stride loads: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 5 
+         remark #15477: vector cost: 2.500 
+         remark #15478: estimated potential speedup: 1.250 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/benchmark.c(256,3)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(269,2)
+   remark #15382: vectorization support: call to function FreeSimParams(struct simul_t *, int, int) cannot be vectorized   [ src/benchmark.c(270,3) ]
+   remark #15382: vectorization support: call to function FreeDecoderBins(struct simul_t *) cannot be vectorized   [ src/benchmark.c(272,4) ]
+   remark #15382: vectorization support: call to function free(void *) cannot be vectorized   [ src/benchmark.c(273,3) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/benchmark.c(277,2)
+   remark #15382: vectorization support: call to function FreeQECC(struct qecc_t *) cannot be vectorized   [ src/benchmark.c(278,3) ]
+   remark #15382: vectorization support: call to function free(void *) cannot be vectorized   [ src/benchmark.c(279,3) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+===========================================================================

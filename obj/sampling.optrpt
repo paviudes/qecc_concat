@@ -1,0 +1,445 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.1.144 Build 20181018
+
+Compiler options: -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -c -o obj/sampling.o
+
+Begin optimization report for: ConstructImportanceDistribution(double *, double *, int, double)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/sampling.c(15,3)
+<Peeled loop for vectorization, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(15,3)
+<Multiversioned v1>
+   remark #15389: vectorization support: reference truedist[s] has unaligned access   [ src/sampling.c(16,21) ]
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(16,4) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.202
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 110 
+   remark #15477: vector cost: 21.000 
+   remark #15478: estimated potential speedup: 4.940 
+   remark #15482: vectorized math library calls: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(15,3)
+<Remainder loop for vectorization, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(15,3)
+<Multiversioned v2>
+   remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
+LOOP END
+
+LOOP BEGIN at src/sampling.c(18,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(18,3)
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(19,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.833
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.370 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(18,3)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(19,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 3.333
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 4 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 4.370 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(18,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(22,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(22,2)
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(23,17) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 2.050
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 3.800 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(22,2)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(23,17) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 8.200
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.200 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(22,2)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(24,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(24,2)
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,3) ]
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,16) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.093
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.200 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(24,2)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,3) ]
+   remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,16) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.371
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 31 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.200 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(24,2)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: ConstructCumulative(double *, double *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/sampling.c(33,2)
+<Multiversioned v1>
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between cumul[s] (34:3) and cumul[s-1] (34:3)
+LOOP END
+
+LOOP BEGIN at src/sampling.c(33,2)
+<Remainder, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(33,2)
+<Multiversioned v2>
+   remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
+LOOP END
+
+LOOP BEGIN at src/sampling.c(33,2)
+<Remainder, Multiversioned v2>
+LOOP END
+===========================================================================
+
+Begin optimization report for: SampleCumulative(double *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/sampling.c(44,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(44,2)
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.533
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 21 
+   remark #15477: vector cost: 7.500 
+   remark #15478: estimated potential speedup: 2.710 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(44,2)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: PowerSearch(double *, int, double *, double *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/sampling.c(77,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(77,2)
+   remark #15388: vectorization support: reference incl[i] has aligned access   [ src/sampling.c(78,3) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 3.333
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 0.750 
+   remark #15478: estimated potential speedup: 3.680 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(77,2)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(90,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(90,3)
+   remark #15388: vectorization support: reference dist[i] has aligned access   [ src/sampling.c(92,13) ]
+   remark #15305: vectorization support: vector length 8
+   remark #15309: vectorization support: normalized vectorization overhead 1.516
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15454: masked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 20 
+   remark #15477: vector cost: 3.870 
+   remark #15478: estimated potential speedup: 4.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/sampling.c(90,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/sampling.c(100,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/sampling.c(15,3) inlined into src/sampling.c(104,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(15,3) inlined into src/sampling.c(104,4)
+      remark #15389: vectorization support: reference dist[s] has unaligned access   [ src/sampling.c(16,21) ]
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(16,4) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.202
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 110 
+      remark #15477: vector cost: 21.000 
+      remark #15478: estimated potential speedup: 4.940 
+      remark #15482: vectorized math library calls: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(15,3) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(18,3) inlined into src/sampling.c(104,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(18,3) inlined into src/sampling.c(104,4)
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(19,4) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.833
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 4 
+      remark #15477: vector cost: 0.750 
+      remark #15478: estimated potential speedup: 4.370 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(18,3) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(19,4) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 3.333
+      remark #15301: REMAINDER LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15454: masked aligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 51 
+      remark #15477: vector cost: 12.750 
+      remark #15478: estimated potential speedup: 3.530 
+      remark #15486: divides: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(18,3) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(22,2) inlined into src/sampling.c(104,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(22,2) inlined into src/sampling.c(104,4)
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(23,17) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 2.050
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 6 
+      remark #15477: vector cost: 1.250 
+      remark #15478: estimated potential speedup: 3.800 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(22,2) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(23,17) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 8.200
+      remark #15301: REMAINDER LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15454: masked aligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 51 
+      remark #15477: vector cost: 12.750 
+      remark #15478: estimated potential speedup: 3.530 
+      remark #15486: divides: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(22,2) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(24,2) inlined into src/sampling.c(104,4)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(24,2) inlined into src/sampling.c(104,4)
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,3) ]
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,16) ]
+      remark #15388: vectorization support: reference impdist[i] has aligned access   [ src/sampling.c(108,14) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.230
+      remark #15301: FUSED LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15454: masked aligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 51 
+      remark #15477: vector cost: 12.750 
+      remark #15478: estimated potential speedup: 3.530 
+      remark #15486: divides: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(106,4)
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(24,2) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,3) ]
+      remark #15388: vectorization support: reference impdist[s] has aligned access   [ src/sampling.c(25,16) ]
+      remark #15388: vectorization support: reference impdist[i] has aligned access   [ src/sampling.c(108,14) ]
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.922
+      remark #15301: REMAINDER LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15449: unmasked aligned unit stride stores: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15454: masked aligned unit stride loads: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 51 
+      remark #15477: vector cost: 12.750 
+      remark #15478: estimated potential speedup: 3.530 
+      remark #15486: divides: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/sampling.c(24,2) inlined into src/sampling.c(104,4)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at src/sampling.c(117,5)
+   remark #15522: loop was not vectorized: loop control flow is too complex. Try using canonical loop form from OpenMP specification
+LOOP END
+===========================================================================

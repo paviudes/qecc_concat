@@ -107,7 +107,7 @@ double PowerSearch(double *dist, int size, double *window, double *searchin){
 				if (incl[i] == 1)
 					pinc += powerdist[i];
 			// printf("pinc = %g.\n", pinc);
-			
+
 			position = WhereInWindow(pinc, window);
 			if (position == 0)
 				return exponent;
@@ -128,7 +128,7 @@ double PowerSearch(double *dist, int size, double *window, double *searchin){
 				continue;
 		}
 	}
-	
+
 	// Free local variables.
 	free(incl);
 	free(powerdist);

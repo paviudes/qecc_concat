@@ -1,0 +1,506 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.1.144 Build 20181018
+
+Compiler options: -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -c -o obj/mt19937ar.o
+
+Begin optimization report for: genrand_int32(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(112,7)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(112,7)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: genrand_int31(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(142,17)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(142,17)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(142,17)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(142,17)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(142,17)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(142,17)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: genrand_real1(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(148,10)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(148,10)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(148,10)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(148,10)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(148,10)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(148,10)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: genrand_real2(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(155,10)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(155,10)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(155,10)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(155,10)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(155,10)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(155,10)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: genrand_real3(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(162,20)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(162,20)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(162,20)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(162,20)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(162,20)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(162,20)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: genrand_res53(void)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(169,19)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(169,19)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(169,19)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(169,19)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(169,19)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(169,19)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(169,41)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(169,41)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(169,41)
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(115,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(115,32) ]
+   remark #15388: vectorization support: reference mt[kk] has aligned access   [ src/mt19937/mt19937ar.c(116,7) ]
+   remark #15389: vectorization support: reference mt[kk+397] has unaligned access   [ src/mt19937/mt19937ar.c(116,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(116,38) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.125
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 12 
+   remark #15477: vector cost: 16.000 
+   remark #15478: estimated potential speedup: 0.750 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(114,5) inlined into src/mt19937/mt19937ar.c(169,41)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(169,41)
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(119,12) ]
+   remark #15389: vectorization support: reference mt[kk+1] has unaligned access   [ src/mt19937/mt19937ar.c(119,32) ]
+   remark #15389: vectorization support: reference mt[kk] has unaligned access   [ src/mt19937/mt19937ar.c(120,7) ]
+   remark #15389: vectorization support: reference mt[kk-227] has unaligned access   [ src/mt19937/mt19937ar.c(120,16) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <mag01[y&1]>, 64-bit indexed, part of index is read from memory   [ src/mt19937/mt19937ar.c(120,42) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.194
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15462: unmasked indexed (or gather) loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 11 
+   remark #15477: vector cost: 15.500 
+   remark #15478: estimated potential speedup: 0.700 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(118,5) inlined into src/mt19937/mt19937ar.c(169,41)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: init_by_array(unsigned long *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(79,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3) inlined into src/mt19937/mt19937ar.c(79,3)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(82,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between mt[i] (83:5) and mt[0] (87:17)
+   remark #15346: vector dependence: assumed OUTPUT dependence between mt[0] (87:17) and mt[i] (83:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(82,3)
+<Remainder>
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(90,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between mt[i] (91:5) and mt[0] (95:17)
+   remark #15346: vector dependence: assumed OUTPUT dependence between mt[0] (95:17) and mt[i] (91:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(90,3)
+<Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: init_genrand(unsigned long)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between mt[mti] (61:5) and mt[mti-1] (61:5)
+LOOP END
+
+LOOP BEGIN at src/mt19937/mt19937ar.c(60,3)
+<Remainder>
+LOOP END
+===========================================================================

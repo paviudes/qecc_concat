@@ -1,0 +1,936 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.1.144 Build 20181018
+
+Compiler options: -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -c -o obj/qecc.o
+
+Begin optimization report for: FreeQECC(struct qecc_t *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(43,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/qecc.c(44,3) ]
+LOOP END
+
+LOOP BEGIN at src/qecc.c(48,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/qecc.c(50,4) ]
+
+   LOOP BEGIN at src/qecc.c(49,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/qecc.c(50,4) ]
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(55,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/qecc.c(56,2) ]
+LOOP END
+===========================================================================
+
+Begin optimization report for: ChoiToProcess(double **, double __complex__ **, double __complex__ ***)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(66,2)
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <pauli[j]>, part of index is nonlinearly computed   [ src/qecc.c(71,41) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <pauli[j][?/2]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,41) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(pauli+j*8)+(?/2)*8))[(k/4)/2]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,41) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <pauli[i]>, part of index is nonlinearly computed   [ src/qecc.c(71,78) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <pauli[i][:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,78) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(pauli+i*8)+?*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,78) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <process[i]>, part of index is nonlinearly computed   [ src/qecc.c(72,3) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <process[i][j]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(72,3) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.087
+   remark #15462: unmasked indexed (or gather) loads: 7 
+   remark #15463: unmasked indexed (or scatter) stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 69 
+   remark #15477: vector cost: 91.500 
+   remark #15478: estimated potential speedup: 0.740 
+   remark #15482: vectorized math library calls: 1 
+   remark #15487: type converts: 1 
+   remark #15488: --- end vector cost summary ---
+
+   LOOP BEGIN at src/qecc.c(70,3)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[k/4]>, part of index is nonlinearly computed   [ src/qecc.c(71,20) ]
+      remark #15328: vectorization support: indirect load was emulated for the variable <(*(choi+(k/4)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,20) ]
+      remark #15328: vectorization support: irregularly indexed load was emulated for the variable <pauli[j][?/2]>, part of index is nonlinearly computed   [ src/qecc.c(71,41) ]
+      remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(pauli+j*8)+(?/2)*8))[(k/4)/2]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,41) ]
+      remark #15328: vectorization support: irregularly indexed load was emulated for the variable <pauli[i][:]>, part of index is nonlinearly computed   [ src/qecc.c(71,78) ]
+      remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(pauli+i*8)+?*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,78) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15309: vectorization support: normalized vectorization overhead 0.024
+      remark #15462: unmasked indexed (or gather) loads: 6 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 53 
+      remark #15477: vector cost: 393.500 
+      remark #15478: estimated potential speedup: 0.130 
+      remark #15482: vectorized math library calls: 10 
+      remark #15487: type converts: 3 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: GetFullProcessMatrix(struct qecc_t *, struct simul_t *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(85,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(86,4)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(87,5)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(88,6)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/qecc.c(90,7)
+            <Peeled loop for vectorization>
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(90,7)
+               remark #15389: vectorization support: reference sim->virtchan[q] has unaligned access   [ src/qecc.c(91,25) ]
+               remark #15389: vectorization support: reference qecc->action[i][k][q] has unaligned access   [ src/qecc.c(91,44) ]
+               remark #15388: vectorization support: reference qecc->action[j][l][q] has aligned access   [ src/qecc.c(91,69) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15328: vectorization support: indirect load was emulated for the variable <sim->virtchan[q][*(*(*(qecc->action+i*8)+k*8)+q*4)]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(91,25) ]
+               remark #15328: vectorization support: indirect load was emulated for the variable <*(*(*(sim->virtchan+q*8)+(*(*(*(qecc->action+i*8)+k*8)+q*4))*8)+>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(91,25) ]
+               remark #15305: vectorization support: vector length 8
+               remark #15309: vectorization support: normalized vectorization overhead 0.710
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 2 
+               remark #15462: unmasked indexed (or gather) loads: 2 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 15 
+               remark #15477: vector cost: 12.500 
+               remark #15478: estimated potential speedup: 1.160 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(90,7)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(100,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(101,4)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(103,5)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(103,5)
+         remark #15389: vectorization support: reference sim->virtchan[q] has unaligned access   [ src/qecc.c(104,23) ]
+         remark #15388: vectorization support: reference qecc->action[i][j][q] has aligned access   [ src/qecc.c(104,42) ]
+         remark #15388: vectorization support: reference qecc->action[i][j][q] has aligned access   [ src/qecc.c(104,67) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15328: vectorization support: indirect load was emulated for the variable <sim->virtchan[q][*(*(*(qecc->action+i*8)+j*8)+q*4)]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(104,23) ]
+         remark #15328: vectorization support: indirect load was emulated for the variable <*(*(*(sim->virtchan+q*8)+(*(*(*(qecc->action+i*8)+j*8)+q*4))*8)+>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(104,23) ]
+         remark #15305: vectorization support: vector length 8
+         remark #15309: vectorization support: normalized vectorization overhead 0.708
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15450: unmasked unaligned unit stride loads: 1 
+         remark #15462: unmasked indexed (or gather) loads: 2 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 15 
+         remark #15477: vector cost: 12.000 
+         remark #15478: estimated potential speedup: 1.210 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(103,5)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: ComputeSyndromeDistribution(struct qecc_t *, struct simul_t *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(122,3)
+   remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at src/qecc.c(125,3)
+   remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2)
+<Peeled, Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2)
+<Peeled>
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.093
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.290 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2)
+<Peeled, Remainder loop for vectorization>
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.371
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2)
+<Peeled, Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/qecc.c(133,2)
+<Peeled>
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between sim->cumulative[s] (134:4) and sim->cumulative[s-1] (134:4)
+LOOP END
+
+LOOP BEGIN at src/qecc.c(133,2)
+<Peeled, Remainder>
+LOOP END
+===========================================================================
+
+Begin optimization report for: MLDecoder(struct qecc_t *, struct simul_t *, struct constants_t *, int, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(196,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(200,4)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(203,6)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(205,7)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/qecc.c(206,8)
+            <Peeled loop for vectorization>
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8)
+               remark #15389: vectorization support: reference sim->process[u][*(*(*consts->algebra+l*8)+u*4)][i][j] has unaligned access   [ src/qecc.c(207,21) ]
+               remark #15388: vectorization support: reference qecc->projector[s][j] has aligned access   [ src/qecc.c(207,75) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 4
+               remark #15399: vectorization support: unroll factor set to 4
+               remark #15309: vectorization support: normalized vectorization overhead 0.786
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 21 
+               remark #15477: vector cost: 3.500 
+               remark #15478: estimated potential speedup: 4.830 
+               remark #15487: type converts: 1 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8)
+            <Remainder loop for vectorization>
+               remark #15389: vectorization support: reference sim->process[u][*(*(*consts->algebra+l*8)+u*4)][i][j] has unaligned access   [ src/qecc.c(207,21) ]
+               remark #15388: vectorization support: reference qecc->projector[s][j] has aligned access   [ src/qecc.c(207,75) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 4
+               remark #15309: vectorization support: normalized vectorization overhead 3.143
+               remark #15301: REMAINDER LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15462: unmasked indexed (or gather) loads: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 11 
+               remark #15477: vector cost: 7.870 
+               remark #15478: estimated potential speedup: 1.340 
+               remark #15487: type converts: 1 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(212,6)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(214,7)
+         <Peeled loop for vectorization>
+         LOOP END
+
+         LOOP BEGIN at src/qecc.c(214,7)
+            remark #15389: vectorization support: reference sim->process[u][u][i] has unaligned access   [ src/qecc.c(216,8) ]
+            remark #15388: vectorization support: reference qecc->projector[s][i] has aligned access   [ src/qecc.c(216,37) ]
+            remark #15381: vectorization support: unaligned access used inside loop body
+            remark #15328: vectorization support: indirect load was emulated for the variable <sim->process[u][u][i][i]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(216,8) ]
+            remark #15305: vectorization support: vector length 8
+            remark #15399: vectorization support: unroll factor set to 2
+            remark #15309: vectorization support: normalized vectorization overhead 0.373
+            remark #15300: LOOP WAS VECTORIZED
+            remark #15442: entire loop may be executed in remainder
+            remark #15448: unmasked aligned unit stride loads: 1 
+            remark #15450: unmasked unaligned unit stride loads: 1 
+            remark #15462: unmasked indexed (or gather) loads: 1 
+            remark #15475: --- begin vector cost summary ---
+            remark #15476: scalar cost: 11 
+            remark #15477: vector cost: 7.870 
+            remark #15478: estimated potential speedup: 1.340 
+            remark #15487: type converts: 1 
+            remark #15488: --- end vector cost summary ---
+         LOOP END
+
+         LOOP BEGIN at src/qecc.c(214,7)
+         <Remainder loop for vectorization>
+         LOOP END
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: ComputeEffectiveStates(struct qecc_t *, struct simul_t *, struct constants_t *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(244,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(246,3)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(247,4)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4)
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(248,6) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15399: vectorization support: unroll factor set to 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.000
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 7 
+         remark #15477: vector cost: 1.500 
+         remark #15478: estimated potential speedup: 4.330 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4)
+      <Remainder loop for vectorization>
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(248,6) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 3.333
+         remark #15301: REMAINDER LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 79 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.770 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(252,5)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/qecc.c(253,6)
+         remark #15523: loop was not vectorized: loop control variable j was found, but loop iteration count cannot be computed before executing the loop
+
+         LOOP BEGIN at src/qecc.c(254,7)
+            remark #15523: loop was not vectorized: loop control variable a was found, but loop iteration count cannot be computed before executing the loop
+
+            LOOP BEGIN at src/qecc.c(255,8)
+               remark #15523: loop was not vectorized: loop control variable b was found, but loop iteration count cannot be computed before executing the loop
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(258,5)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/qecc.c(259,6)
+         remark #15523: loop was not vectorized: loop control variable j was found, but loop iteration count cannot be computed before executing the loop
+
+         LOOP BEGIN at src/qecc.c(260,7)
+            remark #15523: loop was not vectorized: loop control variable a was found, but loop iteration count cannot be computed before executing the loop
+
+            LOOP BEGIN at src/qecc.c(261,8)
+               remark #15523: loop was not vectorized: loop control variable b was found, but loop iteration count cannot be computed before executing the loop
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(265,4)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(266,5)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(266,5)
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(267,7) ]
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(267,7) ]
+         remark #15305: vectorization support: vector length 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.667
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 79 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.770 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(266,5)
+      <Remainder loop for vectorization>
+         remark #15516: remainder loop was not vectorized: cost model has chosen vectorlength of 1 -- maybe possible to override via pragma/directive with vectorlength clause
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 79 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.770 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: SetFullProcessMatrix(struct qecc_t *, struct simul_t *, double *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(345,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(346,4)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(347,5)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(348,6)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/qecc.c(348,6)
+            <Peeled loop for vectorization>
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(348,6)
+               remark #15388: vectorization support: reference sim->process[i][j][k][l] has aligned access   [ src/qecc.c(349,8) ]
+               remark #15389: vectorization support: reference process[qecc->nstabs*((i*qecc->nlogs)*qecc->nstabs+j*qecc->nstabs+k)+l] has unaligned access   [ src/qecc.c(349,36) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 2
+               remark #15309: vectorization support: normalized vectorization overhead 2.600
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15449: unmasked aligned unit stride stores: 1 
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 5 
+               remark #15477: vector cost: 2.500 
+               remark #15478: estimated potential speedup: 1.250 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(348,6)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(351,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between sim->process[i][i][j][j] (353:6) and sim->process[i][i][j][j] (353:6)
+   remark #15346: vector dependence: assumed OUTPUT dependence between sim->process[i][i][j][j] (353:6) and sim->process[i][i][j][j] (353:6)
+
+   LOOP BEGIN at src/qecc.c(352,4)
+      remark #15389: vectorization support: reference sim->process[i][i][j] has unaligned access   [ src/qecc.c(353,6) ]
+      remark #15389: vectorization support: reference process[i*qecc->nstabs+j] has unaligned access   [ src/qecc.c(353,34) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15329: vectorization support: indirect store was emulated for the variable <sim->process[i][i][j][j]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(353,6) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15399: vectorization support: unroll factor set to 4
+      remark #15309: vectorization support: normalized vectorization overhead 0.088
+      remark #15450: unmasked unaligned unit stride loads: 2 
+      remark #15463: unmasked indexed (or scatter) stores: 1 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 5 
+      remark #15477: vector cost: 8.500 
+      remark #15478: estimated potential speedup: 0.590 
+      remark #15487: type converts: 1 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(352,4)
+   <Remainder>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: SingleShotErrorCorrection(int, int, int, struct qecc_t *, struct simul_t *, struct constants_t *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(85,3) inlined into src/qecc.c(363,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(86,4) inlined into src/qecc.c(363,3)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(87,5) inlined into src/qecc.c(363,3)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(88,6) inlined into src/qecc.c(363,3)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/qecc.c(90,7) inlined into src/qecc.c(363,3)
+            <Peeled loop for vectorization>
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(90,7) inlined into src/qecc.c(363,3)
+               remark #15389: vectorization support: reference sim->virtchan[q] has unaligned access   [ src/qecc.c(91,25) ]
+               remark #15389: vectorization support: reference qecc->action[i][k][q] has unaligned access   [ src/qecc.c(91,44) ]
+               remark #15388: vectorization support: reference qecc->action[j][l][q] has aligned access   [ src/qecc.c(91,69) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15328: vectorization support: indirect load was emulated for the variable <sim->virtchan[q][*(*(*(qecc->action+i*8)+k*8)+q*4)]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(91,25) ]
+               remark #15328: vectorization support: indirect load was emulated for the variable <*(*(*(sim->virtchan+q*8)+(*(*(*(qecc->action+i*8)+k*8)+q*4))*8)+>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(91,25) ]
+               remark #15305: vectorization support: vector length 8
+               remark #15309: vectorization support: normalized vectorization overhead 0.710
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 2 
+               remark #15462: unmasked indexed (or gather) loads: 2 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 15 
+               remark #15477: vector cost: 12.500 
+               remark #15478: estimated potential speedup: 1.160 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(90,7) inlined into src/qecc.c(363,3)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(100,3) inlined into src/qecc.c(363,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(101,4) inlined into src/qecc.c(363,3)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(103,5) inlined into src/qecc.c(363,3)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(103,5) inlined into src/qecc.c(363,3)
+         remark #15389: vectorization support: reference sim->virtchan[q] has unaligned access   [ src/qecc.c(104,23) ]
+         remark #15388: vectorization support: reference qecc->action[i][j][q] has aligned access   [ src/qecc.c(104,42) ]
+         remark #15388: vectorization support: reference qecc->action[i][j][q] has aligned access   [ src/qecc.c(104,67) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15328: vectorization support: indirect load was emulated for the variable <sim->virtchan[q][*(*(*(qecc->action+i*8)+j*8)+q*4)]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(104,23) ]
+         remark #15328: vectorization support: indirect load was emulated for the variable <*(*(*(sim->virtchan+q*8)+(*(*(*(qecc->action+i*8)+j*8)+q*4))*8)+>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(104,23) ]
+         remark #15305: vectorization support: vector length 8
+         remark #15309: vectorization support: normalized vectorization overhead 0.708
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15450: unmasked unaligned unit stride loads: 1 
+         remark #15462: unmasked indexed (or gather) loads: 2 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 15 
+         remark #15477: vector cost: 12.000 
+         remark #15478: estimated potential speedup: 1.210 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(103,5) inlined into src/qecc.c(363,3)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(122,3) inlined into src/qecc.c(366,2)
+   remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at src/qecc.c(125,3) inlined into src/qecc.c(366,2)
+   remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2) inlined into src/qecc.c(366,2)
+<Peeled, Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2) inlined into src/qecc.c(366,2)
+<Peeled>
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.093
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 32 
+   remark #15477: vector cost: 8.750 
+   remark #15478: estimated potential speedup: 3.290 
+   remark #15486: divides: 1 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2) inlined into src/qecc.c(366,2)
+<Peeled, Remainder loop for vectorization>
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15388: vectorization support: reference sim->syndprobs[s] has aligned access   [ src/qecc.c(129,4) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.371
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+LOOP END
+
+LOOP BEGIN at src/qecc.c(128,2) inlined into src/qecc.c(366,2)
+<Peeled, Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/qecc.c(133,2) inlined into src/qecc.c(366,2)
+<Peeled>
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed FLOW dependence between sim->cumulative[s] (134:4) and sim->cumulative[s-1] (134:4)
+LOOP END
+
+LOOP BEGIN at src/qecc.c(133,2) inlined into src/qecc.c(366,2)
+<Peeled, Remainder>
+LOOP END
+
+LOOP BEGIN at src/qecc.c(196,2) inlined into src/qecc.c(370,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(200,4) inlined into src/qecc.c(370,2)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(203,6) inlined into src/qecc.c(370,2)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(205,7) inlined into src/qecc.c(370,2)
+            remark #15542: loop was not vectorized: inner loop was already vectorized
+
+            LOOP BEGIN at src/qecc.c(206,8) inlined into src/qecc.c(370,2)
+            <Peeled loop for vectorization>
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8) inlined into src/qecc.c(370,2)
+               remark #15389: vectorization support: reference sim->process[u][*(*(*consts->algebra+l*8)+u*4)][i][j] has unaligned access   [ src/qecc.c(207,21) ]
+               remark #15388: vectorization support: reference qecc->projector[s][j] has aligned access   [ src/qecc.c(207,75) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 4
+               remark #15399: vectorization support: unroll factor set to 4
+               remark #15309: vectorization support: normalized vectorization overhead 0.786
+               remark #15300: LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 21 
+               remark #15477: vector cost: 3.500 
+               remark #15478: estimated potential speedup: 4.830 
+               remark #15487: type converts: 1 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8) inlined into src/qecc.c(370,2)
+            <Remainder loop for vectorization>
+               remark #15389: vectorization support: reference sim->process[u][*(*(*consts->algebra+l*8)+u*4)][i][j] has unaligned access   [ src/qecc.c(207,21) ]
+               remark #15388: vectorization support: reference qecc->projector[s][j] has aligned access   [ src/qecc.c(207,75) ]
+               remark #15381: vectorization support: unaligned access used inside loop body
+               remark #15305: vectorization support: vector length 4
+               remark #15309: vectorization support: normalized vectorization overhead 3.143
+               remark #15301: REMAINDER LOOP WAS VECTORIZED
+               remark #15442: entire loop may be executed in remainder
+               remark #15448: unmasked aligned unit stride loads: 1 
+               remark #15450: unmasked unaligned unit stride loads: 1 
+               remark #15462: unmasked indexed (or gather) loads: 1 
+               remark #15475: --- begin vector cost summary ---
+               remark #15476: scalar cost: 11 
+               remark #15477: vector cost: 7.870 
+               remark #15478: estimated potential speedup: 1.340 
+               remark #15487: type converts: 1 
+               remark #15488: --- end vector cost summary ---
+            LOOP END
+
+            LOOP BEGIN at src/qecc.c(206,8) inlined into src/qecc.c(370,2)
+            <Remainder loop for vectorization>
+            LOOP END
+         LOOP END
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(212,6) inlined into src/qecc.c(370,2)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at src/qecc.c(214,7) inlined into src/qecc.c(370,2)
+         <Peeled loop for vectorization>
+         LOOP END
+
+         LOOP BEGIN at src/qecc.c(214,7) inlined into src/qecc.c(370,2)
+            remark #15389: vectorization support: reference sim->process[u][u][i] has unaligned access   [ src/qecc.c(216,8) ]
+            remark #15388: vectorization support: reference qecc->projector[s][i] has aligned access   [ src/qecc.c(216,37) ]
+            remark #15381: vectorization support: unaligned access used inside loop body
+            remark #15328: vectorization support: indirect load was emulated for the variable <sim->process[u][u][i][i]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(216,8) ]
+            remark #15305: vectorization support: vector length 8
+            remark #15399: vectorization support: unroll factor set to 2
+            remark #15309: vectorization support: normalized vectorization overhead 0.373
+            remark #15300: LOOP WAS VECTORIZED
+            remark #15442: entire loop may be executed in remainder
+            remark #15448: unmasked aligned unit stride loads: 1 
+            remark #15450: unmasked unaligned unit stride loads: 1 
+            remark #15462: unmasked indexed (or gather) loads: 1 
+            remark #15475: --- begin vector cost summary ---
+            remark #15476: scalar cost: 11 
+            remark #15477: vector cost: 7.870 
+            remark #15478: estimated potential speedup: 1.340 
+            remark #15487: type converts: 1 
+            remark #15488: --- end vector cost summary ---
+         LOOP END
+
+         LOOP BEGIN at src/qecc.c(214,7) inlined into src/qecc.c(370,2)
+         <Remainder loop for vectorization>
+         LOOP END
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(244,2) inlined into src/qecc.c(374,2)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at src/qecc.c(246,3) inlined into src/qecc.c(374,2)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(247,4) inlined into src/qecc.c(374,2)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4) inlined into src/qecc.c(374,2)
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(248,6) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15399: vectorization support: unroll factor set to 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.000
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 7 
+         remark #15477: vector cost: 1.500 
+         remark #15478: estimated potential speedup: 4.330 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4) inlined into src/qecc.c(374,2)
+      <Remainder loop for vectorization>
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(248,6) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 3.333
+         remark #15301: REMAINDER LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 78 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.560 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(247,4) inlined into src/qecc.c(374,2)
+      <Remainder loop for vectorization>
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(252,5) inlined into src/qecc.c(374,2)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/qecc.c(253,6) inlined into src/qecc.c(374,2)
+         remark #15523: loop was not vectorized: loop control variable j was found, but loop iteration count cannot be computed before executing the loop
+
+         LOOP BEGIN at src/qecc.c(254,7) inlined into src/qecc.c(374,2)
+            remark #15523: loop was not vectorized: loop control variable a was found, but loop iteration count cannot be computed before executing the loop
+
+            LOOP BEGIN at src/qecc.c(255,8) inlined into src/qecc.c(374,2)
+               remark #15523: loop was not vectorized: loop control variable b was found, but loop iteration count cannot be computed before executing the loop
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(258,5) inlined into src/qecc.c(374,2)
+      remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+      LOOP BEGIN at src/qecc.c(259,6) inlined into src/qecc.c(374,2)
+         remark #15523: loop was not vectorized: loop control variable j was found, but loop iteration count cannot be computed before executing the loop
+
+         LOOP BEGIN at src/qecc.c(260,7) inlined into src/qecc.c(374,2)
+            remark #15523: loop was not vectorized: loop control variable a was found, but loop iteration count cannot be computed before executing the loop
+
+            LOOP BEGIN at src/qecc.c(261,8) inlined into src/qecc.c(374,2)
+               remark #15523: loop was not vectorized: loop control variable b was found, but loop iteration count cannot be computed before executing the loop
+            LOOP END
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at src/qecc.c(265,4) inlined into src/qecc.c(374,2)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at src/qecc.c(266,5) inlined into src/qecc.c(374,2)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(266,5) inlined into src/qecc.c(374,2)
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(267,7) ]
+         remark #15388: vectorization support: reference (*(*(sim->effective+s*8)+i*8))[j] has aligned access   [ src/qecc.c(267,7) ]
+         remark #15305: vectorization support: vector length 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.667
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 78 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.560 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/qecc.c(266,5) inlined into src/qecc.c(374,2)
+      <Remainder loop for vectorization>
+         remark #15516: remainder loop was not vectorized: cost model has chosen vectorlength of 1 -- maybe possible to override via pragma/directive with vectorlength clause
+         remark #15442: entire loop may be executed in remainder
+         remark #15448: unmasked aligned unit stride loads: 1 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 78 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 23.560 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(379,2)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+(k/4)*8))[:] (71:4) and process[i][j] (72:3)
+   remark #15346: vector dependence: assumed FLOW dependence between process[i][j] (72:3) and (*(choi+(k/4)*8))[:] (71:4)
+
+   LOOP BEGIN at src/qecc.c(66,2) inlined into src/qecc.c(380,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #15346: vector dependence: assumed ANTI dependence between (*(choi+(k/4)*8))[:] (71:4) and process[i][j] (72:3)
+      remark #15346: vector dependence: assumed FLOW dependence between process[i][j] (72:3) and (*(choi+(k/4)*8))[:] (71:4)
+
+      LOOP BEGIN at src/qecc.c(70,3) inlined into src/qecc.c(380,3)
+         remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+         remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[k/4]>, part of index is nonlinearly computed   [ src/qecc.c(71,20) ]
+         remark #15328: vectorization support: indirect load was emulated for the variable <(*(choi+(k/4)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,20) ]
+         remark #15328: vectorization support: irregularly indexed load was emulated for the variable <consts->pauli[j][?/2]>, part of index is nonlinearly computed   [ src/qecc.c(71,41) ]
+         remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(consts->pauli+j*8)+(?/2)*8))[(k/4)/2]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,41) ]
+         remark #15328: vectorization support: irregularly indexed load was emulated for the variable <consts->pauli[i][:]>, part of index is nonlinearly computed   [ src/qecc.c(71,78) ]
+         remark #15328: vectorization support: indirect load was emulated for the variable <(*(*(consts->pauli+i*8)+?*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/qecc.c(71,78) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15309: vectorization support: normalized vectorization overhead 0.024
+         remark #15462: unmasked indexed (or gather) loads: 6 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 53 
+         remark #15477: vector cost: 393.500 
+         remark #15478: estimated potential speedup: 0.130 
+         remark #15482: vectorized math library calls: 10 
+         remark #15487: type converts: 3 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: InitQECC(struct qecc_t *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/qecc.c(22,2)
+   remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at src/qecc.c(27,2)
+   remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+
+   LOOP BEGIN at src/qecc.c(29,3)
+      remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/qecc.c(34,2)
+   remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+===========================================================================

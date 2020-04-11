@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <complex.h>
 #include "mt19937/mt19937ar.h" // Random number generator
 #include "printfuns.h"
@@ -12,6 +13,7 @@
 #include "sampling.h"
 #include "checks.h"
 #include "logmetrics.h"
+#include "benchmark.h"
 
 int main(int argc, char **argv)
 {
@@ -299,21 +301,151 @@ int main(int argc, char **argv)
 		// Create a pointer to simulation structure.
 		int nphys = 7, nenc = 1;
 		struct simul_t *sim = malloc(sizeof(struct simul_t));
-		if (strncmp(file, "AllocSimParams", 14) == 0){
+		if (strncmp(func, "AllocSimParams", 14) == 0){
 			printf("Function: AllocSimParams.\n");
 			AllocSimParams(sim, nphys, nenc);
 		}
-		if (strncmp(file, "AllocSimParamsQECC", 18) == 0){
+		if (strncmp(func, "AllocSimParamsQECC", 18) == 0){
 			printf("Function: AllocSimParamsQECC.\n");
 			AllocSimParamsQECC(sim, nphys, nenc);
 		}
-		if (strncmp(file, "FreeSimParams", 13) == 0){
+		if (strncmp(func, "FreeSimParams", 13) == 0){
 			printf("Function: FreeSimParams.\n");
 			FreeSimParams(sim, nphys, nenc);
 		}
-		if (strncmp(file, "FreeSimParamsQECC", 17) == 0){
+		if (strncmp(func, "FreeSimParamsQECC", 17) == 0){
 			printf("Function: FreeSimParamsQECC.\n");
 			FreeSimParamsQECC(sim, nphys, nenc);
+		}
+	}
+
+	if (strncmp(file, "benchmark", 9) == 0){
+		// Testing the entire benchmarking functionality.
+		printf("Testing the entire benchmarking functionality.\n");
+		// The array inputs for this function's test are in the folder: ./../input/debug_test/
+		if (strncmp(func, "Benchmark", 9) == 0){
+			int nlevels = 1;
+			
+			// ===
+			int *nkd = malloc(nlevels * 3 * sizeof(int));
+			LoadIntArray1D(nkd, "./../chflow/input/debug_testing/nkd.txt", nlevels * 3);
+			PrintIntArray1D(nkd, "nkd", nlevels * 3);
+			// ===
+
+			// ===
+			int n = nkd[0], k = nkd[1];
+			int nstabs = (int) pow(2, (n - k)), nlogs = (int) pow(4, k);
+			printf("nstabs = %d, nlogs = %d.\n", nstabs, nlogs);
+			// ===
+
+			// ===
+			int *SS = malloc(nlevels * nstabs * nstabs * sizeof(int));
+			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", nlevels * nstabs * nstabs);
+			printf("Loaded SS.\n");
+			PrintIntArray1D(SS, "SS", nlevels * nstabs * nstabs);
+			// ===
+
+			// ===
+			int *normalizer = malloc(nlevels * nlogs * nstabs * n * sizeof(int));
+			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", nlevels * nlogs * nstabs * n);
+			printf("Loaded normalizer.\n");
+			PrintIntArray1D(normalizer, "normalizer", nlevels * nlogs * nstabs * n);
+			// ===
+
+			// ===
+			double *normphases_real = malloc(nlevels * nlogs * nstabs * sizeof(double));
+			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", nlevels * nlogs * nstabs);
+			printf("Loaded normphases_real.\n");
+			PrintDoubleArray1D(normphases_real, "normphases_real", nlevels * nlogs * nstabs);
+			// ===
+
+			// ===
+			double *normphases_imag = malloc(nlevels * nlogs * nstabs * sizeof(double));
+			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", nlevels * nlogs * nstabs);
+			printf("Loaded normphases_imag.\n");
+			PrintDoubleArray1D(normphases_imag, "normphases_imag", nlevels * nlogs * nstabs);
+			// ===
+
+			// ===
+			char *chname = malloc(100 * sizeof(char));
+			sprintf(chname, "pcorr");
+			// ===
+
+			// ===
+			int iscorr = 1;
+			int nparams = 0;
+			if (iscorr == 0)
+				nparams = nlogs * nlogs;
+			else
+				nparams = nstabs * nlogs;
+			// ===
+
+			// ===
+			double *physical = malloc(nparams * sizeof(double));
+			LoadDoubleArray1D(physical, "./../chflow/input/debug_testing/physical.txt", nparams);
+			printf("Loaded physical.\n");
+			PrintDoubleArray1D(physical, "physical", nparams);
+			// ===
+
+			// ===
+			int nmetrics = 1;
+			char **metrics = malloc(nmetrics * sizeof(char *));
+			metrics[0] = malloc(100 * sizeof(char));
+			sprintf(metrics[0], "infid");
+			printf("metrics[0]: %s.\n", metrics[0]);
+			// ===
+
+			// ===
+			int hybrid = 0;
+			// ===
+
+			// ===
+			int *decoderbins = NULL;
+			int *ndecoderbins = NULL;
+			// ===
+
+			// ===
+			int frame = 0;
+			// ===
+
+			// ===
+			int nbreaks = 1;
+			// ===
+
+			// ===
+			long *stats = malloc(nbreaks * sizeof(long));
+			stats[0] = 100;
+			// ===
+
+			// ===
+			int nbins = 1;
+			int maxbin = 1;
+			// ===
+
+			// ===
+			int importance = 0;
+			// ===
+
+			// ===
+			double *refchan = NULL;
+			// ===
+
+
+			// Calling the Benchmark function
+			printf("Calling the Benchmark function.\n");
+			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, nmetrics, metrics, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+
+			// Free memory
+			free(nkd);
+			free(SS);
+			free(normalizer);
+			free(normphases_real);
+			free(normphases_imag);
+			free(chname);
+			free(physical);
+			free(metrics[0]);
+			free(metrics);
+			free(stats);
 		}
 	}
 

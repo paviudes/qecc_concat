@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <complex.h>
 #include "printfuns.h"
@@ -96,4 +97,22 @@ void PrintLongArray1D(long *array, char *name, int nrows){
 		printf("    %ld", (array[r]));
 	printf("\n");
 	printf("-----\n");
+}
+
+void LoadDoubleArray1D(double *array, char *fname, int size){
+	// Print a double 1D array.
+	int i;
+	FILE *afp = fopen(fname, "r");
+	for (i = 0; i < size; i ++)
+		fscanf(afp, "%lf", &(array[i]));
+	fclose(afp);
+}
+
+void LoadIntArray1D(int *array, char *fname, int size){
+	// Print a double 1D array.
+	int i;
+	FILE *afp = fopen(fname, "r");
+	for (i = 0; i < size; i ++)
+		fscanf(afp, "%d", &(array[i]));
+	fclose(afp);
 }

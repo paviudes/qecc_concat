@@ -27,4 +27,10 @@ extern void PrintLongArray2D(long **array, char *name, int nrows, int ncols);
 // Print a long 1D array.
 extern void PrintLongArray1D(long *array, char *name, int nrows);
 
+// Load a double 1D array from a file.
+extern void LoadDoubleArray1D(double *array, char *fname, int size);
+
+// Load a int 1D array from a file.
+extern void LoadIntArray1D(int *array, char *fname, int size);
+
 #endif /* PRINTFUNS_H */

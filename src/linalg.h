@@ -3,6 +3,19 @@
 
 #include <complex.h>
 
+
+// Compute the sum of numbers in an array.
+extern int SumInt(int *arr, int size);
+
+// Compute the parity of the integer's binary representation.
+extern int BitParity(int num);
+
+/*
+	Compute dot product modulo 2, between two integer's binary representations.
+	https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2
+*/
+extern int BinaryDot(int a, int b);
+
 /*
 	Given a matrix A and a vector v, compute the sum of entries in (A.v).
 */

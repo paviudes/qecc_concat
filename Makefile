@@ -18,14 +18,17 @@ SRC_DIR = src
 
 $(shell mkdir -p obj/)
 
-$(TARGET):obj/main.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
+$(TARGET):obj/main.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
 
 obj/main.o: $(SRC_DIR)/main.c Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o obj/main.o
 
 obj/mt19937ar.o: $(SRC_DIR)/mt19937/mt19937ar.c $(SRC_DIR)/mt19937/mt19937ar.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/mt19937/mt19937ar.c -o obj/mt19937ar.o
+
+obj/rand.o: $(SRC_DIR)/rand.c $(SRC_DIR)/rand.h Makefile
+	$(CC) $(CFLAGS) $(CFLAGS_MKL) -c $(SRC_DIR)/rand.c -o obj/rand.o
 
 obj/linalg.o: $(SRC_DIR)/linalg.c $(SRC_DIR)/linalg.h Makefile
 	$(CC) $(CFLAGS) $(CFLAGS_MKL) -c $(SRC_DIR)/linalg.c -o obj/linalg.o
@@ -61,4 +64,4 @@ obj/sampling.o: $(SRC_DIR)/sampling.c $(SRC_DIR)/sampling.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/sampling.c -o obj/sampling.o
 
 clean:
-	$(RM) $(TARGET) obj/main.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
+	$(RM) $(TARGET) obj/main.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o

@@ -5,6 +5,7 @@
 #include <math.h>
 #include <complex.h>
 #include "mt19937/mt19937ar.h" // Random number generator
+#include "rand.h"
 #include "printfuns.h"
 #include "linalg.h"
 #include "constants.h"
@@ -319,12 +320,44 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (strncmp(file, "rand", 4) == 0){
+		// Test the functions in the rand.c file.
+		printf("Testing functions to generate random patterns.\n");
+		if (strncmp(func, "ShuffleInt", 10) == 0){
+			int size = 10, nshuffles = 10;
+			int *arr = malloc(sizeof(int) * size);
+			for (i = 0; i < size/2; i ++)
+				arr[i] = 1;
+			for (i = size/2; i < size; i ++)
+				arr[i] = 0;
+			PrintIntArray1D(arr, "Array before shuffle", size);
+			ShuffleInt(arr, size, nshuffles);
+			printf("After applying %d shuffles.\n", nshuffles);
+			PrintIntArray1D(arr, "Array after shuffle", size);
+			free(arr);
+		}
+	}
+
+	if (strncmp(file, "linalg", 6) == 0){
+		if (strncmp(func, "BinaryDot", 9) == 0){
+			int max = 64;
+			int a = RandomRangeInt(0, max);
+			int *parity = malloc(max * sizeof(int));
+			printf("Testing the binary dot product between %d and all number form 0 to %d.\n", a, max - 1);
+			for (i = 0; i < max; i ++)
+				parity[i] = BinaryDot(i, a);
+			PrintIntArray1D(parity, "Parities", max);
+			printf("Number of non-orthogonal numbers = %d\n", SumInt(parity, max));
+			free(parity);
+		}
+	}
+
 	if (strncmp(file, "benchmark", 9) == 0){
 		// Testing the entire benchmarking functionality.
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 1;
+			int nlevels = 2;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -372,7 +405,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 0;
 			int nparams = 0;
 			if (iscorr == 0)
 				nparams = nlogs * nlogs;
@@ -414,7 +447,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 100;
+			stats[0] = 10000;
 			// ===
 
 			// ===
@@ -430,10 +463,14 @@ int main(int argc, char **argv)
 			double *refchan = NULL;
 			// ===
 
+			// ===
+			int rc = 1;
+			// ===
+
 
 			// Calling the Benchmark function
-			printf("Calling the Benchmark function.\n");
-			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, nmetrics, metrics, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+			printf("Calling the Benchmark function with %d levels and rc = %d.\n", nlevels, rc);
+			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
 
 			// Free memory
 			free(nkd);

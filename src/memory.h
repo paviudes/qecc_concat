@@ -3,7 +3,8 @@
 
 #include <complex.h>
 
-struct simul_t {
+struct simul_t
+{
   // Physical noise processes.
   char *restrict chname;
   int iscorr;
@@ -47,6 +48,9 @@ struct simul_t {
   int hybrid;
   int **restrict decbins;
   int *restrict ndecbins;
+  // Randomized compiling of QEC gates
+  int rc;
+  int *rcpauli;
 };
 
 // Initialize the elements that pertain to the montecarlo simulation of

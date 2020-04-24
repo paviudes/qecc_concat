@@ -17,6 +17,39 @@
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
 
+int SumInt(int *arr, int size){
+	// Compute the sum of numbers in an array.
+	int i, sum = 0;
+	for (i = 0; i < size; i ++)
+		sum += arr[i];
+	return sum;
+}
+
+int BitParity(int num){
+	// Compute the parity of the integer's binary representation.
+	int parity = 0;
+	if (num > 0){
+		int i, nbits = (int)(1 + (log(num)/log(2)));
+		// printf("log(%d) = %g, nbits = %d.\n", num, log(num), nbits);
+		int *seq = malloc(sizeof(int) * nbits);
+		for (i = nbits - 1; i >= 0; i --){
+			seq[i] = (int)(num/pow(2, i));
+			num = num % (int)(pow(2, i));
+		}
+		parity = SumInt(seq, nbits) % 2;
+		free(seq);
+	}
+	return parity;
+}
+
+int BinaryDot(int a, int b){
+	// Compute dot product modulo 2, between two integer's binary representations.
+	// https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2
+	return BitParity(a & b);
+}
+
+
+
 double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
 	// This is a wrapper for SumDot where the vector has integers.
 	double *dvecB = malloc(sizeof(double) * rowsB);

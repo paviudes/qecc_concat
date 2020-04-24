@@ -1,8 +1,9 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
-struct BenchOut {
-  /*
+struct BenchOut
+{
+        /*
   Output parameters of a benchmarking process.
   1. Average effective channels for each concatenation level.
           logchans = 3D array of shape: nlevels x 4^K x 4^K
@@ -20,12 +21,12 @@ struct BenchOut {
 
   All the arrays are vectorized.
   */
-  double *logchans;
-  double *chanvar;
-  double *logerrs;
-  double *logvars;
-  int *bins;
-  double *running;
+        double *logchans;
+        double *chanvar;
+        double *logerrs;
+        double *logvars;
+        int *bins;
+        double *running;
 };
 
 /*
@@ -73,6 +74,6 @@ struct BenchOut {
 
         All the multi-dimensional arrays are (row) vectorized.
 */
-extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan);
+extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan);
 
 #endif /* BENCHMARK_H */

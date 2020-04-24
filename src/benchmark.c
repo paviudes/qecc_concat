@@ -11,7 +11,8 @@
 #include "benchmark.h"
 // #include "logmetrics.h" // only for testing
 
-void InitBenchOut(struct BenchOut *pbout, int nlevels, int nmetrics, int nlogs, int nbins, int nbreaks) {
+void InitBenchOut(struct BenchOut *pbout, int nlevels, int nmetrics, int nlogs, int nbins, int nbreaks)
+{
 	// Initialize the memory allocated the to the benchmark output.
 	pbout->logchans = malloc(sizeof(double) * (nlevels + 1) * nlogs * nlogs);
 	pbout->chanvar = malloc(sizeof(double) * (nlevels + 1) * nlogs * nlogs);
@@ -21,7 +22,8 @@ void InitBenchOut(struct BenchOut *pbout, int nlevels, int nmetrics, int nlogs, 
 	pbout->running = malloc(sizeof(double) * nmetrics * nbreaks);
 }
 
-void FreeBenchOut(struct BenchOut *pbout) {
+void FreeBenchOut(struct BenchOut *pbout)
+{
 	// free the memory allocated to the Benchmark output.
 	free(pbout->logchans);
 	free(pbout->chanvar);
@@ -31,7 +33,8 @@ void FreeBenchOut(struct BenchOut *pbout) {
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan) {
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
+{
 	/*
 	Benchmark an error correcting scheme.
 	Inputs:
@@ -76,7 +79,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	// printf("Quantum error correcting code with %d levels.\n", nlevels);
 	struct qecc_t **qcode = malloc(sizeof(struct qecc_t *) * nlevels);
 	int l, s, g, i, q, stabcount = 0, normcount = 0, norm_phcount = 0;
-	for (l = 0; l < nlevels; l++) {
+	for (l = 0; l < nlevels; l++)
+	{
 		// printf("l = %d\n", l);
 		qcode[l] = malloc(sizeof(struct qecc_t));
 		qcode[l]->N = nkd[3 * l];
@@ -109,9 +113,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	// printf("QECC assigned.\n");
 
 	// if (iscorr == 0)
-		// PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
+	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
 	// else
-		// PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
+	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
 
 	// Record the number of physical qubits -- this is for setting the sizes of the decoder bins.
 	int *nphys = malloc(sizeof(int) * nlevels);
@@ -124,7 +128,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	// logical error rate.
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(importance == 2)));
 	int m, j, c, chan_count = 0;
-	for (s = 0; s < 1 + (int)(importance == 2); s++) {
+	for (s = 0; s < 1 + (int)(importance == 2); s++)
+	{
 		sims[s] = malloc(sizeof(struct simul_t));
 		sims[s]->nlevels = nlevels;
 		sims[s]->nmetrics = nmetrics;
@@ -147,7 +152,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		else if (frame == 1)
 			for (l = 0; l < nlevels; l++)
 				(sims[s]->frames)[l] = consts->nclifford;
-		else {
+		else
+		{
 			for (l = 0; l < nlevels - 1; l++)
 				(sims[s]->frames)[l] = 4;
 			(sims[s]->frames)[nlevels - 1] = consts->nclifford;
@@ -156,10 +162,12 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// printf("Allocating decoding bins for decoder %d.\n", sims[s]->hybrid);
 
 		// Prescription for averaging channels at intermediate decoding levels
-		if (sims[s]->hybrid > 0) {
+		if (sims[s]->hybrid > 0)
+		{
 			AllocDecoderBins(sims[s], nphys);
 			chan_count = 0;
-			for (l = 0; l < nlevels; l++) {
+			for (l = 0; l < nlevels; l++)
+			{
 				for (c = 0; c < chans[l]; c++)
 					(sims[s]->decbins)[l][c] = decoderbins[chan_count + c];
 				chan_count += chans[l];
@@ -178,20 +186,22 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		// PrintDoubleArray1D(physical, "physical", nparams);
 
-		for (i = 0; i < nparams; i++) {
+		for (i = 0; i < nparams; i++)
+		{
 			if (s == 0)
 				(sims[s]->physical)[i] = physical[i];
 			else
 				(sims[s]->physical)[i] = refchan[i];
 
 			if (sims[s]->iscorr == 0)
-				(sims[s]->logical)[0][i/(qcode[0]->nlogs)][i % (qcode[0]->nlogs)] = (sims[s]->physical)[i];
+				(sims[s]->logical)[0][i / (qcode[0]->nlogs)][i % (qcode[0]->nlogs)] = (sims[s]->physical)[i];
 		}
 		// PrintDoubleArray1D((sims[s]->physical), "sim->physical", nparams);
 
 		// printf("Loading %d metrics to be computed.\n", nmetrics);
 
-		for (m = 0; m < nmetrics; m++){
+		for (m = 0; m < nmetrics; m++)
+		{
 			sprintf((sims[s]->metricsToCompute)[m], "%s", metrics[m]);
 			// (sims[s]->metricsToCompute)[m] = metrics[m];
 			// printf("(sims[s]->metricsToCompute)[%d] = %s\n", m, (sims[s]->metricsToCompute)[m]);
@@ -205,6 +215,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		// PrintDoubleArray1D(physical, "Physical Channel", nparams);
 		// printf("Allocations complete for s = %d.\n", s);
+
+		// Randomized compiling of quantum gates
+		sims[s]->rc = rc;
 	}
 
 	// printf("Going to start Performance.\n");
@@ -233,11 +246,14 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	// printf("Assigning output values.\n");
 
-	for (l = 0; l < nlevels + 1; l++) {
-		// printf("l = %d\n", l);
-		// PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
-		for (i = 0; i < nlogs; i++) {
-			for (j = 0; j < nlogs; j++) {
+	for (l = 0; l < nlevels + 1; l++)
+	{
+		printf("l = %d\n", l);
+		PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
+		for (i = 0; i < nlogs; i++)
+		{
+			for (j = 0; j < nlogs; j++)
+			{
 				(bout.logchans)[l * (int)pow((double)nlogs, 2) + i * nlogs + j] = (sims[0]->logical)[l][i][j];
 				(bout.chanvar)[l * (int)pow((double)nlogs, 2) + i * nlogs + j] = (sims[0]->variance)[l][sims[0]->nmetrics + i * nlogs + j];
 			}
@@ -245,8 +261,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	}
 	// PrintDoubleArray1D((bout.logchans), "Logical channels", (nlevels + 1) * nlogs * nlogs);
 
-	for (m = 0; m < nmetrics; m++) {
-		for (l = 0; l < nlevels + 1; l++) {
+	for (m = 0; m < nmetrics; m++)
+	{
+		for (l = 0; l < nlevels + 1; l++)
+		{
 			(bout.logerrs)[m * (nlevels + 1) + l] = (sims[0]->metricValues)[l][m];
 			(bout.logvars)[m * (nlevels + 1) + l] = (sims[0]->variance)[l][m];
 			for (i = 0; i < nbins; i++)
@@ -266,7 +284,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	free(nphys);
 	free(chans);
 	// printf("Freeing %d simulation structures.\n", 1 + (int)(importance == 2));
-	for (s = 0; s < 1 + (int)(importance == 2); s++) {
+	for (s = 0; s < 1 + (int)(importance == 2); s++)
+	{
 		FreeSimParams(sims[s], qcode[0]->N, qcode[0]->K);
 		if (sims[s]->hybrid > 0)
 			FreeDecoderBins(sims[s]);
@@ -274,7 +293,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	}
 	free(sims);
 	// printf("Freeing %d qcode structures.\n", nlevels);
-	for (l = 0; l < nlevels; l++) {
+	for (l = 0; l < nlevels; l++)
+	{
 		FreeQECC(qcode[l]);
 		free(qcode[l]);
 	}

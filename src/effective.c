@@ -97,6 +97,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 				(sim->sumsq)[level + 1][sim->nmetrics + i * qcode->nlogs + j] += pow(bias * avg[sim->nmetrics + i * qcode->nlogs + j], 2);
 			}
 		}
+		// printf("The trace-preserving part of the logical channel at level %d is: %g and the bias is: %g.\n", level + 1, avg[sim->nmetrics], bias);
 
 		// printf("Syndrome metric binning.\n");
 
@@ -123,6 +124,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 				(sim->variance)[level + 1][sim->nmetrics + i * qcode->nlogs + j] = 1 / ((double)((sim->statsperlevel)[level + 1] * ((sim->statsperlevel)[level + 1] - 1))) * sim->sumsq[level + 1][sim->nmetrics + i * qcode->nlogs + j] - pow((sim->logical)[level + 1][i][j], 2);
 			}
 		}
+		// printf("The trace-preserving part of the average logical channel at level %d is: %g.\n", level + 1, (sim->logical)[level + 1][0][0]);
 	}
 	// Free memory.
 	free(metvals);
@@ -178,11 +180,15 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	// printf("Function: ComputeLevelOneChannels\n");
 	int q, i, j, isPauli = 1;
 	AllocSimParamsQECC(sim, qcode->N, qcode->K);
-	if (sim->iscorr == 0) {
+	if ((sim->iscorr == 0) || (sim->iscorr == 2)) {
 		for (q = 0; q < qcode->N; q++) {
 			for (i = 0; i < qcode->nlogs; i++)
-				for (j = 0; j < qcode->nlogs; j++)
-					(sim->virtchan)[q][i][j] = (sim->physical)[i * qcode->nlogs + j];
+				for (j = 0; j < qcode->nlogs; j++){
+					if (sim->iscorr == 0)
+						(sim->virtchan)[q][i][j] = (sim->physical)[i * qcode->nlogs + j];
+					else
+						(sim->virtchan)[q][i][j] = (sim->physical)[q * qcode->nlogs * qcode->nlogs + i * qcode->nlogs + j];
+				}
 			if (isPauli > 0)
 				isPauli = isPauli * IsDiagonal((sim->virtchan)[q], qcode->nlogs);
 			// PrintDoubleArray2D((sim->virtchan)[q], "Level 0 channel", qcode->nlogs, qcode->nlogs);
@@ -191,14 +197,14 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		// printf("Loaded virtual channels, isPauli = %d.\n", isPauli);
 		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->frames)[0], qcode, sim, consts);
 	}
-	else{
-		// Correlated channel -- the physical channel contains the full process
-		// matrix
+	else if (sim->iscorr == 1){
+		// Correlated channel -- the physical channel contains the full process matrix
 		// printf("Simulating a correlated Pauli channel: %d.\n", isPauli);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
 		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->frames)[0], qcode, sim, consts);
 	}
+	else;
 
 	// printf("Completed SingleShotErrorCorrection.\n");
 	UpdateMetrics(0, 1, 1, 0, qcode, sim, consts);
@@ -209,8 +215,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 			for (j = 0; j < qcode->nlogs; j++)
 				(sim->levelOneChannels)[s][i][j] = (sim->effprocess)[s][i][j];
 		// printf("s = %d:\n", s);
-		// PrintDoubleArray2D((sim->levelOneChannels)[s], "Level 1 channel",
-		// qcode->nlogs, qcode->nlogs);
+		// PrintDoubleArray2D((sim->levelOneChannels)[s], "Level 1 channel", qcode->nlogs, qcode->nlogs);
 	}
 	ConstructCumulative(sim->levelOneSynds, sim->levelOneCumul, qcode->nstabs);
 	// Compute the importance distribution for level-1 if necessary.
@@ -264,8 +269,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 	// printf("Computing logical channels for %d levels.\n", sims[0]->nlevels);
 
 	for (l = 1; l < sims[0]->nlevels; l++){
-		// Allocate memory for the simulation parameters which depend on the error
-		// correcting code
+		// Allocate memory for the simulation parameters which depend on the error correcting code
 		for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s++)
 			AllocSimParamsQECC(sims[s], qcode[l]->N, qcode[l]->K);
 
@@ -278,8 +282,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 
 		for (b = 0; b < chans[l + 1]; b++) {
 		// printf("batch = %d of %d\n", b, chans[l]);
-		// Load the input channels on to the simulation structures and perform
-		// QECC.
+		// Load the input channels on to the simulation structures and perform QECC.
 		for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s++) {
 			bias = 1;
 			history = 1;
@@ -407,8 +410,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s++)
 		ComputeLevelOneChannels(sims[s], qcode[0], consts);
 	// printf("Finished level-1 computations with %d channels.\n", (nchans));
-	// PrintDoubleArray2D((sims[0]->logical)[1], "Logical channel",
-	// qcode[0]->nlogs, qcode[0]->nlogs);
+	// PrintDoubleArray2D((sims[0]->logical)[1], "Logical channel", qcode[0]->nlogs, qcode[0]->nlogs);
 
 	int c, i, j, m, randsynd;
 	long t;

@@ -108,8 +108,10 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	int nparams;
 	if (simul->iscorr == 0)
 		nparams = nlogs * nlogs;
-	else
+	else if (simul->iscorr == 1)
 		nparams = nlogs * nstabs;
+	else
+		nparams = nphys * nlogs * nlogs;
 	simul->physical = malloc(nparams * sizeof(double));
 	for (i = 0; i < nparams; i++)
 		simul->physical[i] = 0;
@@ -152,10 +154,6 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	simul->statsperlevel = malloc((simul->nlevels + 1) * sizeof(long));
 	for (l = 0; l < simul->nlevels + 1; l++)
 		(simul->statsperlevel)[l] = 0;
-
-	// Upper and lower limits for the probability of the outlier syndromes.
-	(simul->outlierprobs)[0] = 0.2;
-	(simul->outlierprobs)[1] = 0.25;
 
 	// Syndrome-metric bins.
 	simul->bins = malloc((simul->nlevels + 1) * sizeof(int ***));

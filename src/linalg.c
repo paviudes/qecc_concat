@@ -17,6 +17,18 @@
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
 
+double Max(double a, double b){
+	// Compute the maximum of two numbers.
+	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
+	return (a > b) ? a:b;
+}
+
+double Min(double a, double b){
+	// Compute the minimum of two numbers.
+	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
+	return (a < b) ? a:b;
+}
+
 int SumInt(int *arr, int size){
 	// Compute the sum of numbers in an array.
 	int i, sum = 0;
@@ -47,7 +59,6 @@ int BinaryDot(int a, int b){
 	// https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2
 	return BitParity(a & b);
 }
-
 
 
 double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
@@ -92,6 +103,16 @@ double Trace(double **mat, int nrows){
 	double trace = 0;
 	for (i = 0; i < nrows; i ++)
 		trace += mat[i][i];
+	return trace;
+}
+
+double TraceFlattened(double *mat, int nrows){
+	// Compute the trace of a flattened 2D matrix.
+	// We will use a vectorized for loop.
+	int i;
+	double trace = 0;
+	for (i = 0; i < nrows; i ++)
+		trace += mat[i * nrows + i];
 	return trace;
 }
 

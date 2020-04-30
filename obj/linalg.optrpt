@@ -6,18 +6,117 @@ Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version
 
 Compiler options: -I/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/include -fPIC -Wall -Wextra -std=c11 -O3 -xavx -qopt-report-phase=vec -qopt-report=5 -m64 -c -o obj/linalg.o
 
+Begin optimization report for: SumInt(int *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/linalg.c(35,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2)
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ src/linalg.c(36,10) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 4.100
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 2.120 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: BitParity(int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/linalg.c(47,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed ANTI dependence between num (48:4) and num (49:4)
+   remark #15346: vector dependence: assumed FLOW dependence between num (49:4) and num (48:4)
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(51,12)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(51,12)
+   remark #15388: vectorization support: reference seq[i] has aligned access   [ src/linalg.c(36,10) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 4.100
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 2.120 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(51,12)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: BinaryDot(int, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/linalg.c(47,3) inlined into src/linalg.c(60,9)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed ANTI dependence between num (48:4) and num (49:4)
+   remark #15346: vector dependence: assumed FLOW dependence between num (49:4) and num (48:4)
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(60,9)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(60,9)
+   remark #15388: vectorization support: reference seq[i] has aligned access   [ src/linalg.c(36,10) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 4.100
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 3 
+   remark #15477: vector cost: 1.250 
+   remark #15478: estimated potential speedup: 2.120 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/linalg.c(35,2) inlined into src/linalg.c(60,9)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
 Begin optimization report for: SumDotInt(double **, int *, int, int, int)
 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(24,2)
+LOOP BEGIN at src/linalg.c(68,2)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(24,2)
-   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(25,3) ]
-   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(25,23) ]
+LOOP BEGIN at src/linalg.c(68,2)
+   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(69,3) ]
+   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(69,23) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
@@ -34,10 +133,10 @@ LOOP BEGIN at src/linalg.c(24,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(24,2)
+LOOP BEGIN at src/linalg.c(68,2)
 <Remainder loop for vectorization>
-   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(25,3) ]
-   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(25,23) ]
+   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(69,3) ]
+   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(69,23) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 2.167
@@ -53,14 +152,14 @@ LOOP BEGIN at src/linalg.c(24,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(24,2)
+LOOP BEGIN at src/linalg.c(68,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(26,15)
-   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(131,4) ]
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(131,11) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(131,11) ]
+LOOP BEGIN at src/linalg.c(184,3) inlined into src/linalg.c(70,15)
+   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(185,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(185,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(185,11) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -74,16 +173,16 @@ LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(26,15)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(184,3) inlined into src/linalg.c(70,15)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(70,15)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(26,15)
-      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(134,4) ]
-      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(134,11) ]
+   LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(70,15)
+      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(188,4) ]
+      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(188,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -97,17 +196,17 @@ LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(26,15)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(26,15)
+   LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(70,15)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(70,15)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(26,15)
-      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(142,4) ]
-      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(142,14) ]
+   LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(70,15)
+      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(196,4) ]
+      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(196,14) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.273
@@ -121,17 +220,17 @@ LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(26,15)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(26,15)
+   LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(70,15)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(88,2) inlined into src/linalg.c(70,15)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
-   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(45,10) ]
+LOOP BEGIN at src/linalg.c(88,2) inlined into src/linalg.c(70,15)
+   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(89,10) ]
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
    remark #15309: vectorization support: normalized vectorization overhead 2.050
@@ -145,9 +244,9 @@ LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(88,2) inlined into src/linalg.c(70,15)
 <Remainder loop for vectorization>
-   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(45,10) ]
+   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(89,10) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 8.200
    remark #15301: REMAINDER LOOP WAS VECTORIZED
@@ -160,7 +259,7 @@ LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2) inlined into src/linalg.c(26,15)
+LOOP BEGIN at src/linalg.c(88,2) inlined into src/linalg.c(70,15)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
@@ -170,10 +269,10 @@ Begin optimization report for: SumDot(double **, double *, int, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(40,2)
-   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(131,4) ]
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(131,11) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(131,11) ]
+LOOP BEGIN at src/linalg.c(184,3) inlined into src/linalg.c(84,2)
+   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(185,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(185,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(185,11) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -187,16 +286,16 @@ LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(40,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(130,3) inlined into src/linalg.c(40,2)
+LOOP BEGIN at src/linalg.c(184,3) inlined into src/linalg.c(84,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(40,2)
+LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(84,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(40,2)
-      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(134,4) ]
-      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(134,11) ]
+   LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(84,2)
+      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(188,4) ]
+      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(188,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -210,17 +309,17 @@ LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(40,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(133,3) inlined into src/linalg.c(40,2)
+   LOOP BEGIN at src/linalg.c(187,3) inlined into src/linalg.c(84,2)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(40,2)
+LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(84,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(40,2)
-      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(142,4) ]
-      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(142,14) ]
+   LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(84,2)
+      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(196,4) ]
+      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(196,14) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.273
@@ -234,17 +333,17 @@ LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(40,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(141,3) inlined into src/linalg.c(40,2)
+   LOOP BEGIN at src/linalg.c(195,3) inlined into src/linalg.c(84,2)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2)
+LOOP BEGIN at src/linalg.c(88,2)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2)
-   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(45,10) ]
+LOOP BEGIN at src/linalg.c(88,2)
+   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(89,10) ]
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
    remark #15309: vectorization support: normalized vectorization overhead 2.050
@@ -258,9 +357,9 @@ LOOP BEGIN at src/linalg.c(44,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2)
+LOOP BEGIN at src/linalg.c(88,2)
 <Remainder loop for vectorization>
-   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(45,10) ]
+   remark #15388: vectorization support: reference prod[i] has aligned access   [ src/linalg.c(89,10) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 8.200
    remark #15301: REMAINDER LOOP WAS VECTORIZED
@@ -273,7 +372,7 @@ LOOP BEGIN at src/linalg.c(44,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(44,2)
+LOOP BEGIN at src/linalg.c(88,2)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
@@ -283,13 +382,13 @@ Begin optimization report for: DiagGDotIntV(double **, int *, int, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(69,2)
+LOOP BEGIN at src/linalg.c(123,2)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(69,2)
-   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(70,3) ]
-   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(70,23) ]
+LOOP BEGIN at src/linalg.c(123,2)
+   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(124,3) ]
+   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(124,23) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
@@ -306,10 +405,10 @@ LOOP BEGIN at src/linalg.c(69,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(69,2)
+LOOP BEGIN at src/linalg.c(123,2)
 <Remainder loop for vectorization>
-   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(70,3) ]
-   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(70,23) ]
+   remark #15388: vectorization support: reference vecB[i] has aligned access   [ src/linalg.c(124,3) ]
+   remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(124,23) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 2.167
@@ -325,16 +424,16 @@ LOOP BEGIN at src/linalg.c(69,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(69,2)
+LOOP BEGIN at src/linalg.c(123,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(90,3) inlined into src/linalg.c(71,19)
-   remark #15388: vectorization support: reference x[i] has aligned access   [ src/linalg.c(91,4) ]
-   remark #15389: vectorization support: reference matA[i] has unaligned access   [ src/linalg.c(91,11) ]
+LOOP BEGIN at src/linalg.c(144,3) inlined into src/linalg.c(125,19)
+   remark #15388: vectorization support: reference x[i] has aligned access   [ src/linalg.c(145,4) ]
+   remark #15389: vectorization support: reference matA[i] has unaligned access   [ src/linalg.c(145,11) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(91,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(145,11) ]
    remark #15305: vectorization support: vector length 2
    remark #15399: vectorization support: unroll factor set to 4
    remark #15309: vectorization support: normalized vectorization overhead 0.050
@@ -349,16 +448,16 @@ LOOP BEGIN at src/linalg.c(90,3) inlined into src/linalg.c(71,19)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(90,3) inlined into src/linalg.c(71,19)
+LOOP BEGIN at src/linalg.c(144,3) inlined into src/linalg.c(125,19)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(92,3) inlined into src/linalg.c(71,19)
+LOOP BEGIN at src/linalg.c(146,3) inlined into src/linalg.c(125,19)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(92,3) inlined into src/linalg.c(71,19)
-      remark #15388: vectorization support: reference y[i] has aligned access   [ src/linalg.c(93,4) ]
-      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(93,11) ]
+   LOOP BEGIN at src/linalg.c(146,3) inlined into src/linalg.c(125,19)
+      remark #15388: vectorization support: reference y[i] has aligned access   [ src/linalg.c(147,4) ]
+      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(147,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -372,7 +471,7 @@ LOOP BEGIN at src/linalg.c(92,3) inlined into src/linalg.c(71,19)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(92,3) inlined into src/linalg.c(71,19)
+   LOOP BEGIN at src/linalg.c(146,3) inlined into src/linalg.c(125,19)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -383,12 +482,12 @@ Begin optimization report for: DiagGDotV(double **, double *, int, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(90,3)
-   remark #15388: vectorization support: reference x[i] has aligned access   [ src/linalg.c(91,4) ]
-   remark #15389: vectorization support: reference matA[i] has unaligned access   [ src/linalg.c(91,11) ]
+LOOP BEGIN at src/linalg.c(144,3)
+   remark #15388: vectorization support: reference x[i] has aligned access   [ src/linalg.c(145,4) ]
+   remark #15389: vectorization support: reference matA[i] has unaligned access   [ src/linalg.c(145,11) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(91,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(145,11) ]
    remark #15305: vectorization support: vector length 2
    remark #15399: vectorization support: unroll factor set to 4
    remark #15309: vectorization support: normalized vectorization overhead 0.050
@@ -403,16 +502,16 @@ LOOP BEGIN at src/linalg.c(90,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(90,3)
+LOOP BEGIN at src/linalg.c(144,3)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(92,3)
+LOOP BEGIN at src/linalg.c(146,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(92,3)
-      remark #15388: vectorization support: reference y[i] has aligned access   [ src/linalg.c(93,4) ]
-      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(93,11) ]
+   LOOP BEGIN at src/linalg.c(146,3)
+      remark #15388: vectorization support: reference y[i] has aligned access   [ src/linalg.c(147,4) ]
+      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(147,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -426,7 +525,7 @@ LOOP BEGIN at src/linalg.c(92,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(92,3)
+   LOOP BEGIN at src/linalg.c(146,3)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -437,10 +536,10 @@ Begin optimization report for: GDotV(double **, double *, double *, int, int, in
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(130,3)
-   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(131,4) ]
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(131,11) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(131,11) ]
+LOOP BEGIN at src/linalg.c(184,3)
+   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(185,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(185,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(185,11) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -454,16 +553,16 @@ LOOP BEGIN at src/linalg.c(130,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(130,3)
+LOOP BEGIN at src/linalg.c(184,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(133,3)
+LOOP BEGIN at src/linalg.c(187,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(133,3)
-      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(134,4) ]
-      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(134,11) ]
+   LOOP BEGIN at src/linalg.c(187,3)
+      remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(188,4) ]
+      remark #15389: vectorization support: reference vecB[i] has unaligned access   [ src/linalg.c(188,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -477,17 +576,17 @@ LOOP BEGIN at src/linalg.c(133,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(133,3)
+   LOOP BEGIN at src/linalg.c(187,3)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(141,3)
+LOOP BEGIN at src/linalg.c(195,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(141,3)
-      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(142,4) ]
-      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(142,14) ]
+   LOOP BEGIN at src/linalg.c(195,3)
+      remark #15389: vectorization support: reference prod[i] has unaligned access   [ src/linalg.c(196,4) ]
+      remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(196,14) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.273
@@ -501,7 +600,7 @@ LOOP BEGIN at src/linalg.c(141,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(141,3)
+   LOOP BEGIN at src/linalg.c(195,3)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -512,10 +611,10 @@ Begin optimization report for: GDot(double **, double **, double **, int, int, i
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(172,3)
-   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(173,4) ]
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(173,11) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(173,11) ]
+LOOP BEGIN at src/linalg.c(226,3)
+   remark #15388: vectorization support: reference A[i] has aligned access   [ src/linalg.c(227,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matA[i/colsA]>, part of index is nonlinearly computed   [ src/linalg.c(227,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matA[i/colsA][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(227,11) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -529,14 +628,14 @@ LOOP BEGIN at src/linalg.c(172,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(172,3)
+LOOP BEGIN at src/linalg.c(226,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(175,3)
-   remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(176,4) ]
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matB[i/colsB]>, part of index is nonlinearly computed   [ src/linalg.c(176,11) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <matB[i/colsB][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(176,11) ]
+LOOP BEGIN at src/linalg.c(229,3)
+   remark #15388: vectorization support: reference B[i] has aligned access   [ src/linalg.c(230,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <matB[i/colsB]>, part of index is nonlinearly computed   [ src/linalg.c(230,11) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <matB[i/colsB][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(230,11) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -550,15 +649,15 @@ LOOP BEGIN at src/linalg.c(175,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(175,3)
+LOOP BEGIN at src/linalg.c(229,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/linalg.c(183,3)
-   remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(184,31) ]
+LOOP BEGIN at src/linalg.c(237,3)
+   remark #15388: vectorization support: reference C[i] has aligned access   [ src/linalg.c(238,31) ]
    remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <prod[i/colsB]>, part of index is nonlinearly computed   [ src/linalg.c(184,4) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <prod[i/colsB][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(184,4) ]
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <prod[i/colsB]>, part of index is nonlinearly computed   [ src/linalg.c(238,4) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <prod[i/colsB][:]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(238,4) ]
    remark #15305: vectorization support: vector length 2
    remark #15309: vectorization support: normalized vectorization overhead 0.025
    remark #15448: unmasked aligned unit stride loads: 1 
@@ -579,12 +678,12 @@ Begin optimization report for: ZDot(double __complex__ **, double __complex__ **
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(214,3)
+LOOP BEGIN at src/linalg.c(268,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(215,4)
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <A[i*colsA+j]>, stride is 2   [ src/linalg.c(217,5) ]
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <A[i*colsA+j]>, stride is 2   [ src/linalg.c(216,5) ]
+   LOOP BEGIN at src/linalg.c(269,4)
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <A[i*colsA+j]>, stride is 2   [ src/linalg.c(271,5) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <A[i*colsA+j]>, stride is 2   [ src/linalg.c(270,5) ]
       remark #15305: vectorization support: vector length 2
       remark #15399: vectorization support: unroll factor set to 4
       remark #15309: vectorization support: normalized vectorization overhead 0.023
@@ -598,7 +697,7 @@ LOOP BEGIN at src/linalg.c(214,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(215,4)
+   LOOP BEGIN at src/linalg.c(269,4)
    <Remainder loop for vectorization>
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 0.545
@@ -612,17 +711,17 @@ LOOP BEGIN at src/linalg.c(214,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(215,4)
+   LOOP BEGIN at src/linalg.c(269,4)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(220,3)
+LOOP BEGIN at src/linalg.c(274,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(221,4)
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <B[i*colsB+j]>, stride is 2   [ src/linalg.c(223,5) ]
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <B[i*colsB+j]>, stride is 2   [ src/linalg.c(222,5) ]
+   LOOP BEGIN at src/linalg.c(275,4)
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <B[i*colsB+j]>, stride is 2   [ src/linalg.c(277,5) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <B[i*colsB+j]>, stride is 2   [ src/linalg.c(276,5) ]
       remark #15305: vectorization support: vector length 2
       remark #15399: vectorization support: unroll factor set to 4
       remark #15309: vectorization support: normalized vectorization overhead 0.023
@@ -636,7 +735,7 @@ LOOP BEGIN at src/linalg.c(220,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(221,4)
+   LOOP BEGIN at src/linalg.c(275,4)
    <Remainder loop for vectorization>
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 0.545
@@ -650,22 +749,22 @@ LOOP BEGIN at src/linalg.c(220,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(221,4)
+   LOOP BEGIN at src/linalg.c(275,4)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(233,3)
+LOOP BEGIN at src/linalg.c(287,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(234,4)
+   LOOP BEGIN at src/linalg.c(288,4)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(234,4)
-      remark #15388: vectorization support: reference (*(prod+i*8))[j] has aligned access   [ src/linalg.c(235,5) ]
-      remark #15328: vectorization support: non-unit strided load was emulated for the variable <C[i*colsB+j]>, stride is 2   [ src/linalg.c(235,18) ]
-      remark #15328: vectorization support: non-unit strided load was emulated for the variable <C[i*colsB+j]>, stride is 2   [ src/linalg.c(235,42) ]
+   LOOP BEGIN at src/linalg.c(288,4)
+      remark #15388: vectorization support: reference (*(prod+i*8))[j] has aligned access   [ src/linalg.c(289,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <C[i*colsB+j]>, stride is 2   [ src/linalg.c(289,18) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <C[i*colsB+j]>, stride is 2   [ src/linalg.c(289,42) ]
       remark #15305: vectorization support: vector length 2
       remark #15399: vectorization support: unroll factor set to 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -680,9 +779,9 @@ LOOP BEGIN at src/linalg.c(233,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(234,4)
+   LOOP BEGIN at src/linalg.c(288,4)
    <Remainder loop for vectorization>
-      remark #15388: vectorization support: reference (*(prod+i*8))[j] has aligned access   [ src/linalg.c(235,5) ]
+      remark #15388: vectorization support: reference (*(prod+i*8))[j] has aligned access   [ src/linalg.c(289,5) ]
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 1.111
       remark #15301: REMAINDER LOOP WAS VECTORIZED
@@ -696,7 +795,7 @@ LOOP BEGIN at src/linalg.c(233,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(234,4)
+   LOOP BEGIN at src/linalg.c(288,4)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -707,12 +806,12 @@ Begin optimization report for: Diagonalize(double __complex__ **, int, double __
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(267,2)
+LOOP BEGIN at src/linalg.c(321,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(268,3)
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <a[i*nrows+j]>, stride is 2   [ src/linalg.c(270,4) ]
-      remark #15329: vectorization support: non-unit strided store was emulated for the variable <a[i*nrows+j]>, stride is 2   [ src/linalg.c(269,4) ]
+   LOOP BEGIN at src/linalg.c(322,3)
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <a[i*nrows+j]>, stride is 2   [ src/linalg.c(324,4) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <a[i*nrows+j]>, stride is 2   [ src/linalg.c(323,4) ]
       remark #15305: vectorization support: vector length 2
       remark #15399: vectorization support: unroll factor set to 4
       remark #15309: vectorization support: normalized vectorization overhead 0.023
@@ -726,7 +825,7 @@ LOOP BEGIN at src/linalg.c(267,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(268,3)
+   LOOP BEGIN at src/linalg.c(322,3)
    <Remainder loop for vectorization>
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 0.545
@@ -740,22 +839,22 @@ LOOP BEGIN at src/linalg.c(267,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(268,3)
+   LOOP BEGIN at src/linalg.c(322,3)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/linalg.c(279,3)
+LOOP BEGIN at src/linalg.c(333,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/linalg.c(282,5)
+   LOOP BEGIN at src/linalg.c(336,5)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(282,5)
-      remark #15388: vectorization support: reference (*(eigvecs+i*8))[j] has aligned access   [ src/linalg.c(283,6) ]
-      remark #15328: vectorization support: non-unit strided load was emulated for the variable <vr[i*nrows+j]>, stride is 2   [ src/linalg.c(283,22) ]
-      remark #15328: vectorization support: non-unit strided load was emulated for the variable <vr[i*nrows+j]>, stride is 2   [ src/linalg.c(283,47) ]
+   LOOP BEGIN at src/linalg.c(336,5)
+      remark #15388: vectorization support: reference (*(eigvecs+i*8))[j] has aligned access   [ src/linalg.c(337,6) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <vr[i*nrows+j]>, stride is 2   [ src/linalg.c(337,22) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <vr[i*nrows+j]>, stride is 2   [ src/linalg.c(337,47) ]
       remark #15305: vectorization support: vector length 2
       remark #15399: vectorization support: unroll factor set to 4
       remark #15309: vectorization support: normalized vectorization overhead 0.333
@@ -770,9 +869,9 @@ LOOP BEGIN at src/linalg.c(279,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(282,5)
+   LOOP BEGIN at src/linalg.c(336,5)
    <Remainder loop for vectorization>
-      remark #15388: vectorization support: reference (*(eigvecs+i*8))[j] has aligned access   [ src/linalg.c(283,6) ]
+      remark #15388: vectorization support: reference (*(eigvecs+i*8))[j] has aligned access   [ src/linalg.c(337,6) ]
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 1.111
       remark #15301: REMAINDER LOOP WAS VECTORIZED
@@ -786,9 +885,42 @@ LOOP BEGIN at src/linalg.c(279,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/linalg.c(282,5)
+   LOOP BEGIN at src/linalg.c(336,5)
    <Remainder loop for vectorization>
    LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: TraceFlattened(double *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/linalg.c(114,2)
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <mat[i*nrows+i]>, stride is unknown to compiler   [ src/linalg.c(115,12) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.646
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15452: unmasked strided loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 3.000 
+   remark #15478: estimated potential speedup: 1.860 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at src/linalg.c(114,2)
+<Remainder loop for vectorization>
+   remark #15335: remainder loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 3.417
+   remark #15452: unmasked strided loads: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 6 
+   remark #15477: vector cost: 3.000 
+   remark #15478: estimated potential speedup: 1.860 
+   remark #15488: --- end vector cost summary ---
 LOOP END
 ===========================================================================
 
@@ -797,11 +929,11 @@ Begin optimization report for: Trace(double **, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/linalg.c(60,2)
-   remark #15389: vectorization support: reference mat[i] has unaligned access   [ src/linalg.c(61,12) ]
+LOOP BEGIN at src/linalg.c(104,2)
+   remark #15389: vectorization support: reference mat[i] has unaligned access   [ src/linalg.c(105,12) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
-   remark #15328: vectorization support: indirect load was emulated for the variable <mat[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(61,12) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <mat[i][i]>, 64-bit indexed, part of address is read from memory   [ src/linalg.c(105,12) ]
    remark #15305: vectorization support: vector length 2
    remark #15399: vectorization support: unroll factor set to 4
    remark #15309: vectorization support: normalized vectorization overhead 0.324
@@ -815,7 +947,7 @@ LOOP BEGIN at src/linalg.c(60,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/linalg.c(60,2)
+LOOP BEGIN at src/linalg.c(104,2)
 <Remainder>
 LOOP END
 ===========================================================================

@@ -21,6 +21,8 @@ int main(int argc, char **argv)
 	/* 
 	This function is simply to test all the C functions in the converted/ folder.
 	*/
+	clock_t begin = clock();
+	printf("bmark: source last compiled on %s at %s.\n", __DATE__, __TIME__);
 	if (argc < 2){
 		printf("Usage: ./bmark <file name> <function name>\n");
 		return 0;
@@ -374,29 +376,29 @@ int main(int argc, char **argv)
 			// ===
 			int *SS = malloc(nlevels * nstabs * nstabs * sizeof(int));
 			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", nlevels * nstabs * nstabs);
-			printf("Loaded SS.\n");
-			PrintIntArray1D(SS, "SS", nlevels * nstabs * nstabs);
+			printf("_/ Loaded SS.\n");
+			// PrintIntArray1D(SS, "SS", nlevels * nstabs * nstabs);
 			// ===
 
 			// ===
 			int *normalizer = malloc(nlevels * nlogs * nstabs * n * sizeof(int));
 			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", nlevels * nlogs * nstabs * n);
-			printf("Loaded normalizer.\n");
-			PrintIntArray1D(normalizer, "normalizer", nlevels * nlogs * nstabs * n);
+			printf("_/ Loaded normalizer.\n");
+			// PrintIntArray1D(normalizer, "normalizer", nlevels * nlogs * nstabs * n);
 			// ===
 
 			// ===
 			double *normphases_real = malloc(nlevels * nlogs * nstabs * sizeof(double));
 			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", nlevels * nlogs * nstabs);
-			printf("Loaded normphases_real.\n");
-			PrintDoubleArray1D(normphases_real, "normphases_real", nlevels * nlogs * nstabs);
+			printf("_/ Loaded normphases_real.\n");
+			// PrintDoubleArray1D(normphases_real, "normphases_real", nlevels * nlogs * nstabs);
 			// ===
 
 			// ===
 			double *normphases_imag = malloc(nlevels * nlogs * nstabs * sizeof(double));
 			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", nlevels * nlogs * nstabs);
-			printf("Loaded normphases_imag.\n");
-			PrintDoubleArray1D(normphases_imag, "normphases_imag", nlevels * nlogs * nstabs);
+			printf("_/ Loaded normphases_imag.\n");
+			// PrintDoubleArray1D(normphases_imag, "normphases_imag", nlevels * nlogs * nstabs);
 			// ===
 
 			// ===
@@ -405,12 +407,17 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 0;
+			int iscorr = 2;
+			// ===
+
+			// ===
 			int nparams = 0;
 			if (iscorr == 0)
 				nparams = nlogs * nlogs;
-			else
+			else if (iscorr == 1)
 				nparams = nstabs * nlogs;
+			else
+				nparams = n * nlogs * nlogs;
 			// ===
 
 			// ===
@@ -447,7 +454,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10000;
+			stats[0] = 100;
 			// ===
 
 			// ===
@@ -464,14 +471,12 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int rc = 1;
+			int rc = 0;
 			// ===
-
 
 			// Calling the Benchmark function
 			printf("Calling the Benchmark function with %d levels and rc = %d.\n", nlevels, rc);
 			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
-
 			// Free memory
 			free(nkd);
 			free(SS);
@@ -492,5 +497,13 @@ int main(int argc, char **argv)
 	free(mat);
 	free(file);
 	free(func);
+
+	// Output the total run time of the test.
+	clock_t end = clock();
+	double runtime = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("***********\n");
+	printf("All testing done in %d seconds.\n", (int) runtime);
+	printf("***********\n");
+	
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "memory.h"
 #include "printfuns.h"
+#include "linalg.h"
 #include "qecc.h"
 #include "effective.h"
 #include "benchmark.h"
@@ -108,14 +109,18 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
 
 		// printf("norm_phcount = %d\n", norm_phcount);
+
+		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}
 
 	// printf("QECC assigned.\n");
 
 	// if (iscorr == 0)
 	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
-	// else
+	// else if (iscorr == 1)
 	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
+	// else
+	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs);
 
 	// Record the number of physical qubits -- this is for setting the sizes of the decoder bins.
 	int *nphys = malloc(sizeof(int) * nlevels);
@@ -124,8 +129,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	int *chans = malloc(sizeof(int) * nlevels);
 	CountIndepLogicalChannels(chans, nphys, nlevels);
 
-	// Parameters that are specific to the Montecarlo simulations to estimate the
-	// logical error rate.
+	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(importance == 2)));
 	int m, j, c, chan_count = 0;
 	for (s = 0; s < 1 + (int)(importance == 2); s++)
@@ -181,8 +185,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		int nparams = 0;
 		if (sims[s]->iscorr == 0)
 			nparams = qcode[0]->nlogs * qcode[0]->nlogs;
-		else
+		else if (sims[s]->iscorr == 1)
 			nparams = qcode[0]->nlogs * qcode[0]->nstabs;
+		else
+			nparams = qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs;
 
 		// PrintDoubleArray1D(physical, "physical", nparams);
 
@@ -213,7 +219,18 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(sims[s]->runstats)[i] = stats[i];
 
-		// PrintDoubleArray1D(physical, "Physical Channel", nparams);
+		// Setting outlier syndrome probabilities.
+		// Upper and lower limits for the probability of the outlier syndromes.
+		// We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2
+		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
+		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
+		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
+		double eprob = 0.5 + 0.5 * (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
+		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
+		
+		// printf("eprob = %g, Outlier probabilities lie in the range: [%g, %g].\n", eprob, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
+
 		// printf("Allocations complete for s = %d.\n", s);
 
 		// Randomized compiling of quantum gates
@@ -248,8 +265,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	for (l = 0; l < nlevels + 1; l++)
 	{
-		printf("l = %d\n", l);
-		PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
+		// printf("l = %d\n", l);
+		// PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
 		for (i = 0; i < nlogs; i++)
 		{
 			for (j = 0; j < nlogs; j++)
@@ -301,6 +318,6 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	free(qcode);
 	FreeConstants(consts);
 
-	printf("Benchmark complete!\n");
+	// printf("Benchmark complete!\n");
 	return bout;
 }

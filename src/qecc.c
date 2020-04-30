@@ -140,8 +140,8 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 			}
 		}
 		// PrintDoubleArray2D((sim->process)[0][0], "process[0][0]", qecc->nstabs, qecc->nstabs);
-		// printf("Done computing full process matrix: process[0][0][0][0] = %g.\n", (sim->process)[0][0][0][0]);
 	}
+	// printf("Done computing full process matrix: process[0][0][0][0] = %g.\n", (sim->process)[0][0][0][0]);
 }
 
 
@@ -452,7 +452,7 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int frame, struct qecc_t
 	// over a set of input physical channels.
 	// printf("Constructing the full process matrix\n");
 	int s;
-	if (iscorr == 0)
+	if ((iscorr == 0) || (iscorr == 2))
 		GetFullProcessMatrix(qecc, sim, isPauli);
 	// Compute the probabilities of all the syndromes.
 	ComputeSyndromeDistribution(qecc, sim, isPauli);

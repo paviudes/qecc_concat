@@ -3,17 +3,28 @@
 #	source /opt/intel/compilers_and_libraries_2019/mac/bin/compilervars.sh intel64
 # The Random number generator is defined in mt19937ar.c .
 # See https://gist.github.com/xuhdev/1873316.
-CC = icc
-OPTS = -O3 -xavx
-REPORT = -qopt-report-phase=vec -qopt-report=5
-CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS)
-# $(REPORT)
+# See also for conditional statements in Makefile: https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html
+MODE = RUN
+ifeq ($(MODE), DEBUG)
+	CC = gcc
+	OPTS = -O0
+	REPORT = $()
+	TARGET = bmark
+	LDFLAGS = $()
+endif
+ifneq ($(MODE), DEBUG)
+	CC = icc
+	OPTS = -O3 -xavx
+	REPORT = -qopt-report-phase=vec -qopt-report=5
+	TARGET = bmark.so
+	LDFLAGS = -shared
+endif
+
+CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS) $(REPORT)
 CFLAGS_MKL = -m64 -I${MKLROOT}/include
 LIBS = -lm
 LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
-LDFLAGS = -shared
 RM = rm
-TARGET = bmark.so
 SRC_DIR = src
 
 $(shell mkdir -p obj/)

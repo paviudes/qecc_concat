@@ -11,28 +11,33 @@ Begin optimization report for: AllocSimParamsQECC(struct simul_t *, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(19,2)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(20,26) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(22,30) ]
+LOOP BEGIN at src/memory.c(22,2)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(24,26) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(26,30) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (20:26) and simul->virtchan (22:5)
-   remark #15346: vector dependence: assumed ANTI dependence between simul->virtchan (22:5) and call:malloc(size_t) (20:26)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (24:26) and simul->virtchan (26:5)
+   remark #15346: vector dependence: assumed ANTI dependence between simul->virtchan (26:5) and call:malloc(size_t) (24:26)
 
-   LOOP BEGIN at src/memory.c(21,3)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(22,30) ]
+   LOOP BEGIN at src/memory.c(25,3)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(26,30) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (22:30) and simul->virtchan (22:5)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->virtchan (22:5) and call:malloc(size_t) (22:30)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (26:30) and simul->virtchan (26:5)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->virtchan (26:5) and call:malloc(size_t) (26:30)
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(29,2)
+LOOP BEGIN at src/memory.c(32,2)
+   remark #15382: vectorization support: call to function BinaryDot(int, int) cannot be vectorized   [ src/memory.c(33,26) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+
+LOOP BEGIN at src/memory.c(38,2)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/memory.c(29,2)
-   remark #15389: vectorization support: reference simul has unaligned access   [ src/memory.c(31,4) ]
-   remark #15388: vectorization support: reference simul->syndprobs[s] has aligned access   [ src/memory.c(30,4) ]
+LOOP BEGIN at src/memory.c(38,2)
+   remark #15389: vectorization support: reference simul has unaligned access   [ src/memory.c(41,4) ]
+   remark #15388: vectorization support: reference simul->syndprobs[s] has aligned access   [ src/memory.c(40,4) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
@@ -48,10 +53,10 @@ LOOP BEGIN at src/memory.c(29,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/memory.c(29,2)
+LOOP BEGIN at src/memory.c(38,2)
 <Remainder loop for vectorization>
-   remark #15389: vectorization support: reference simul has unaligned access   [ src/memory.c(31,4) ]
-   remark #15388: vectorization support: reference simul->syndprobs[s] has aligned access   [ src/memory.c(30,4) ]
+   remark #15389: vectorization support: reference simul has unaligned access   [ src/memory.c(41,4) ]
+   remark #15388: vectorization support: reference simul->syndprobs[s] has aligned access   [ src/memory.c(40,4) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.929
@@ -66,49 +71,49 @@ LOOP BEGIN at src/memory.c(29,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/memory.c(29,2)
+LOOP BEGIN at src/memory.c(38,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/memory.c(37,2)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(38,25) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(40,29) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(42,33) ]
+LOOP BEGIN at src/memory.c(47,2)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(49,25) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(52,29) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(54,33) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (38:25) and simul->process[i] (42:6)
-   remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (42:6) and call:malloc(size_t) (38:25)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (49:25) and simul->process[i] (54:6)
+   remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (54:6) and call:malloc(size_t) (49:25)
 
-   LOOP BEGIN at src/memory.c(39,3)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(40,29) ]
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(42,33) ]
+   LOOP BEGIN at src/memory.c(50,3)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(52,29) ]
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(54,33) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (40:29) and simul->process[i] (42:6)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (42:6) and call:malloc(size_t) (40:29)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (52:29) and simul->process[i] (54:6)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (54:6) and call:malloc(size_t) (52:29)
 
-      LOOP BEGIN at src/memory.c(41,4)
-         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(42,33) ]
+      LOOP BEGIN at src/memory.c(53,4)
+         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(54,33) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (42:33) and simul->process[i] (42:6)
-         remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (42:6) and call:malloc(size_t) (42:33)
+         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (54:33) and simul->process[i] (54:6)
+         remark #15346: vector dependence: assumed ANTI dependence between simul->process[i] (54:6) and call:malloc(size_t) (54:33)
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(50,2)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(51,27) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(52,28) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(54,31) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(55,32) ]
+LOOP BEGIN at src/memory.c(62,2)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(64,27) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(65,28) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(68,31) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(69,32) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (51:27) and simul->effprocess[s] (55:5)
-   remark #15346: vector dependence: assumed ANTI dependence between simul->effprocess[s] (55:5) and call:malloc(size_t) (51:27)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (64:27) and simul->effprocess[s] (69:5)
+   remark #15346: vector dependence: assumed ANTI dependence between simul->effprocess[s] (69:5) and call:malloc(size_t) (64:27)
 
-   LOOP BEGIN at src/memory.c(53,3)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(54,31) ]
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(55,32) ]
+   LOOP BEGIN at src/memory.c(66,3)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(68,31) ]
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(69,32) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (54:31) and simul->effprocess[s] (55:5)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->effprocess[s] (55:5) and call:malloc(size_t) (54:31)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (68:31) and simul->effprocess[s] (69:5)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->effprocess[s] (69:5) and call:malloc(size_t) (68:31)
    LOOP END
 LOOP END
 ===========================================================================
@@ -118,16 +123,16 @@ Begin optimization report for: AllocDecoderBins(struct simul_t *, int *)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(316,2) inlined into src/memory.c(67,2)
+LOOP BEGIN at src/memory.c(355,2) inlined into src/memory.c(82,2)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (317:3) and chans[l+1] (317:3)
+   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (356:3) and chans[l+1] (356:3)
 LOOP END
 
-LOOP BEGIN at src/memory.c(316,2) inlined into src/memory.c(67,2)
+LOOP BEGIN at src/memory.c(355,2) inlined into src/memory.c(82,2)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at src/memory.c(71,2)
+LOOP BEGIN at src/memory.c(86,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 ===========================================================================
@@ -137,8 +142,8 @@ Begin optimization report for: FreeDecoderBins(struct simul_t *)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(79,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(80,3) ]
+LOOP BEGIN at src/memory.c(95,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(96,3) ]
 LOOP END
 ===========================================================================
 
@@ -147,15 +152,15 @@ Begin optimization report for: AllocSimParams(struct simul_t *, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(97,2)
+LOOP BEGIN at src/memory.c(116,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/memory.c(97,2)
+   LOOP BEGIN at src/memory.c(116,2)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/memory.c(97,2)
-      remark #15388: vectorization support: reference simul has aligned access   [ src/memory.c(98,3) ]
+   LOOP BEGIN at src/memory.c(116,2)
+      remark #15388: vectorization support: reference simul has aligned access   [ src/memory.c(117,3) ]
       remark #15305: vectorization support: vector length 4
       remark #15399: vectorization support: unroll factor set to 2
       remark #15309: vectorization support: normalized vectorization overhead 1.667
@@ -169,68 +174,68 @@ LOOP BEGIN at src/memory.c(97,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/memory.c(97,2)
+   LOOP BEGIN at src/memory.c(116,2)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(103,2)
+LOOP BEGIN at src/memory.c(122,2)
    remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
-LOOP BEGIN at src/memory.c(108,2)
+LOOP BEGIN at src/memory.c(128,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at src/memory.c(110,3)
+   LOOP BEGIN at src/memory.c(131,3)
       remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-      LOOP BEGIN at src/memory.c(110,3)
+      LOOP BEGIN at src/memory.c(131,3)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between simul->metricValues[l] (111:5) and simul->metricValues[l][m] (111:5)
-         remark #15346: vector dependence: assumed FLOW dependence between simul->metricValues[l][m] (111:5) and simul->metricValues[l] (111:5)
+         remark #15346: vector dependence: assumed ANTI dependence between simul->metricValues[l] (132:5) and simul->metricValues[l][m] (132:5)
+         remark #15346: vector dependence: assumed FLOW dependence between simul->metricValues[l][m] (132:5) and simul->metricValues[l] (132:5)
       LOOP END
 
-      LOOP BEGIN at src/memory.c(110,3)
+      LOOP BEGIN at src/memory.c(131,3)
       <Remainder>
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(117,2)
+LOOP BEGIN at src/memory.c(138,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at src/memory.c(119,3)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(120,29) ]
-      remark #15382: vectorization support: call to function _?1memset cannot be vectorized   [ src/memory.c(121,4) ]
+   LOOP BEGIN at src/memory.c(141,3)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(143,29) ]
+      remark #15382: vectorization support: call to function _?1memset cannot be vectorized   [ src/memory.c(144,4) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (120:29) and simul->logical[l] (122:6)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->logical[l] (122:6) and call:malloc(size_t) (120:29)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (143:29) and simul->logical[l] (145:6)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->logical[l] (145:6) and call:malloc(size_t) (143:29)
 
-      LOOP BEGIN at src/memory.c(121,4)
+      LOOP BEGIN at src/memory.c(144,4)
          remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-         LOOP BEGIN at src/memory.c(121,4)
+         LOOP BEGIN at src/memory.c(144,4)
             remark #15344: loop was not vectorized: vector dependence prevents vectorization
-            remark #15346: vector dependence: assumed ANTI dependence between simul->logical[l] (122:6) and simul->logical[l][i][j] (122:6)
-            remark #15346: vector dependence: assumed FLOW dependence between simul->logical[l][i][j] (122:6) and simul->logical[l] (122:6)
+            remark #15346: vector dependence: assumed ANTI dependence between simul->logical[l] (145:6) and simul->logical[l][i][j] (145:6)
+            remark #15346: vector dependence: assumed FLOW dependence between simul->logical[l][i][j] (145:6) and simul->logical[l] (145:6)
          LOOP END
 
-         LOOP BEGIN at src/memory.c(121,4)
+         LOOP BEGIN at src/memory.c(144,4)
          <Remainder>
          LOOP END
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(132,2)
+LOOP BEGIN at src/memory.c(155,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/memory.c(132,2)
+   LOOP BEGIN at src/memory.c(155,2)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/memory.c(132,2)
-      remark #15388: vectorization support: reference simul has aligned access   [ src/memory.c(133,4) ]
+   LOOP BEGIN at src/memory.c(155,2)
+      remark #15388: vectorization support: reference simul has aligned access   [ src/memory.c(156,4) ]
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 3.333
       remark #15300: LOOP WAS VECTORIZED
@@ -243,71 +248,71 @@ LOOP BEGIN at src/memory.c(132,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/memory.c(132,2)
+   LOOP BEGIN at src/memory.c(155,2)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(141,2)
+LOOP BEGIN at src/memory.c(160,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at src/memory.c(143,3)
+   LOOP BEGIN at src/memory.c(163,3)
       remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
 
-      LOOP BEGIN at src/memory.c(145,5)
+      LOOP BEGIN at src/memory.c(166,4)
          remark #15523: loop was not vectorized: loop control variable i was found, but loop iteration count cannot be computed before executing the loop
 
-         LOOP BEGIN at src/memory.c(147,6)
+         LOOP BEGIN at src/memory.c(169,5)
             remark #15523: loop was not vectorized: loop control variable j was found, but loop iteration count cannot be computed before executing the loop
          LOOP END
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(156,2)
+LOOP BEGIN at src/memory.c(178,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at src/memory.c(159,3)
+   LOOP BEGIN at src/memory.c(182,3)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between simul->sumsq[l][i] (160:6) and simul->sumsq[l] (160:6)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->sumsq[l] (160:6) and simul->sumsq[l][i] (160:6)
+      remark #15346: vector dependence: assumed FLOW dependence between simul->sumsq[l][i] (184:5) and simul->sumsq[l] (184:5)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->sumsq[l] (184:5) and simul->sumsq[l][i] (184:5)
    LOOP END
 
-   LOOP BEGIN at src/memory.c(159,3)
+   LOOP BEGIN at src/memory.c(182,3)
    <Remainder>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(172,2)
+LOOP BEGIN at src/memory.c(196,2)
    remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at src/memory.c(174,3)
+   LOOP BEGIN at src/memory.c(199,3)
       remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-      LOOP BEGIN at src/memory.c(174,3)
+      LOOP BEGIN at src/memory.c(199,3)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between simul->runavg[m] (175:5) and simul->runavg[m][i] (175:5)
-         remark #15346: vector dependence: assumed FLOW dependence between simul->runavg[m][i] (175:5) and simul->runavg[m] (175:5)
+         remark #15346: vector dependence: assumed ANTI dependence between simul->runavg[m] (200:5) and simul->runavg[m][i] (200:5)
+         remark #15346: vector dependence: assumed FLOW dependence between simul->runavg[m][i] (200:5) and simul->runavg[m] (200:5)
       LOOP END
 
-      LOOP BEGIN at src/memory.c(174,3)
+      LOOP BEGIN at src/memory.c(199,3)
       <Remainder>
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(181,2)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(182,34) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(184,38) ]
+LOOP BEGIN at src/memory.c(206,2)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(208,34) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(210,38) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (182:34) and simul->levelOneChannels[s] (184:5)
-   remark #15346: vector dependence: assumed ANTI dependence between simul->levelOneChannels[s] (184:5) and call:malloc(size_t) (182:34)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (208:34) and simul->levelOneChannels[s] (210:5)
+   remark #15346: vector dependence: assumed ANTI dependence between simul->levelOneChannels[s] (210:5) and call:malloc(size_t) (208:34)
 
-   LOOP BEGIN at src/memory.c(183,3)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(184,38) ]
+   LOOP BEGIN at src/memory.c(209,3)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(210,38) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (184:38) and simul->levelOneChannels[s] (184:5)
-      remark #15346: vector dependence: assumed ANTI dependence between simul->levelOneChannels[s] (184:5) and call:malloc(size_t) (184:38)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (210:38) and simul->levelOneChannels[s] (210:5)
+      remark #15346: vector dependence: assumed ANTI dependence between simul->levelOneChannels[s] (210:5) and call:malloc(size_t) (210:38)
    LOOP END
 LOOP END
 ===========================================================================
@@ -317,31 +322,31 @@ Begin optimization report for: FreeSimParamsQECC(struct simul_t *, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(199,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(201,4) ]
+LOOP BEGIN at src/memory.c(226,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(229,4) ]
 
-   LOOP BEGIN at src/memory.c(200,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(201,4) ]
+   LOOP BEGIN at src/memory.c(228,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(229,4) ]
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(208,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(211,5) ]
+LOOP BEGIN at src/memory.c(237,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(242,5) ]
 
-   LOOP BEGIN at src/memory.c(209,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(211,5) ]
+   LOOP BEGIN at src/memory.c(239,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(242,5) ]
 
-      LOOP BEGIN at src/memory.c(210,4)
-         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(211,5) ]
+      LOOP BEGIN at src/memory.c(241,4)
+         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(242,5) ]
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(219,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(221,4) ]
+LOOP BEGIN at src/memory.c(250,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(254,4) ]
 
-   LOOP BEGIN at src/memory.c(220,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(221,4) ]
+   LOOP BEGIN at src/memory.c(252,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(254,4) ]
    LOOP END
 LOOP END
 ===========================================================================
@@ -351,51 +356,51 @@ Begin optimization report for: FreeSimParams(struct simul_t *, int, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(247,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(248,3) ]
-LOOP END
-
-LOOP BEGIN at src/memory.c(251,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(252,3) ]
-LOOP END
-
-LOOP BEGIN at src/memory.c(256,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(258,4) ]
-
-   LOOP BEGIN at src/memory.c(257,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(258,4) ]
-   LOOP END
-LOOP END
-
-LOOP BEGIN at src/memory.c(271,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(272,3) ]
-LOOP END
-
-LOOP BEGIN at src/memory.c(274,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(275,3) ]
-LOOP END
-
-LOOP BEGIN at src/memory.c(280,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(281,3) ]
+LOOP BEGIN at src/memory.c(281,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(282,3) ]
 LOOP END
 
 LOOP BEGIN at src/memory.c(285,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(288,5) ]
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(286,3) ]
+LOOP END
 
-   LOOP BEGIN at src/memory.c(286,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(288,5) ]
+LOOP BEGIN at src/memory.c(290,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(293,4) ]
 
-      LOOP BEGIN at src/memory.c(287,4)
-         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(288,5) ]
+   LOOP BEGIN at src/memory.c(292,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(293,4) ]
+   LOOP END
+LOOP END
+
+LOOP BEGIN at src/memory.c(306,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(307,3) ]
+LOOP END
+
+LOOP BEGIN at src/memory.c(309,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(310,3) ]
+LOOP END
+
+LOOP BEGIN at src/memory.c(315,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(316,3) ]
+LOOP END
+
+LOOP BEGIN at src/memory.c(320,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(325,5) ]
+
+   LOOP BEGIN at src/memory.c(322,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(325,5) ]
+
+      LOOP BEGIN at src/memory.c(324,4)
+         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(325,5) ]
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(297,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(301,4) ]
+LOOP BEGIN at src/memory.c(334,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(339,4) ]
 
-   LOOP BEGIN at src/memory.c(300,3)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(301,4) ]
+   LOOP BEGIN at src/memory.c(338,3)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(339,4) ]
    LOOP END
 LOOP END
 ===========================================================================
@@ -405,22 +410,22 @@ Begin optimization report for: CountIndepLogicalChannels(int *, int *, int)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(316,2)
+LOOP BEGIN at src/memory.c(355,2)
 <Multiversioned v1>
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (317:3) and chans[l+1] (317:3)
+   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (356:3) and chans[l+1] (356:3)
 LOOP END
 
-LOOP BEGIN at src/memory.c(316,2)
+LOOP BEGIN at src/memory.c(355,2)
 <Remainder, Multiversioned v1>
 LOOP END
 
-LOOP BEGIN at src/memory.c(316,2)
+LOOP BEGIN at src/memory.c(355,2)
 <Multiversioned v2>
    remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
 LOOP END
 
-LOOP BEGIN at src/memory.c(316,2)
+LOOP BEGIN at src/memory.c(355,2)
 <Remainder, Multiversioned v2>
 LOOP END
 ===========================================================================
@@ -430,57 +435,57 @@ Begin optimization report for: MemManageChannels(double *****, int *, int *, int
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(316,2) inlined into src/memory.c(327,11)
+LOOP BEGIN at src/memory.c(355,2) inlined into src/memory.c(367,11)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (317:3) and chans[l+1] (317:3)
+   remark #15346: vector dependence: assumed FLOW dependence between chans[l] (356:3) and chans[l+1] (356:3)
 LOOP END
 
-LOOP BEGIN at src/memory.c(316,2) inlined into src/memory.c(327,11)
+LOOP BEGIN at src/memory.c(355,2) inlined into src/memory.c(367,11)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at src/memory.c(331,3)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(332,18) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(335,22) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(337,26) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(339,30) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(340,33) ]
+LOOP BEGIN at src/memory.c(372,3)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(374,18) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(378,22) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(381,26) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(383,30) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(384,33) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (332:18) and channels[l] (340:6)
-   remark #15346: vector dependence: assumed ANTI dependence between channels[l] (340:6) and call:malloc(size_t) (332:18)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (374:18) and channels[l] (384:6)
+   remark #15346: vector dependence: assumed ANTI dependence between channels[l] (384:6) and call:malloc(size_t) (374:18)
 
-   LOOP BEGIN at src/memory.c(334,4)
+   LOOP BEGIN at src/memory.c(376,4)
       remark #15523: loop was not vectorized: loop control variable c was found, but loop iteration count cannot be computed before executing the loop
 
-      LOOP BEGIN at src/memory.c(336,5)
-         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(337,26) ]
-         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(339,30) ]
-         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(340,33) ]
+      LOOP BEGIN at src/memory.c(379,5)
+         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(381,26) ]
+         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(383,30) ]
+         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(384,33) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (337:26) and channels[l] (340:6)
-         remark #15346: vector dependence: assumed ANTI dependence between channels[l] (340:6) and call:malloc(size_t) (337:26)
+         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (381:26) and channels[l] (384:6)
+         remark #15346: vector dependence: assumed ANTI dependence between channels[l] (384:6) and call:malloc(size_t) (381:26)
 
-         LOOP BEGIN at src/memory.c(338,6)
-            remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(339,30) ]
+         LOOP BEGIN at src/memory.c(382,6)
+            remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(383,30) ]
             remark #15344: loop was not vectorized: vector dependence prevents vectorization
-            remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (339:30) and channels[l] (339:7)
-            remark #15346: vector dependence: assumed ANTI dependence between channels[l] (339:7) and call:malloc(size_t) (339:30)
+            remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (383:30) and channels[l] (383:7)
+            remark #15346: vector dependence: assumed ANTI dependence between channels[l] (383:7) and call:malloc(size_t) (383:30)
          LOOP END
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(347,3)
-   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(349,4) ]
+LOOP BEGIN at src/memory.c(392,3)
+   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(395,4) ]
 
-   LOOP BEGIN at src/memory.c(349,4)
-      remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(350,5) ]
+   LOOP BEGIN at src/memory.c(395,4)
+      remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(397,5) ]
 
-      LOOP BEGIN at src/memory.c(350,5)
-         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(352,7) ]
+      LOOP BEGIN at src/memory.c(397,5)
+         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(400,7) ]
 
-         LOOP BEGIN at src/memory.c(351,6)
-            remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(352,7) ]
+         LOOP BEGIN at src/memory.c(399,6)
+            remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(400,7) ]
          LOOP END
       LOOP END
    LOOP END
@@ -492,40 +497,40 @@ Begin optimization report for: MemManageInputChannels(double ****, int, int, int
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/memory.c(372,3)
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(373,23) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(375,27) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(377,31) ]
-   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(378,34) ]
+LOOP BEGIN at src/memory.c(421,3)
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(423,23) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(426,27) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(428,31) ]
+   remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(429,34) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (373:23) and inputchannels[q] (378:5)
-   remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (378:5) and call:malloc(size_t) (373:23)
+   remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (423:23) and inputchannels[q] (429:5)
+   remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (429:5) and call:malloc(size_t) (423:23)
 
-   LOOP BEGIN at src/memory.c(374,4)
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(375,27) ]
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(377,31) ]
-      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(378,34) ]
+   LOOP BEGIN at src/memory.c(424,4)
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(426,27) ]
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(428,31) ]
+      remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(429,34) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (375:27) and inputchannels[q] (378:5)
-      remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (378:5) and call:malloc(size_t) (375:27)
+      remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (426:27) and inputchannels[q] (429:5)
+      remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (429:5) and call:malloc(size_t) (426:27)
 
-      LOOP BEGIN at src/memory.c(376,5)
-         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(377,31) ]
+      LOOP BEGIN at src/memory.c(427,5)
+         remark #15382: vectorization support: call to function malloc(size_t) cannot be vectorized   [ src/memory.c(428,31) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (377:31) and inputchannels[q] (377:6)
-         remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (377:6) and call:malloc(size_t) (377:31)
+         remark #15346: vector dependence: assumed FLOW dependence between call:malloc(size_t) (428:31) and inputchannels[q] (428:6)
+         remark #15346: vector dependence: assumed ANTI dependence between inputchannels[q] (428:6) and call:malloc(size_t) (428:31)
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/memory.c(384,3)
-   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(385,4) ]
+LOOP BEGIN at src/memory.c(436,3)
+   remark #15541: outer loop was not auto-vectorized: consider using SIMD directive   [ src/memory.c(438,4) ]
 
-   LOOP BEGIN at src/memory.c(385,4)
-      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(387,6) ]
+   LOOP BEGIN at src/memory.c(438,4)
+      remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(441,6) ]
 
-      LOOP BEGIN at src/memory.c(386,5)
-         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(387,6) ]
+      LOOP BEGIN at src/memory.c(440,5)
+         remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/memory.c(441,6) ]
       LOOP END
    LOOP END
 LOOP END

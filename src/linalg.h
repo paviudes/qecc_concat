@@ -4,6 +4,12 @@
 #include <complex.h>
 
 
+// Compute the maximum of two numbers.
+extern double Max(double a, double b);
+
+// Compute the minimum of two numbers.
+extern double Min(double a, double b);
+
 // Compute the sum of numbers in an array.
 extern int SumInt(int *arr, int size);
 
@@ -31,6 +37,12 @@ extern double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rows
 	We will use a vectorized for loop.
 */
 extern double Trace(double **mat, int nrows);
+
+/*
+	Compute the trace of a matrix.
+	We will use a vectorized for loop.
+*/
+extern double TraceFlattened(double *mat, int nrows);
 
 /*
 	Given a matrix A and a vector v, compute the dot product: diag(A).v where diag(A) referes to the 1D vector containing the diagonal of A.

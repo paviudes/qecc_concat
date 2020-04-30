@@ -31,9 +31,9 @@ Begin optimization report for: ProcessToChoi(double **, int, double __complex__ 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/effective.c(141,2)
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(142,3) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(142,3) ]
+LOOP BEGIN at src/effective.c(143,2)
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(144,3) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(144,3) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -47,14 +47,14 @@ LOOP BEGIN at src/effective.c(141,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(141,2)
+LOOP BEGIN at src/effective.c(143,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(143,2)
+LOOP BEGIN at src/effective.c(145,2)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
-   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
+   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
+   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
 LOOP END
 ===========================================================================
 
@@ -63,13 +63,13 @@ Begin optimization report for: ComputeLevelZeroMetrics(struct simul_t *, int, st
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/effective.c(157,2)
-   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/effective.c(158,13) ]
+LOOP BEGIN at src/effective.c(159,2)
+   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/effective.c(160,13) ]
 LOOP END
 
-LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(159,2)
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(142,3) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(142,3) ]
+LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(161,2)
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(144,3) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(144,3) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -83,18 +83,18 @@ LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(159,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(159,2)
+LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(161,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(159,2)
+LOOP BEGIN at src/effective.c(145,2) inlined into src/effective.c(161,2)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
-   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
+   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
+   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
 LOOP END
 
-LOOP BEGIN at src/effective.c(166,2)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/effective.c(167,3) ]
+LOOP BEGIN at src/effective.c(168,2)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/effective.c(169,3) ]
 LOOP END
 ===========================================================================
 
@@ -103,51 +103,72 @@ Begin optimization report for: ComputeLevelOneChannels(struct simul_t *, struct 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/effective.c(182,3)
+LOOP BEGIN at src/effective.c(184,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(183,4)
+   LOOP BEGIN at src/effective.c(185,4)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(184,5)
-         remark #15542: loop was not vectorized: inner loop was already vectorized
+      LOOP BEGIN at src/effective.c(186,5)
+      <Peeled loop for vectorization>
+      LOOP END
 
-         LOOP BEGIN at src/effective.c(184,5)
-         <Peeled loop for vectorization>
-         LOOP END
+      LOOP BEGIN at src/effective.c(186,5)
+         remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(188,8) ]
+         remark #15389: vectorization support: reference sim->physical[i*qcode->nlogs+j] has unaligned access   [ src/effective.c(188,35) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15305: vectorization support: vector length 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.444
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15450: unmasked unaligned unit stride loads: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 5 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 2.140 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
 
-         LOOP BEGIN at src/effective.c(184,5)
-            remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(185,7) ]
-            remark #15389: vectorization support: reference sim->physical[i*qcode->nlogs+j] has unaligned access   [ src/effective.c(185,34) ]
-            remark #15381: vectorization support: unaligned access used inside loop body
-            remark #15305: vectorization support: vector length 2
-            remark #15309: vectorization support: normalized vectorization overhead 2.600
-            remark #15300: LOOP WAS VECTORIZED
-            remark #15442: entire loop may be executed in remainder
-            remark #15449: unmasked aligned unit stride stores: 1 
-            remark #15450: unmasked unaligned unit stride loads: 1 
-            remark #15475: --- begin vector cost summary ---
-            remark #15476: scalar cost: 5 
-            remark #15477: vector cost: 2.500 
-            remark #15478: estimated potential speedup: 1.250 
-            remark #15488: --- end vector cost summary ---
-         LOOP END
+      LOOP BEGIN at src/effective.c(186,5)
+      <Remainder loop for vectorization>
+      LOOP END
 
-         LOOP BEGIN at src/effective.c(184,5)
-         <Remainder loop for vectorization>
-         LOOP END
+      LOOP BEGIN at src/effective.c(186,5)
+      <Peeled loop for vectorization>
+      LOOP END
+
+      LOOP BEGIN at src/effective.c(186,5)
+         remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(190,8) ]
+         remark #15389: vectorization support: reference sim->physical[qcode->nlogs*(q*qcode->nlogs+i)+j] has unaligned access   [ src/effective.c(190,35) ]
+         remark #15381: vectorization support: unaligned access used inside loop body
+         remark #15305: vectorization support: vector length 4
+         remark #15309: vectorization support: normalized vectorization overhead 1.444
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15442: entire loop may be executed in remainder
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15450: unmasked unaligned unit stride loads: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 5 
+         remark #15477: vector cost: 2.250 
+         remark #15478: estimated potential speedup: 2.140 
+         remark #15488: --- end vector cost summary ---
+      LOOP END
+
+      LOOP BEGIN at src/effective.c(186,5)
+      <Remainder loop for vectorization>
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(210,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(210,2)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(210,2)
       remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(69,3) ]
       remark #15305: vectorization support: vector length 4
       remark #15399: vectorization support: unroll factor set to 2
@@ -162,19 +183,19 @@ LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(210,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(210,2)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(210,2)
       remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
       remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
       remark #15389: vectorization support: reference metvals[m] has unaligned access   [ src/effective.c(78,16) ]
@@ -194,7 +215,7 @@ LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization>
       remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
       remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
@@ -214,18 +235,18 @@ LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(210,2)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(204,2)
+      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(210,2)
       <Peeled loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(204,2)
+      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(210,2)
          remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
          remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
          remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(82,53) ]
@@ -245,7 +266,7 @@ LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(204,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(204,2)
+      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(210,2)
       <Remainder loop for vectorization>
          remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
          remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
@@ -265,17 +286,17 @@ LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(204,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(204,2)
+      LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(210,2)
       <Remainder loop for vectorization>
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(210,2)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(210,2)
    remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
    remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
    remark #15389: vectorization support: reference avg[m] has unaligned access   [ src/effective.c(90,48) ]
@@ -299,7 +320,7 @@ LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(210,2)
 <Remainder loop for vectorization>
    remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
    remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
@@ -323,18 +344,18 @@ LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(210,2)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(210,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Peeled loop for vectorization, Distributed chunk1>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Distributed chunk1>
       remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
       remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
@@ -355,7 +376,7 @@ LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization, Distributed chunk1>
       remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
       remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
@@ -375,15 +396,15 @@ LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization, Distributed chunk1>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Peeled loop for vectorization, Distributed chunk2>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Distributed chunk2>
       remark #15389: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(97,81) ]
       remark #15388: vectorization support: reference sim->sumsq[1][sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(97,6) ]
@@ -404,7 +425,7 @@ LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization, Distributed chunk2>
       remark #15389: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(97,81) ]
       remark #15388: vectorization support: reference sim->sumsq[1][sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(97,6) ]
@@ -424,27 +445,27 @@ LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(204,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(204,2)
+   LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(210,2)
    <Remainder loop for vectorization, Distributed chunk2>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(107,5) inlined into src/effective.c(204,2)
+LOOP BEGIN at src/effective.c(108,5) inlined into src/effective.c(210,2)
    remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
-LOOP BEGIN at src/effective.c(206,2)
+LOOP BEGIN at src/effective.c(212,2)
 <Distributed chunk1>
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(206,2)
+   LOOP BEGIN at src/effective.c(212,2)
    <Peeled loop for vectorization, Distributed chunk1>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2)
+   LOOP BEGIN at src/effective.c(212,2)
    <Distributed chunk1>
-      remark #15388: vectorization support: reference sim->levelOneSynds[s] has aligned access   [ src/effective.c(207,4) ]
-      remark #15389: vectorization support: reference sim->syndprobs[s] has unaligned access   [ src/effective.c(207,30) ]
+      remark #15388: vectorization support: reference sim->levelOneSynds[s] has aligned access   [ src/effective.c(213,4) ]
+      remark #15389: vectorization support: reference sim->syndprobs[s] has unaligned access   [ src/effective.c(213,30) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 2.600
@@ -459,28 +480,28 @@ LOOP BEGIN at src/effective.c(206,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2)
+   LOOP BEGIN at src/effective.c(212,2)
    <Remainder loop for vectorization, Distributed chunk1>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(206,2)
+LOOP BEGIN at src/effective.c(212,2)
 <Distributed chunk2>
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(208,3)
+   LOOP BEGIN at src/effective.c(214,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(209,4)
+      LOOP BEGIN at src/effective.c(215,4)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(209,4)
+         LOOP BEGIN at src/effective.c(215,4)
          <Peeled loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(209,4)
-            remark #15388: vectorization support: reference sim->levelOneChannels[s][i][j] has aligned access   [ src/effective.c(210,6) ]
-            remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(210,41) ]
+         LOOP BEGIN at src/effective.c(215,4)
+            remark #15388: vectorization support: reference sim->levelOneChannels[s][i][j] has aligned access   [ src/effective.c(216,6) ]
+            remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(216,41) ]
             remark #15381: vectorization support: unaligned access used inside loop body
             remark #15305: vectorization support: vector length 2
             remark #15309: vectorization support: normalized vectorization overhead 2.600
@@ -495,7 +516,7 @@ LOOP BEGIN at src/effective.c(206,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(209,4)
+         LOOP BEGIN at src/effective.c(215,4)
          <Remainder loop for vectorization>
          LOOP END
       LOOP END
@@ -508,17 +529,17 @@ Begin optimization report for: Performance(struct qecc_t **, struct simul_t **, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/effective.c(394,2)
+LOOP BEGIN at src/effective.c(397,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
-LOOP BEGIN at src/effective.c(157,2) inlined into src/effective.c(403,3)
-   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/effective.c(158,13) ]
+LOOP BEGIN at src/effective.c(159,2) inlined into src/effective.c(406,3)
+   remark #15527: loop was not vectorized: function call to malloc(size_t) cannot be vectorized   [ src/effective.c(160,13) ]
 LOOP END
 
-LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(403,3)
-   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(142,3) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(142,3) ]
+LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(406,3)
+   remark #15328: vectorization support: irregularly indexed load was emulated for the variable <choi[v/nlogs]>, part of index is nonlinearly computed   [ src/effective.c(144,3) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(choi+(v/nlogs)*8))[:]>, 64-bit indexed, part of address is read from memory   [ src/effective.c(144,3) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.028
    remark #15300: LOOP WAS VECTORIZED
@@ -532,68 +553,89 @@ LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(403,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(141,2) inlined into src/effective.c(403,3)
+LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(406,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(143,2) inlined into src/effective.c(403,3)
+LOOP BEGIN at src/effective.c(145,2) inlined into src/effective.c(406,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
-   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (148:3) and (*(choi+i*8))[j] (148:3)
+   remark #15346: vector dependence: assumed FLOW dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
+   remark #15346: vector dependence: assumed ANTI dependence between (*(choi+i*8))[j] (150:3) and (*(choi+i*8))[j] (150:3)
 LOOP END
 
-LOOP BEGIN at src/effective.c(166,2) inlined into src/effective.c(403,3)
-   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/effective.c(167,3) ]
+LOOP BEGIN at src/effective.c(168,2) inlined into src/effective.c(406,3)
+   remark #15527: loop was not vectorized: function call to free(void *) cannot be vectorized   [ src/effective.c(169,3) ]
 LOOP END
 
-LOOP BEGIN at src/effective.c(407,2)
+LOOP BEGIN at src/effective.c(410,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(182,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(184,3) inlined into src/effective.c(411,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(183,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(185,4) inlined into src/effective.c(411,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(184,5) inlined into src/effective.c(408,3)
-            remark #15542: loop was not vectorized: inner loop was already vectorized
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+         <Peeled loop for vectorization>
+         LOOP END
 
-            LOOP BEGIN at src/effective.c(184,5) inlined into src/effective.c(408,3)
-            <Peeled loop for vectorization>
-            LOOP END
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+            remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(188,8) ]
+            remark #15389: vectorization support: reference sim->physical[i*qcode->nlogs+j] has unaligned access   [ src/effective.c(188,35) ]
+            remark #15381: vectorization support: unaligned access used inside loop body
+            remark #15305: vectorization support: vector length 4
+            remark #15309: vectorization support: normalized vectorization overhead 1.444
+            remark #15300: LOOP WAS VECTORIZED
+            remark #15442: entire loop may be executed in remainder
+            remark #15449: unmasked aligned unit stride stores: 1 
+            remark #15450: unmasked unaligned unit stride loads: 1 
+            remark #15475: --- begin vector cost summary ---
+            remark #15476: scalar cost: 5 
+            remark #15477: vector cost: 2.250 
+            remark #15478: estimated potential speedup: 2.140 
+            remark #15488: --- end vector cost summary ---
+         LOOP END
 
-            LOOP BEGIN at src/effective.c(184,5) inlined into src/effective.c(408,3)
-               remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(185,7) ]
-               remark #15389: vectorization support: reference sim->physical[i*qcode->nlogs+j] has unaligned access   [ src/effective.c(185,34) ]
-               remark #15381: vectorization support: unaligned access used inside loop body
-               remark #15305: vectorization support: vector length 2
-               remark #15309: vectorization support: normalized vectorization overhead 2.600
-               remark #15300: LOOP WAS VECTORIZED
-               remark #15442: entire loop may be executed in remainder
-               remark #15449: unmasked aligned unit stride stores: 1 
-               remark #15450: unmasked unaligned unit stride loads: 1 
-               remark #15475: --- begin vector cost summary ---
-               remark #15476: scalar cost: 5 
-               remark #15477: vector cost: 2.500 
-               remark #15478: estimated potential speedup: 1.250 
-               remark #15488: --- end vector cost summary ---
-            LOOP END
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+         <Remainder loop for vectorization>
+         LOOP END
 
-            LOOP BEGIN at src/effective.c(184,5) inlined into src/effective.c(408,3)
-            <Remainder loop for vectorization>
-            LOOP END
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+         <Peeled loop for vectorization>
+         LOOP END
+
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+            remark #15388: vectorization support: reference sim->virtchan[q][i][j] has aligned access   [ src/effective.c(190,8) ]
+            remark #15389: vectorization support: reference sim->physical[qcode->nlogs*(q*qcode->nlogs+i)+j] has unaligned access   [ src/effective.c(190,35) ]
+            remark #15381: vectorization support: unaligned access used inside loop body
+            remark #15305: vectorization support: vector length 4
+            remark #15309: vectorization support: normalized vectorization overhead 1.444
+            remark #15300: LOOP WAS VECTORIZED
+            remark #15442: entire loop may be executed in remainder
+            remark #15449: unmasked aligned unit stride stores: 1 
+            remark #15450: unmasked unaligned unit stride loads: 1 
+            remark #15475: --- begin vector cost summary ---
+            remark #15476: scalar cost: 5 
+            remark #15477: vector cost: 2.250 
+            remark #15478: estimated potential speedup: 2.140 
+            remark #15488: --- end vector cost summary ---
+         LOOP END
+
+         LOOP BEGIN at src/effective.c(186,5) inlined into src/effective.c(411,3)
+         <Remainder loop for vectorization>
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(411,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(411,3)
       <Peeled loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(411,3)
          remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(69,3) ]
          remark #15305: vectorization support: vector length 4
          remark #15399: vectorization support: unroll factor set to 2
@@ -608,19 +650,19 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization>
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(411,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(411,3)
       <Peeled loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(411,3)
          remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
          remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
          remark #15389: vectorization support: reference metvals[m] has unaligned access   [ src/effective.c(78,16) ]
@@ -640,7 +682,7 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization>
          remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
          remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
@@ -659,18 +701,18 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(411,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(408,3)
+         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(411,3)
          <Peeled loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(408,3)
+         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(411,3)
             remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
             remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
             remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(82,53) ]
@@ -690,7 +732,7 @@ LOOP BEGIN at src/effective.c(407,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(408,3)
+         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(411,3)
          <Remainder loop for vectorization>
             remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
             remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
@@ -709,17 +751,17 @@ LOOP BEGIN at src/effective.c(407,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(408,3)
+         LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(411,3)
          <Remainder loop for vectorization>
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(411,3)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(411,3)
       remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
       remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
       remark #15389: vectorization support: reference avg[m] has unaligned access   [ src/effective.c(90,48) ]
@@ -743,7 +785,7 @@ LOOP BEGIN at src/effective.c(407,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(411,3)
    <Remainder loop for vectorization>
       remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
       remark #15389: vectorization support: reference sim->metricValues[1][m] has unaligned access   [ src/effective.c(90,5) ]
@@ -765,18 +807,18 @@ LOOP BEGIN at src/effective.c(407,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(411,3)
    <Remainder loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(411,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Peeled loop for vectorization, Distributed chunk1>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Distributed chunk1>
          remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
          remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
@@ -797,7 +839,7 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization, Distributed chunk1>
          remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
          remark #15388: vectorization support: reference sim->logical[1][i][j] has aligned access   [ src/effective.c(96,6) ]
@@ -816,15 +858,15 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization, Distributed chunk1>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Peeled loop for vectorization, Distributed chunk2>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Distributed chunk2>
          remark #15389: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(97,81) ]
          remark #15388: vectorization support: reference sim->sumsq[1][sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(97,6) ]
@@ -845,7 +887,7 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization, Distributed chunk2>
          remark #15389: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(97,81) ]
          remark #15388: vectorization support: reference sim->sumsq[1][sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(97,6) ]
@@ -864,32 +906,32 @@ LOOP BEGIN at src/effective.c(407,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(411,3)
       <Remainder loop for vectorization, Distributed chunk2>
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(107,5) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(108,5) inlined into src/effective.c(411,3)
       remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(212,2) inlined into src/effective.c(411,3)
    <Distributed chunk1>
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(208,3) inlined into src/effective.c(408,3)
+      LOOP BEGIN at src/effective.c(214,3) inlined into src/effective.c(411,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(209,4) inlined into src/effective.c(408,3)
+         LOOP BEGIN at src/effective.c(215,4) inlined into src/effective.c(411,3)
             remark #15542: loop was not vectorized: inner loop was already vectorized
 
-            LOOP BEGIN at src/effective.c(209,4) inlined into src/effective.c(408,3)
+            LOOP BEGIN at src/effective.c(215,4) inlined into src/effective.c(411,3)
             <Peeled loop for vectorization>
             LOOP END
 
-            LOOP BEGIN at src/effective.c(209,4) inlined into src/effective.c(408,3)
-               remark #15388: vectorization support: reference sim->levelOneChannels[s][i][j] has aligned access   [ src/effective.c(210,6) ]
-               remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(210,41) ]
+            LOOP BEGIN at src/effective.c(215,4) inlined into src/effective.c(411,3)
+               remark #15388: vectorization support: reference sim->levelOneChannels[s][i][j] has aligned access   [ src/effective.c(216,6) ]
+               remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(216,41) ]
                remark #15381: vectorization support: unaligned access used inside loop body
                remark #15305: vectorization support: vector length 2
                remark #15309: vectorization support: normalized vectorization overhead 2.600
@@ -904,21 +946,21 @@ LOOP BEGIN at src/effective.c(407,2)
                remark #15488: --- end vector cost summary ---
             LOOP END
 
-            LOOP BEGIN at src/effective.c(209,4) inlined into src/effective.c(408,3)
+            LOOP BEGIN at src/effective.c(215,4) inlined into src/effective.c(411,3)
             <Remainder loop for vectorization>
             LOOP END
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(212,2) inlined into src/effective.c(411,3)
    <Peeled loop for vectorization, Distributed chunk2>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(212,2) inlined into src/effective.c(411,3)
    <Distributed chunk2>
-      remark #15388: vectorization support: reference sim->levelOneSynds[s] has aligned access   [ src/effective.c(207,4) ]
-      remark #15389: vectorization support: reference sim->syndprobs[s] has unaligned access   [ src/effective.c(207,30) ]
+      remark #15388: vectorization support: reference sim->levelOneSynds[s] has aligned access   [ src/effective.c(213,4) ]
+      remark #15389: vectorization support: reference sim->syndprobs[s] has unaligned access   [ src/effective.c(213,30) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 1.444
@@ -933,98 +975,98 @@ LOOP BEGIN at src/effective.c(407,2)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(206,2) inlined into src/effective.c(408,3)
+   LOOP BEGIN at src/effective.c(212,2) inlined into src/effective.c(411,3)
    <Remainder loop for vectorization, Distributed chunk2>
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(416,3)
+LOOP BEGIN at src/effective.c(418,3)
    remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
 
-   LOOP BEGIN at src/effective.c(419,4)
+   LOOP BEGIN at src/effective.c(421,4)
       remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
 
-      LOOP BEGIN at src/effective.c(425,6)
-         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(426,7) ]
+      LOOP BEGIN at src/effective.c(427,6)
+         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(428,7) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between *sims->levelOneChannels[randsynd][i][j] (426:7) and *channels[c][0][i][j] (427:8)
-         remark #15346: vector dependence: assumed FLOW dependence between *channels[c][0][i][j] (427:8) and *sims->levelOneChannels[randsynd][i][j] (426:7)
+         remark #15346: vector dependence: assumed ANTI dependence between *sims->levelOneChannels[randsynd][i][j] (428:7) and *channels[c][0][i][j] (429:8)
+         remark #15346: vector dependence: assumed FLOW dependence between *channels[c][0][i][j] (429:8) and *sims->levelOneChannels[randsynd][i][j] (428:7)
 
-         LOOP BEGIN at src/effective.c(426,7)
+         LOOP BEGIN at src/effective.c(428,7)
             remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-            LOOP BEGIN at src/effective.c(426,7)
+            LOOP BEGIN at src/effective.c(428,7)
             <Multiversioned v2>
                remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
             LOOP END
 
-            LOOP BEGIN at src/effective.c(426,7)
+            LOOP BEGIN at src/effective.c(428,7)
             <Remainder, Multiversioned v2>
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(436,6)
-         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(437,7) ]
+      LOOP BEGIN at src/effective.c(438,6)
+         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(439,7) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between *sims->levelOneChannels[randsynd][i][j] (437:7) and *channels[c][0][i][j] (438:8)
-         remark #15346: vector dependence: assumed FLOW dependence between *channels[c][0][i][j] (438:8) and *sims->levelOneChannels[randsynd][i][j] (437:7)
+         remark #15346: vector dependence: assumed ANTI dependence between *sims->levelOneChannels[randsynd][i][j] (439:7) and *channels[c][0][i][j] (440:8)
+         remark #15346: vector dependence: assumed FLOW dependence between *channels[c][0][i][j] (440:8) and *sims->levelOneChannels[randsynd][i][j] (439:7)
 
-         LOOP BEGIN at src/effective.c(437,7)
+         LOOP BEGIN at src/effective.c(439,7)
             remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-            LOOP BEGIN at src/effective.c(437,7)
+            LOOP BEGIN at src/effective.c(439,7)
             <Multiversioned v2>
                remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
             LOOP END
 
-            LOOP BEGIN at src/effective.c(437,7)
+            LOOP BEGIN at src/effective.c(439,7)
             <Remainder, Multiversioned v2>
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(446,6)
+      LOOP BEGIN at src/effective.c(448,6)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (449:9) and *channels[c][s][i][j] (449:9)
-         remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (449:9) and *channels[c][s][i][j] (449:9)
+         remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (451:9) and *channels[c][s][i][j] (451:9)
+         remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (451:9) and *channels[c][s][i][j] (451:9)
 
-         LOOP BEGIN at src/effective.c(447,7)
+         LOOP BEGIN at src/effective.c(449,7)
             remark #15344: loop was not vectorized: vector dependence prevents vectorization
-            remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (449:9) and *channels[c][s][i][j] (449:9)
-            remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (449:9) and *channels[c][s][i][j] (449:9)
+            remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (451:9) and *channels[c][s][i][j] (451:9)
+            remark #15346: vector dependence: assumed OUTPUT dependence between *channels[c][s][i][j] (451:9) and *channels[c][s][i][j] (451:9)
 
-            LOOP BEGIN at src/effective.c(448,8)
+            LOOP BEGIN at src/effective.c(450,8)
                remark #15344: loop was not vectorized: vector dependence prevents vectorization
-               remark #15346: vector dependence: assumed FLOW dependence between *channels[c][s][i][j] (449:9) and (*(*((*(sims+s*8))->levelOneChannels+randsynd*8)+i*8))[j] (449:9)
-               remark #15346: vector dependence: assumed ANTI dependence between (*(*((*(sims+s*8))->levelOneChannels+randsynd*8)+i*8))[j] (449:9) and *channels[c][s][i][j] (449:9)
+               remark #15346: vector dependence: assumed FLOW dependence between *channels[c][s][i][j] (451:9) and (*(*((*(sims+s*8))->levelOneChannels+randsynd*8)+i*8))[j] (451:9)
+               remark #15346: vector dependence: assumed ANTI dependence between (*(*((*(sims+s*8))->levelOneChannels+randsynd*8)+i*8))[j] (451:9) and *channels[c][s][i][j] (451:9)
             LOOP END
 
-            LOOP BEGIN at src/effective.c(448,8)
+            LOOP BEGIN at src/effective.c(450,8)
             <Remainder>
             LOOP END
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(464,4)
+   LOOP BEGIN at src/effective.c(466,4)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between *(*((*(sims+s*8))->runavg+m*8)) (467:8) and *(*((*(sims+s*8))->runavg+m*8)) (468:8)
-      remark #15346: vector dependence: assumed ANTI dependence between *(*((*(sims+s*8))->runavg+m*8)) (468:8) and *(*((*(sims+s*8))->runavg+m*8)) (467:8)
+      remark #15346: vector dependence: assumed FLOW dependence between *(*((*(sims+s*8))->runavg+m*8)) (469:8) and *(*((*(sims+s*8))->runavg+m*8)) (470:8)
+      remark #15346: vector dependence: assumed ANTI dependence between *(*((*(sims+s*8))->runavg+m*8)) (470:8) and *(*((*(sims+s*8))->runavg+m*8)) (469:8)
 
-      LOOP BEGIN at src/effective.c(22,2) inlined into src/effective.c(465,9)
+      LOOP BEGIN at src/effective.c(22,2) inlined into src/effective.c(467,9)
          remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria   [ src/effective.c(23,3) ]
       LOOP END
 
-      LOOP BEGIN at src/effective.c(466,6)
+      LOOP BEGIN at src/effective.c(468,6)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed FLOW dependence between *(*((*(sims+s*8))->runavg+m*8)) (467:8) and *(*((*(sims+s*8))->runavg+m*8)) (468:8)
-         remark #15346: vector dependence: assumed ANTI dependence between *(*((*(sims+s*8))->runavg+m*8)) (468:8) and *(*((*(sims+s*8))->runavg+m*8)) (467:8)
+         remark #15346: vector dependence: assumed FLOW dependence between *(*((*(sims+s*8))->runavg+m*8)) (469:8) and *(*((*(sims+s*8))->runavg+m*8)) (470:8)
+         remark #15346: vector dependence: assumed ANTI dependence between *(*((*(sims+s*8))->runavg+m*8)) (470:8) and *(*((*(sims+s*8))->runavg+m*8)) (469:8)
       LOOP END
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(476,2)
+LOOP BEGIN at src/effective.c(478,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 ===========================================================================
@@ -1034,48 +1076,48 @@ Begin optimization report for: ComputeLogicalChannels(struct simul_t **, struct 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at src/effective.c(245,2)
+LOOP BEGIN at src/effective.c(250,2)
    remark #15523: loop was not vectorized: loop control variable l was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
-LOOP BEGIN at src/effective.c(266,2)
+LOOP BEGIN at src/effective.c(271,2)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(269,3)
+   LOOP BEGIN at src/effective.c(273,3)
       remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
    LOOP END
 
-   LOOP BEGIN at src/effective.c(279,3)
+   LOOP BEGIN at src/effective.c(283,3)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at src/effective.c(283,3)
+      LOOP BEGIN at src/effective.c(286,3)
          remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
 
-         LOOP BEGIN at src/effective.c(287,4)
+         LOOP BEGIN at src/effective.c(290,4)
             remark #15523: loop was not vectorized: loop control variable q was found, but loop iteration count cannot be computed before executing the loop
 
-            LOOP BEGIN at src/effective.c(288,5)
+            LOOP BEGIN at src/effective.c(291,5)
                remark #15344: loop was not vectorized: vector dependence prevents vectorization
-               remark #15346: vector dependence: assumed OUTPUT dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8)
-               remark #15346: vector dependence: assumed OUTPUT dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8)
+               remark #15346: vector dependence: assumed OUTPUT dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8)
+               remark #15346: vector dependence: assumed OUTPUT dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8)
 
-               LOOP BEGIN at src/effective.c(289,6)
+               LOOP BEGIN at src/effective.c(292,6)
                   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-                  remark #15346: vector dependence: assumed FLOW dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8) and channels[l-1][((*(qcode+l*8))->N)*b+q][s][i][j] (290:8)
-                  remark #15346: vector dependence: assumed ANTI dependence between channels[l-1][((*(qcode+l*8))->N)*b+q][s][i][j] (290:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (290:8)
+                  remark #15346: vector dependence: assumed FLOW dependence between (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8) and channels[l-1][((*(qcode+l*8))->N)*b+q][s][i][j] (293:8)
+                  remark #15346: vector dependence: assumed ANTI dependence between channels[l-1][((*(qcode+l*8))->N)*b+q][s][i][j] (293:8) and (*(*((*(sims+s*8))->virtchan+q*8)+i*8))[j] (293:8)
                LOOP END
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(307,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(307,3)
          <Peeled loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(307,3)
             remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(69,3) ]
             remark #15305: vectorization support: vector length 4
             remark #15399: vectorization support: unroll factor set to 2
@@ -1090,19 +1132,19 @@ LOOP BEGIN at src/effective.c(266,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(68,2) inlined into src/effective.c(307,3)
          <Remainder loop for vectorization>
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(73,3) inlined into src/effective.c(307,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(307,3)
          <Peeled loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(307,3)
             remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
             remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
             remark #15389: vectorization support: reference metvals[m] has unaligned access   [ src/effective.c(78,16) ]
@@ -1122,7 +1164,7 @@ LOOP BEGIN at src/effective.c(266,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(307,3)
          <Remainder loop for vectorization>
             remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
             remark #15388: vectorization support: reference avg[m] has aligned access   [ src/effective.c(78,6) ]
@@ -1134,18 +1176,18 @@ LOOP BEGIN at src/effective.c(266,2)
             remark #15442: entire loop may be executed in remainder
          LOOP END
 
-         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(77,5) inlined into src/effective.c(307,3)
          <Remainder loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(80,5) inlined into src/effective.c(307,3)
             remark #15542: loop was not vectorized: inner loop was already vectorized
 
-            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(304,3)
+            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(307,3)
             <Peeled loop for vectorization>
             LOOP END
 
-            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(304,3)
+            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(307,3)
                remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
                remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
                remark #15389: vectorization support: reference sim->effprocess[s][i][j] has unaligned access   [ src/effective.c(82,53) ]
@@ -1165,7 +1207,7 @@ LOOP BEGIN at src/effective.c(266,2)
                remark #15488: --- end vector cost summary ---
             LOOP END
 
-            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(304,3)
+            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(307,3)
             <Remainder loop for vectorization>
                remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
                remark #15388: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has aligned access   [ src/effective.c(82,7) ]
@@ -1177,17 +1219,17 @@ LOOP BEGIN at src/effective.c(266,2)
                remark #15442: entire loop may be executed in remainder
             LOOP END
 
-            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(304,3)
+            LOOP BEGIN at src/effective.c(81,6) inlined into src/effective.c(307,3)
             <Remainder loop for vectorization>
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(307,3)
       <Peeled loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(307,3)
          remark #15389: vectorization support: reference sim->metricValues[l+1][m] has unaligned access   [ src/effective.c(90,5) ]
          remark #15389: vectorization support: reference sim->metricValues[l+1][m] has unaligned access   [ src/effective.c(90,5) ]
          remark #15389: vectorization support: reference avg[m] has unaligned access   [ src/effective.c(90,48) ]
@@ -1211,7 +1253,7 @@ LOOP BEGIN at src/effective.c(266,2)
          remark #15488: --- end vector cost summary ---
       LOOP END
 
-      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(307,3)
       <Remainder loop for vectorization>
          remark #15389: vectorization support: reference sim->metricValues[l+1][m] has unaligned access   [ src/effective.c(90,5) ]
          remark #15389: vectorization support: reference sim->metricValues[l+1][m] has unaligned access   [ src/effective.c(90,5) ]
@@ -1226,18 +1268,18 @@ LOOP BEGIN at src/effective.c(266,2)
          remark #15442: entire loop may be executed in remainder
       LOOP END
 
-      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(89,3) inlined into src/effective.c(307,3)
       <Remainder loop for vectorization>
       LOOP END
 
-      LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(94,3) inlined into src/effective.c(307,3)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(307,3)
          <Peeled loop for vectorization>
          LOOP END
 
-         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(307,3)
             remark #15389: vectorization support: reference sim->logical[l+1][i][j] has unaligned access   [ src/effective.c(96,6) ]
             remark #15389: vectorization support: reference sim->logical[l+1][i][j] has unaligned access   [ src/effective.c(96,6) ]
             remark #15389: vectorization support: reference avg[sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(96,47) ]
@@ -1261,7 +1303,7 @@ LOOP BEGIN at src/effective.c(266,2)
             remark #15488: --- end vector cost summary ---
          LOOP END
 
-         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(307,3)
          <Remainder loop for vectorization>
             remark #15389: vectorization support: reference sim->logical[l+1][i][j] has unaligned access   [ src/effective.c(96,6) ]
             remark #15389: vectorization support: reference sim->logical[l+1][i][j] has unaligned access   [ src/effective.c(96,6) ]
@@ -1276,93 +1318,93 @@ LOOP BEGIN at src/effective.c(266,2)
             remark #15442: entire loop may be executed in remainder
          LOOP END
 
-         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(304,3)
+         LOOP BEGIN at src/effective.c(95,4) inlined into src/effective.c(307,3)
          <Remainder loop for vectorization>
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(107,5) inlined into src/effective.c(304,3)
+      LOOP BEGIN at src/effective.c(108,5) inlined into src/effective.c(307,3)
          remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
       LOOP END
 
-      LOOP BEGIN at src/effective.c(310,5)
-         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(311,6) ]
+      LOOP BEGIN at src/effective.c(313,5)
+         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(314,6) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (311:6) and channels[l][b][0][i][j] (312:7)
-         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (312:7) and *sims->effprocess[randsynd][i][j] (311:6)
+         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (314:6) and channels[l][b][0][i][j] (315:7)
+         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (315:7) and *sims->effprocess[randsynd][i][j] (314:6)
 
-         LOOP BEGIN at src/effective.c(311,6)
+         LOOP BEGIN at src/effective.c(314,6)
             remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-            LOOP BEGIN at src/effective.c(311,6)
+            LOOP BEGIN at src/effective.c(314,6)
             <Multiversioned v2>
                remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
             LOOP END
 
-            LOOP BEGIN at src/effective.c(311,6)
+            LOOP BEGIN at src/effective.c(314,6)
             <Remainder, Multiversioned v2>
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(329,5)
-         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(330,6) ]
+      LOOP BEGIN at src/effective.c(332,5)
+         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(333,6) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (330:6) and channels[l][b][0][i][j] (331:7)
-         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (331:7) and *sims->effprocess[randsynd][i][j] (330:6)
+         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (333:6) and channels[l][b][0][i][j] (334:7)
+         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (334:7) and *sims->effprocess[randsynd][i][j] (333:6)
 
-         LOOP BEGIN at src/effective.c(330,6)
+         LOOP BEGIN at src/effective.c(333,6)
             remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-            LOOP BEGIN at src/effective.c(330,6)
+            LOOP BEGIN at src/effective.c(333,6)
             <Multiversioned v2>
                remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
             LOOP END
 
-            LOOP BEGIN at src/effective.c(330,6)
+            LOOP BEGIN at src/effective.c(333,6)
             <Remainder, Multiversioned v2>
             LOOP END
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(341,5)
+      LOOP BEGIN at src/effective.c(344,5)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed OUTPUT dependence between channels[l][b][1][i][j] (343:7) and channels[l][b][1][i][j] (343:7)
-         remark #15346: vector dependence: assumed OUTPUT dependence between channels[l][b][1][i][j] (343:7) and channels[l][b][1][i][j] (343:7)
+         remark #15346: vector dependence: assumed OUTPUT dependence between channels[l][b][1][i][j] (346:7) and channels[l][b][1][i][j] (346:7)
+         remark #15346: vector dependence: assumed OUTPUT dependence between channels[l][b][1][i][j] (346:7) and channels[l][b][1][i][j] (346:7)
 
-         LOOP BEGIN at src/effective.c(342,6)
+         LOOP BEGIN at src/effective.c(345,6)
             remark #15344: loop was not vectorized: vector dependence prevents vectorization
-            remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][1][i][j] (343:7) and (*(*((*(sims+8))->effprocess+randsynd*8)+i*8))[j] (343:7)
-            remark #15346: vector dependence: assumed ANTI dependence between (*(*((*(sims+8))->effprocess+randsynd*8)+i*8))[j] (343:7) and channels[l][b][1][i][j] (343:7)
+            remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][1][i][j] (346:7) and (*(*((*(sims+8))->effprocess+randsynd*8)+i*8))[j] (346:7)
+            remark #15346: vector dependence: assumed ANTI dependence between (*(*((*(sims+8))->effprocess+randsynd*8)+i*8))[j] (346:7) and channels[l][b][1][i][j] (346:7)
          LOOP END
 
-         LOOP BEGIN at src/effective.c(342,6)
+         LOOP BEGIN at src/effective.c(345,6)
          <Remainder>
          LOOP END
       LOOP END
 
-      LOOP BEGIN at src/effective.c(349,5)
-         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(350,6) ]
+      LOOP BEGIN at src/effective.c(352,5)
+         remark #15382: vectorization support: call to function _?1memcpy cannot be vectorized   [ src/effective.c(353,6) ]
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (350:6) and channels[l][b][0][i][j] (351:7)
-         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (351:7) and *sims->effprocess[randsynd][i][j] (350:6)
+         remark #15346: vector dependence: assumed ANTI dependence between *sims->effprocess[randsynd][i][j] (353:6) and channels[l][b][0][i][j] (354:7)
+         remark #15346: vector dependence: assumed FLOW dependence between channels[l][b][0][i][j] (354:7) and *sims->effprocess[randsynd][i][j] (353:6)
 
-         LOOP BEGIN at src/effective.c(350,6)
+         LOOP BEGIN at src/effective.c(353,6)
             remark #15398: loop was not vectorized: loop was transformed to memset or memcpy
 
-            LOOP BEGIN at src/effective.c(350,6)
+            LOOP BEGIN at src/effective.c(353,6)
             <Multiversioned v2>
                remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
             LOOP END
 
-            LOOP BEGIN at src/effective.c(350,6)
+            LOOP BEGIN at src/effective.c(353,6)
             <Remainder, Multiversioned v2>
             LOOP END
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at src/effective.c(363,3)
+   LOOP BEGIN at src/effective.c(366,3)
       remark #15523: loop was not vectorized: loop control variable s was found, but loop iteration count cannot be computed before executing the loop
    LOOP END
 LOOP END
@@ -1620,20 +1662,20 @@ LOOP BEGIN at src/effective.c(94,3)
    LOOP END
 LOOP END
 
-LOOP BEGIN at src/effective.c(107,5)
+LOOP BEGIN at src/effective.c(108,5)
    remark #15523: loop was not vectorized: loop control variable m was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
-LOOP BEGIN at src/effective.c(116,3)
+LOOP BEGIN at src/effective.c(117,3)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(116,3)
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(117,5) ]
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(117,5) ]
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,158) ]
-   remark #15389: vectorization support: reference sim->variance[level+1][m] has unaligned access   [ src/effective.c(118,5) ]
-   remark #15389: vectorization support: reference sim->sumsq[level+1][m] has unaligned access   [ src/effective.c(118,126) ]
+LOOP BEGIN at src/effective.c(117,3)
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,5) ]
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,5) ]
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(119,158) ]
+   remark #15389: vectorization support: reference sim->variance[level+1][m] has unaligned access   [ src/effective.c(119,5) ]
+   remark #15389: vectorization support: reference sim->sumsq[level+1][m] has unaligned access   [ src/effective.c(119,126) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 4
@@ -1652,13 +1694,13 @@ LOOP BEGIN at src/effective.c(116,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(116,3)
+LOOP BEGIN at src/effective.c(117,3)
 <Remainder loop for vectorization>
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(117,5) ]
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(117,5) ]
-   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,158) ]
-   remark #15389: vectorization support: reference sim->variance[level+1][m] has unaligned access   [ src/effective.c(118,5) ]
-   remark #15389: vectorization support: reference sim->sumsq[level+1][m] has unaligned access   [ src/effective.c(118,126) ]
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,5) ]
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(118,5) ]
+   remark #15388: vectorization support: reference sim->metricValues[level+1][m] has aligned access   [ src/effective.c(119,158) ]
+   remark #15389: vectorization support: reference sim->variance[level+1][m] has unaligned access   [ src/effective.c(119,5) ]
+   remark #15389: vectorization support: reference sim->sumsq[level+1][m] has unaligned access   [ src/effective.c(119,126) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.393
@@ -1676,23 +1718,23 @@ LOOP BEGIN at src/effective.c(116,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at src/effective.c(116,3)
+LOOP BEGIN at src/effective.c(117,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at src/effective.c(120,3)
+LOOP BEGIN at src/effective.c(121,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at src/effective.c(121,4)
+   LOOP BEGIN at src/effective.c(122,4)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at src/effective.c(121,4)
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(122,6) ]
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(122,6) ]
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,229) ]
-      remark #15389: vectorization support: reference sim->variance[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(123,6) ]
-      remark #15389: vectorization support: reference sim->sumsq[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(123,162) ]
+   LOOP BEGIN at src/effective.c(122,4)
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,6) ]
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,6) ]
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(124,229) ]
+      remark #15389: vectorization support: reference sim->variance[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(124,6) ]
+      remark #15389: vectorization support: reference sim->sumsq[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(124,162) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15399: vectorization support: unroll factor set to 4
@@ -1711,13 +1753,13 @@ LOOP BEGIN at src/effective.c(120,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(121,4)
+   LOOP BEGIN at src/effective.c(122,4)
    <Remainder loop for vectorization>
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(122,6) ]
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(122,6) ]
-      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,229) ]
-      remark #15389: vectorization support: reference sim->variance[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(123,6) ]
-      remark #15389: vectorization support: reference sim->sumsq[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(123,162) ]
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,6) ]
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(123,6) ]
+      remark #15388: vectorization support: reference sim->logical[level+1][i][j] has aligned access   [ src/effective.c(124,229) ]
+      remark #15389: vectorization support: reference sim->variance[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(124,6) ]
+      remark #15389: vectorization support: reference sim->sumsq[level+1][sim->nmetrics+i*qcode->nlogs+j] has unaligned access   [ src/effective.c(124,162) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 0.393
@@ -1735,7 +1777,7 @@ LOOP BEGIN at src/effective.c(120,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at src/effective.c(121,4)
+   LOOP BEGIN at src/effective.c(122,4)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END

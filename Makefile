@@ -19,6 +19,10 @@ ifneq ($(MODE), DEBUG)
 	TARGET = bmark.so
 	LDFLAGS = -shared
 endif
+ifeq ($(strip $(shell command -v icc)),)
+	CC = gcc
+	OPTS = -O3
+endif
 
 CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS)
 # $(REPORT)

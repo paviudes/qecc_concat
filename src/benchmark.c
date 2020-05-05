@@ -291,7 +291,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(bout.running)[m * nbreaks + i] = (sims[0]->runavg)[m][i + 1];
 	}
-	// PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
+	PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
 	// PrintDoubleArray1D((bout.running), "Running average", nmetrics * nbreaks);
 
 	// ######################################

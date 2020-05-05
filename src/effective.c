@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "mt19937/mt19937ar.h"
 #include "constants.h"
 #include "printfuns.h"
@@ -152,24 +153,80 @@ void ProcessToChoi(double **process, int nlogs, double complex **choi, double co
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
 }
 
-void ComputeLevelZeroMetrics(struct simul_t *sim, int nlogs, struct constants_t *consts){
+void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct constants_t *consts){
 	// Compute the level-0 (physical) metrics.
 	double complex **choi = malloc(sizeof(double complex *) * nlogs);
-	int i;
+	double **ptm, *chanmets;
+	int i, j, q;
+
+	// printf("nlogs = %d, nqubits = %d\n", nlogs, nqubits);
+
 	for (i = 0; i < nlogs; i++)
 		choi[i] = malloc(sizeof(double complex) * nlogs);
-	ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
-	ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, choi, sim->chname, consts);
-	// PrintComplexArray2D(choi, "Physical channel", nlogs, nlogs);
-	// if (IsState(choi) == 1)
-	// 	printf("_/ is a quantum state.\n");
-	// else
-	// 	printf("X not a quantum state.\n");
+	
+	if (sim->iscorr == 0){
+		ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
+		ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, choi, sim->chname, consts);
+	}
+	else if (sim->iscorr == 2){
+		// Compute the level 0 metrics for each qubit's physical channel and average them.
+		// We are assuming that the error metrics under with tensor products.
+		// Extract the single qubit maps from the physical channels.
+		// printf("Computing Level 0 metrics\n");
+		// Fidelity is multiplicative whereas the other error-metrics are additive.
+		// Infidelity is 1 - the product of fidelities
+		for (i = 0; i < sim->nmetrics; i ++)
+			if (strncmp((sim->metricsToCompute)[i], "infid", 5) == 0)
+				(sim->metricValues)[0][i] = 1;
+
+		// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics", sim->nmetrics);
+		ptm = malloc(sizeof(double *) * nlogs);
+		for (i = 0; i < nlogs; i++)
+			ptm[i] = malloc(sizeof(double) * nlogs);
+		
+		chanmets = malloc(sizeof(double) * nqubits);
+		for (q = 0; q < nqubits; q ++){
+			// Extract the physical channel for the qubit q.
+			for (i = 0; i < nlogs; i ++){
+				for (j = 0; j < nlogs; j ++){
+					ptm[i][j] = (sim->physical)[q * nlogs * nlogs + i * nlogs + j];
+				}
+			}
+			// PrintDoubleArray2D(ptm, "Pauli transfer matrix", nlogs, nlogs);
+			ProcessToChoi(ptm, nlogs, choi, consts->pauli);
+			// PrintComplexArray2D(choi, "Choi matrix", nlogs, nlogs);
+			
+			// Compute metrics for the q-th qubit's channel.
+			for (i = 0; i < sim->nmetrics; i ++)
+				chanmets[i] = 0;
+			ComputeMetrics(chanmets, sim->nmetrics, sim->metricsToCompute, choi, sim->chname, consts);
+			// printf("qubit: %d\n", q);
+			// PrintDoubleArray1D(chanmets, "Physical metrics", sim->nmetrics);
+			// Add the metrics across qubits for all except fidelity.
+			// For fidelity, we need to multiply the values.
+			for (i = 0; i < sim->nmetrics; i ++){
+				// printf("Metric: %s\n", sim->metricsToCompute[i]);
+				if (strncmp(sim->metricsToCompute[i], "infid", 5) == 0)
+					(sim->metricValues)[0][i] *= (1 - chanmets[i]); 
+				else
+					(sim->metricValues)[0][i] += chanmets[i]; 
+			}
+		}
+		// Infidelity is 1 - the product of fidelities
+		for (i = 0; i < sim->nmetrics; i ++)
+			if (strncmp(sim->metricsToCompute[i], "infid", 5) == 0)
+				(sim->metricValues)[0][i] = 1 - (sim->metricValues)[0][i];
+		// Free memory
+		for (i = 0; i < nlogs; i++)
+			free(ptm[i]);
+		free(ptm);
+		free(chanmets);
+	}
+	else;
 	for (i = 0; i < nlogs; i++)
 		free(choi[i]);
 	free(choi);
-	// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics",
-	// sim->nmetrics);
+	// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics", sim->nmetrics);
 }
 
 void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct constants_t *consts) {
@@ -191,6 +248,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 				}
 			if (isPauli > 0)
 				isPauli = isPauli * IsDiagonal((sim->virtchan)[q], qcode->nlogs);
+			// printf("Qubit %d.\n", q);
 			// PrintDoubleArray2D((sim->virtchan)[q], "Level 0 channel", qcode->nlogs, qcode->nlogs);
 		}
 
@@ -401,10 +459,8 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	// printf("Allocate memory to channels.\n");
 	double *****channels = malloc(sizeof(double ****) * (sims[0]->nlevels));
 	int nchans = MemManageChannels(channels, nphys, nencs, sims[0]->nlevels, sims[0]->importance, 0);
-	if (sims[0]->iscorr == 0) {
-		// Compute level-0 metrics.
-		ComputeLevelZeroMetrics(sims[0], qcode[0]->nlogs, consts);
-	}
+	// Compute level-0 metrics.
+	ComputeLevelZeroMetrics(sims[0], qcode[0]->N, qcode[0]->nlogs, consts);
 	// Compute level-1 effective channels and syndromes.
 	int s;
 	for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s++)

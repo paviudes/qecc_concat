@@ -403,7 +403,7 @@ int main(int argc, char **argv)
 
 			// ===
 			char *chname = malloc(100 * sizeof(char));
-			sprintf(chname, "pcorr");
+			sprintf(chname, "rtas");
 			// ===
 
 			// ===
@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 0;
+			int importance = 1;
 			// ===
 
 			// ===

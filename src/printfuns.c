@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <complex.h>
 #include "printfuns.h"
 
@@ -102,17 +103,26 @@ void PrintLongArray1D(long *array, char *name, int nrows){
 void LoadDoubleArray1D(double *array, char *fname, int size){
 	// Print a double 1D array.
 	int i;
-	FILE *afp = fopen(fname, "r");
-	for (i = 0; i < size; i ++)
-		fscanf(afp, "%lf", &(array[i]));
-	fclose(afp);
+	if( access( fname, F_OK ) != -1 ){
+		FILE *afp = fopen(fname, "r");
+		for (i = 0; i < size; i ++)
+			fscanf(afp, "%lf", &(array[i]));
+		fclose(afp);
+	}
+	else
+		printf("File %s does not exist.\n", fname);
 }
 
 void LoadIntArray1D(int *array, char *fname, int size){
 	// Print a double 1D array.
 	int i;
-	FILE *afp = fopen(fname, "r");
-	for (i = 0; i < size; i ++)
-		fscanf(afp, "%d", &(array[i]));
-	fclose(afp);
+	if( access( fname, F_OK ) != -1 )
+	{
+		FILE *afp = fopen(fname, "r");
+		for (i = 0; i < size; i ++)
+			fscanf(afp, "%d", &(array[i]));
+		fclose(afp);
+	}
+	else
+		printf("File %s does not exist.\n", fname);
 }

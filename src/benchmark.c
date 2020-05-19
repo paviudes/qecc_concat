@@ -34,7 +34,7 @@ void FreeBenchOut(struct BenchOut *pbout)
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
 {
 	/*
 	Benchmark an error correcting scheme.
@@ -79,7 +79,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	// Initialize the error correcting code structure.
 	// printf("Quantum error correcting code with %d levels.\n", nlevels);
 	struct qecc_t **qcode = malloc(sizeof(struct qecc_t *) * nlevels);
-	int l, s, g, i, q, stabcount = 0, normcount = 0, norm_phcount = 0;
+	int l, s, g, i, q, s_count = 0, ss_count = 0, normcount = 0, norm_phcount = 0;
 	for (l = 0; l < nlevels; l++)
 	{
 		// printf("l = %d\n", l);
@@ -90,10 +90,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		InitQECC(qcode[l]);
 		for (s = 0; s < qcode[l]->nstabs; s++)
 			for (g = 0; g < qcode[l]->nstabs; g++)
-				(qcode[l]->projector)[s][g] = SS[stabcount + s * qcode[l]->nstabs + g];
-		stabcount += qcode[l]->nstabs * qcode[l]->nstabs;
+				(qcode[l]->projector)[s][g] = SS[ss_count + s * qcode[l]->nstabs + g];
+		ss_count += qcode[l]->nstabs * qcode[l]->nstabs;
 
-		// printf("stabcount = %d\n", stabcount);
+		// printf("ss_count = %d\n", ss_count);
 
 		for (i = 0; i < qcode[l]->nlogs; i++)
 			for (s = 0; s < qcode[l]->nstabs; s++)
@@ -109,6 +109,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
 
 		// printf("norm_phcount = %d\n", norm_phcount);
+
+		// Lookup table for the minimum weight decoder
+		for (s = 0; s < qcode[l]->nstabs; s++)
+			(qcode[l]->dclookup)[s] = dclookups[s_count + s];
+		s_count += qcode[l]->nstabs;
 
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}
@@ -149,6 +154,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		AllocSimParams(sims[s], qcode[0]->N, qcode[0]->K);
 
+		// Type of decoding algorithm to be used.
+		(sims[s]->decoders)[l] = decoders[l];
+		
 		// Logical frame for Quantum error correction
 		if (frame == 0)
 			for (l = 0; l < nlevels; l++)

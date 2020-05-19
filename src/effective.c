@@ -253,14 +253,14 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		}
 
 		// printf("Loaded virtual channels, isPauli = %d.\n", isPauli);
-		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->frames)[0], qcode, sim, consts);
+		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->decoders)[0], (sim->frames)[0], qcode, sim, consts);
 	}
 	else if (sim->iscorr == 1){
 		// Correlated channel -- the physical channel contains the full process matrix
 		// printf("Simulating a correlated Pauli channel: %d.\n", isPauli);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
-		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->frames)[0], qcode, sim, consts);
+		SingleShotErrorCorrection(isPauli, sim->iscorr, (sim->decoders)[0], (sim->frames)[0], qcode, sim, consts);
 	}
 	else;
 
@@ -359,7 +359,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			}
 			// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli
 			// = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
-			SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->frames)[l], qcode[l], sims[s], consts);
+			SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[l], (sims[s]->frames)[l], qcode[l], sims[s], consts);
 		}
 		// printf("bias = %g, history = %g.\n", bias, history);
 		UpdateMetrics(l, bias, history, 0, qcode[l], sims[0], consts);

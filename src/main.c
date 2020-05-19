@@ -436,10 +436,15 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int hybrid = 0;
+			int *decoders = malloc(nlevels * sizeof(int));
+			for (i = 0; i < nlevels; i ++)
+				decoders[i] = 0;
+			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
+			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
 			// ===
 
 			// ===
+			int hybrid = 0;
 			int *decoderbins = NULL;
 			int *ndecoderbins = NULL;
 			// ===
@@ -476,7 +481,7 @@ int main(int argc, char **argv)
 
 			// Calling the Benchmark function
 			printf("Calling the Benchmark function with %d levels and rc = %d.\n", nlevels, rc);
-			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
 			// Free memory
 			free(nkd);
 			free(SS);
@@ -488,6 +493,8 @@ int main(int argc, char **argv)
 			free(metrics[0]);
 			free(metrics);
 			free(stats);
+			free(decoders);
+			free(dclookups);
 		}
 	}
 

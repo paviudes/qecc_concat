@@ -37,6 +37,9 @@ void InitQECC(struct qecc_t *qecc)
 	for (i = 0; i < qecc->nlogs; i++)
 		(qecc->phases)[i] = malloc(qecc->nstabs * sizeof(double complex));
 
+	qecc->dclookup = malloc(qecc->nstabs * sizeof(int));
+	for (s = 0; s < qecc->nstabs; s++)
+		qecc->dclookup[s] = 0;
 	// printf("Done InitQECC.\n");
 }
 
@@ -60,6 +63,8 @@ void FreeQECC(struct qecc_t *qecc)
 	for (i = 0; i < qecc->nlogs; i++)
 		free((qecc->phases)[i]);
 	free(qecc->phases);
+
+	free(qecc->dclookup);
 }
 
 void ChoiToProcess(double **process, double complex **choi, double complex ***pauli)
@@ -277,7 +282,7 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 }
 
 
-void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli)
+void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int dcalg, int currentframe, int isPauli)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -291,7 +296,10 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
 	{
-		MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+		if (dcalg == 0)
+			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+		else
+			(sim->corrections)[s] = (qecc->dclookup)[s];
 	}
 	// PrintIntArray1D(sim->corrections, "sim->corrections", qecc->nstabs);
 }
@@ -446,7 +454,7 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 	// printf("Full process matrix set.\n");
 }
 
-void SingleShotErrorCorrection(int isPauli, int iscorr, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts)
+void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts)
 {
 	// Compute the effective logical channel, when error correction is applied
 	// over a set of input physical channels.
@@ -459,7 +467,7 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int frame, struct qecc_t
 	// Maximum Likelihood Decoding (MLD) -- For every syndrome, compute the
 	// probabilities of the logical classes and pick the one that is most likely.
 	// printf("Maximum likelihood decoding\n");
-	MLDecoder(qecc, sim, consts, frame, isPauli);
+	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli);
 	// For every syndrome, apply the correction and compute the new effective choi
 	// matrix of the single qubit logical channel.
 	// printf("Computing the effective logical channels.\n");

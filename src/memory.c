@@ -211,6 +211,11 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	}
 	simul->frames = malloc(simul->nlevels * sizeof(int));
 	// printf("_/ levelOneChannels, frames.\n");
+
+	// Specify the type of decoder being used: 0 for maximum likelihood and 1 for minimum weight.
+	simul->decoders = malloc(simul->nlevels * sizeof(int));  
+	for (i = 0; i < nlogs; i++)
+		(simul->decoders)[i] = 0;
 }
 
 void FreeSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
@@ -342,6 +347,7 @@ void FreeSimParams(struct simul_t *simul, int nphys, int nenc)
 	free(simul->levelOneChannels);
 	// printf("Freed levelOneChannels.\n");
 	free(simul->frames);
+	free(simul->decoders);
 	// printf("Freed frames.\n");
 }
 

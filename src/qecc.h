@@ -13,6 +13,7 @@ struct qecc_t {
   int **restrict projector;
   int ***restrict action;
   double complex **restrict phases;
+  int *dclookup; // Lookup table specifying the corrections for each syndrome.
 };
 
 // Allocate memory for the elements of the quantum error correcting code.
@@ -27,6 +28,6 @@ extern void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, doubl
 
 // Compute the effective logical channel, when error correction is applied over
 // a set of input physical channels.
-extern void SingleShotErrorCorrection(int isPauli, int iscorr, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts);
+extern void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts);
 
 #endif /* QECC_H */

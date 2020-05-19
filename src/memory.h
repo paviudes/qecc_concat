@@ -45,6 +45,7 @@ struct simul_t
   double **restrict runavg;
   double threshold;
   // Decoder
+  int *decoders;
   int hybrid;
   int **restrict decbins;
   int *restrict ndecbins;

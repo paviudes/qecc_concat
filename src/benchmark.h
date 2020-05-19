@@ -66,7 +66,9 @@ struct BenchOut
                         4. Maximum order of magnitude for a bin: int maxbin
                         5. Quantum error correction frame: int frame
                 (e). Decoding
-                        1. Decoding technique, soft or hybrid: int hybrid
+                        1. Decoding algorithm used -- maximum likelihood (0) or minimum weight (1).
+                        2. Syndrome lookup table for a maximum likelihood decoder.
+                        1. Hybrid decoding technique, soft or hybrid: int hybrid
                         2. Channels that must be averaged at intermediate
    levels: int **decoderbins
                         3. Number of distinct (bins) of channels at intermediate
@@ -74,6 +76,6 @@ struct BenchOut
 
         All the multi-dimensional arrays are (row) vectorized.
 */
-extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan);
+extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan);
 
 #endif /* BENCHMARK_H */

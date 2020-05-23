@@ -31,7 +31,7 @@ int GetBinPosition(double number, int nbins, int maxbin) {
 	// the number. If a number is of the order of magnitude of 10^-i, then return
 	// i. To find the order of magnitude we will take the negative log and bin it
 	// from 0 to 20.
-	int binindex = (int)((-1) * log10(number) / ((float)maxbin) * ((float)nbins));
+	int binindex = (int)((-1) * log10(number) / ((double)maxbin) * ((double)nbins));
 	if (binindex < 0)
 		binindex = 0;
 	if (binindex > (nbins - 1))
@@ -74,23 +74,23 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 		for (s = 0; s < qcode->nstabs; s++) {
 			if ((sim->syndprobs)[s] > consts->atol) {
 				// Compute metrics.
-				ComputeMetrics(metvals, sim->nmetrics, sim->metricsToCompute, sim->effective[s], sim->chname, consts);
+				ComputeMetrics(metvals, sim->nmetrics, sim->metricsToCompute, sim->effprocess[s], sim->chname, consts);
 				for (m = 0; m < sim->nmetrics; m++)
 					avg[m] += metvals[m] * (sim->syndprobs)[s];
 				// Compute average channel.
 				for (i = 0; i < qcode->nlogs; i++)
 					for (j = 0; j < qcode->nlogs; j++)
-						avg[sim->nmetrics + i * qcode->nlogs + j] +=	(sim->effprocess)[s][i][j] * (sim->syndprobs)[s];
+						avg[sim->nmetrics + i * qcode->nlogs + j] += (sim->effprocess)[s][i][j] * (sim->syndprobs)[s];
 			}
 		}
 
 		// PrintDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
-		// PrintDoubleArray1D((sim->metricValues)[level + 1], "(sim->metricValues)[level + 1]", sim->nmetrics);
 		// Average of metrics.
 		for (m = 0; m < sim->nmetrics; m++) {
 			(sim->metricValues)[level + 1][m] += bias * avg[m];
 			(sim->sumsq)[level + 1][m] += pow(bias * avg[m], 2);
 		}
+		// PrintDoubleArray1D((sim->metricValues)[level + 1], "(sim->metricValues)[level + 1]", sim->nmetrics);
 		// printf("Populating average logical channel.\n");
 		for (i = 0; i < qcode->nlogs; i++) {
 			for (j = 0; j < qcode->nlogs; j++) {
@@ -133,40 +133,16 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 	// printf("Updated metrics.\n");
 }
 
-void ProcessToChoi(double **process, int nlogs, double complex **choi, double complex ***pauli){
-	// Convert from the process matrix to the Choi matrix.
-	// J = 1/K * sum_P (E(P) o P^T)
-	// where K is the dimension of the Hilbert space, P runs over Pauli operators
-	// and E is the error channel. E(P) = 1/K * sum_Q G_(P,Q) Q where G(P, Q) =
-	// Tr(E(P).Q) is the process matrix and Q runs over Pauli operators. hence we
-	// have: J = 1/K sum_(P, Q) G_(P,Q) Q o P^T
-	int v, i, j, p, q;
-	for (v = 0; v < nlogs * nlogs; v++)
-		choi[v / nlogs][v % nlogs] = 0;
-	for (v = 0; v < nlogs * nlogs * nlogs * nlogs; v++) {
-		p = v % nlogs;
-		q = (v / nlogs) % nlogs;
-		j = (v / (nlogs * nlogs)) % nlogs;
-		i = (v / (nlogs * nlogs * nlogs)) % nlogs;
-		choi[i][j] += (double complex)(0.25 * process[p][q]) * pauli[q][i / 2][j / 2] * pauli[p][j % 2][i % 2];
-	}
-	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
-}
-
 void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct constants_t *consts){
 	// Compute the level-0 (physical) metrics.
-	double complex **choi = malloc(sizeof(double complex *) * nlogs);
 	double **ptm, *chanmets;
 	int i, j, q;
 
 	// printf("nlogs = %d, nqubits = %d\n", nlogs, nqubits);
 
-	for (i = 0; i < nlogs; i++)
-		choi[i] = malloc(sizeof(double complex) * nlogs);
-	
 	if (sim->iscorr == 0){
-		ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
-		ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, choi, sim->chname, consts);
+		// ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
+		ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, (sim->logical)[0], sim->chname, consts);
 	}
 	else if (sim->iscorr == 2){
 		// Compute the level 0 metrics for each qubit's physical channel and average them.
@@ -193,13 +169,11 @@ void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct
 				}
 			}
 			// PrintDoubleArray2D(ptm, "Pauli transfer matrix", nlogs, nlogs);
-			ProcessToChoi(ptm, nlogs, choi, consts->pauli);
-			// PrintComplexArray2D(choi, "Choi matrix", nlogs, nlogs);
 			
 			// Compute metrics for the q-th qubit's channel.
 			for (i = 0; i < sim->nmetrics; i ++)
 				chanmets[i] = 0;
-			ComputeMetrics(chanmets, sim->nmetrics, sim->metricsToCompute, choi, sim->chname, consts);
+			ComputeMetrics(chanmets, sim->nmetrics, sim->metricsToCompute, ptm, sim->chname, consts);
 			// printf("qubit: %d\n", q);
 			// PrintDoubleArray1D(chanmets, "Physical metrics", sim->nmetrics);
 			// Add the metrics across qubits for all except fidelity.
@@ -223,9 +197,6 @@ void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct
 		free(chanmets);
 	}
 	else;
-	for (i = 0; i < nlogs; i++)
-		free(choi[i]);
-	free(choi);
 	// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics", sim->nmetrics);
 }
 
@@ -236,6 +207,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	// simulation structure and perform qcode
 	// printf("Function: ComputeLevelOneChannels\n");
 	int q, i, j, isPauli = 1;
+	// PrintIntArray1D((sim->decoders), "Decoders", sim->nlevels);
 	AllocSimParamsQECC(sim, qcode->N, qcode->K);
 	if ((sim->iscorr == 0) || (sim->iscorr == 2)) {
 		for (q = 0; q < qcode->N; q++) {
@@ -249,7 +221,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 			if (isPauli > 0)
 				isPauli = isPauli * IsDiagonal((sim->virtchan)[q], qcode->nlogs);
 			// printf("Qubit %d.\n", q);
-			// PrintDoubleArray2D((sim->virtchan)[q], "Level 0 channel", qcode->nlogs, qcode->nlogs);
+			// PrintDoubleArrayDiag((sim->virtchan)[q], "Level 0 channel", qcode->nlogs);
 		}
 
 		// printf("Loaded virtual channels, isPauli = %d.\n", isPauli);
@@ -462,6 +434,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	// Compute level-0 metrics.
 	ComputeLevelZeroMetrics(sims[0], qcode[0]->N, qcode[0]->nlogs, consts);
 	// Compute level-1 effective channels and syndromes.
+	// PrintIntArray1D((sims[0]->decoders), "Performance: Decoders", sims[0]->nlevels);
 	int s;
 	for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s++)
 		ComputeLevelOneChannels(sims[s], qcode[0], consts);

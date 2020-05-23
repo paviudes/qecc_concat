@@ -5,12 +5,38 @@
 #include <complex.h>
 #include "linalg.h"
 #include "constants.h"
+#include "memory.h"
 #include "logmetrics.h"
 
-double Entropy(double complex **choi){
+void ProcessToChoi(double **process, double complex **choi, int nlogs, double complex ***pauli){
+	// Convert from the process matrix to the Choi matrix.
+	// J = 1/K * sum_P (E(P) o P^T)
+	// where K is the dimension of the Hilbert space, P runs over Pauli operators
+	// and E is the error channel. E(P) = 1/K * sum_Q G_(P,Q) Q where G(P, Q) =
+	// Tr(E(P).Q) is the process matrix and Q runs over Pauli operators. hence we
+	// have: J = 1/K sum_(P, Q) G_(P,Q) Q o P^T
+	int v, i, j, p, q;
+	for (v = 0; v < nlogs * nlogs; v++)
+		choi[v / nlogs][v % nlogs] = 0;
+	for (v = 0; v < nlogs * nlogs * nlogs * nlogs; v++) {
+		p = v % nlogs;
+		q = (v / nlogs) % nlogs;
+		j = (v / (nlogs * nlogs)) % nlogs;
+		i = (v / (nlogs * nlogs * nlogs)) % nlogs;
+		choi[i][j] += (double complex)(0.25 * process[p][q]) * pauli[q][i / 2][j / 2] * pauli[p][j % 2][i % 2];
+	}
+	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
+}
+
+
+double Entropy(double **ptm, struct constants_t *consts){
 	// Compute the Von-Neumann entropy of the Choi matrix.
+	// Convert the input channel from the Pauli Liouville matrix to the Choi matrix.
 	// If the channel is unitary, its entropy will be zero, as the choi matrix will correspond to a pure state.
 	// If the channel causes decoherence, its choi matrix will be a mixed state with non-zero entropy.
+	double complex **choi = NULL;
+	AllocateDoubleComplexArray2D(choi, 4, 4);
+	ProcessToChoi(ptm, choi, 4, consts->pauli);
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	Diagonalize(choi, 4, eigvals, 0, NULL);
 	int i;
@@ -19,12 +45,17 @@ double Entropy(double complex **choi){
 		entropy -= creal(eigvals[i]) * log(creal(eigvals[i]));
 	// Free memory
 	free(eigvals);
+	FreeDoubleComplexArray2D(choi, 4);
 	return entropy;
 }
 
-double TraceDistance(double complex **choi){
+double TraceDistance(double **ptm, struct constants_t *consts){
 	// Compute the trace distance between the Choi matrix of a channel and that of an identity channel: ||E - id||_1.
+	// Convert the input channel from the Pauli Liouville matrix to the Choi matrix.
 	// The ||.||_1 of a matrix is just the sum of the absolute values of the eigenvalues.
+	double complex **choi = NULL;
+	AllocateDoubleComplexArray2D(choi, 4, 4);
+	ProcessToChoi(ptm, choi, 4, consts->pauli);
 	double complex **chandiff = malloc(sizeof(double complex) * 4);
 	int i, j;
 	for (i = 0; i < 4; i ++){
@@ -47,27 +78,33 @@ double TraceDistance(double complex **choi){
 		free(chandiff[i]);
 	free(chandiff);
 	free(singvals);
+	FreeDoubleComplexArray2D(choi, 4);
 	return trn;
 }
 
-double Infidelity(double complex **choi){
+double Infidelity(double **ptm){
 	// Compute the Infidelity between the input Choi matrix and the Choi matrix corresponding to the identity state.
 	// Choi matrix for the identity is: 0.5 * [[1,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,1]].
 	// Returns 1-fidelity.
-	double infidelity = 1 - 0.5 * (creal(choi[0][0] + choi[3][0] + choi[0][3] + choi[3][3]));
+	// double infidelity = 1 - 0.5 * (creal(choi[0][0] + choi[3][0] + choi[0][3] + choi[3][3]));
+	double infidelity = 1 - Trace(ptm, 4)/4;
 	return infidelity;
 }
 
-double ProcessFidelity(double complex **choi){
-	// Compute the average infidelity, given by: 1/6 * (4 - Tr(N)) where N is the process matrix describing a noise channel.
-	// The above expression for infidelity can be simplified to 2/3 * entanglement infidelity.
-	return (2/((double)3) * Infidelity(choi));
-}
+// double ProcessFidelity(double complex **choi){
+// 	// Compute the average infidelity, given by: 1/6 * (4 - Tr(N)) where N is the process matrix describing a noise channel.
+// 	// The above expression for infidelity can be simplified to 2/3 * entanglement infidelity.
+// 	return (2/((double)3) * Infidelity(choi));
+// }
 
-double FrobeniousNorm(double complex **choi){
+double FrobeniousNorm(double **ptm, struct constants_t *consts){
 	// Compute the Frobenious norm of the difference between the input Choi matrix and the Choi matrix corresponding to the Identity channel.
+	// Convert the input channel from the Pauli Liouville matrix to the Choi matrix.
 	// Frobenious of A is defined as: sqrtl(Trace(A^\dagger . A)).
 	// https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm .
+	double complex **choi = NULL;
+	AllocateDoubleComplexArray2D(choi, 4, 4);
+	ProcessToChoi(ptm, choi, 4, consts->pauli);
 	int i, j;
 	double frobenious = 0;
 	for (i = 0 ; i < 4; i ++)
@@ -75,10 +112,11 @@ double FrobeniousNorm(double complex **choi){
 			frobenious = frobenious + cabs(choi[i][j]) * cabs(choi[i][j]);
 	frobenious = frobenious + 1 - (creal(choi[0][0] + choi[3][0] + choi[0][3] + choi[3][3]));
 	frobenious = sqrt(fabs(frobenious));
+	FreeDoubleComplexArray2D(choi, 4);
 	return frobenious;
 }
 
-
+/*
 void ChoiToChi(double complex **choi, double complex **chi, struct constants_t *consts){
 	// Convert from the Choi to the Chi representation.
 	// Use the idea in ConvertRepresentations.
@@ -88,6 +126,7 @@ void ChoiToChi(double complex **choi, double complex **chi, struct constants_t *
 		for (j = 0; j < 16; j ++)
 			chi[j/4][j%4] += choi[i/4][i%4] * (consts->choitochi)[i][j];
 }
+
 
 double NonPauliness(double complex **choi, struct constants_t *consts){
 	// Quantify the behaviour of a quantum channel by its difference from a Pauli channel.
@@ -119,29 +158,27 @@ double NonPauliness(double complex **choi, struct constants_t *consts){
 	free(chi);
 	return nonpauli;
 }
+*/
 
-void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double complex **choi, char *chname, struct constants_t *consts){
+void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts){
 	// Compute all the metrics for a given channel, in the Choi matrix form.
 	// printf("Metrics for channel %s.\n", chname);
 	int m;
 	for (m = 0; m < nmetrics; m ++){
 		if (strncmp(metricsToCompute[m], "frb", 3) == 0){
-			metvals[m] = FrobeniousNorm(choi);
+			metvals[m] = FrobeniousNorm(ptm, consts);
 		}
 		else if (strncmp(metricsToCompute[m], "infid", 5) == 0){
-			metvals[m] = Infidelity(choi);
+			metvals[m] = Infidelity(ptm);
 		}
-		else if (strncmp(metricsToCompute[m], "processfidelity", 15) == 0){
-			metvals[m] = ProcessFidelity(choi);
-		}
-		else if (strncmp(metricsToCompute[m], "np1", 3) == 0){
-			metvals[m] = NonPauliness(choi, consts);
-		}
+		// else if (strncmp(metricsToCompute[m], "np1", 3) == 0){
+		// 	metvals[m] = NonPauliness(choi, consts);
+		// }
 		else if (strncmp(metricsToCompute[m], "entropy", 7) == 0){
-			metvals[m] = Entropy(choi);
+			metvals[m] = Entropy(ptm, consts);
 		}
 		else if (strncmp(metricsToCompute[m], "trn", 3) == 0){
-			metvals[m] = TraceDistance(choi);
+			metvals[m] = TraceDistance(ptm, consts);
 		}
 		else{
 			// Metrics that are not optimized in C cannot be evaluated at the Logical levels. For these, the metric value is simply zero.

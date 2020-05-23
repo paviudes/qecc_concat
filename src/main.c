@@ -232,6 +232,7 @@ int main(int argc, char **argv)
 
 	if (strncmp(file, "logmetrics", 10) == 0){
 		// Testing functions in logmetrics.c.
+		// REQUIRES SERIOUS REVISION DUE TO CHOI BEING REPLACED BY PTM.
 		if (strncmp(func, "ComputeMetrics", 14) == 0){
 			printf("Function: ComputeMetrics.\n");
 			// Name of the channel
@@ -255,22 +256,6 @@ int main(int argc, char **argv)
 			for (i = 0; i < 4; i ++)
 				for (j = 0; j < 4; j ++)
 					mat[i][j] = genrand_real3() + genrand_real3() * I;
-			double complex **choi = malloc(sizeof(double complex*) * 4);
-			double trchoi = 0;
-			for (i = 0; i < 4; i ++){
-				choi[i] = malloc(sizeof(double complex) * 4);
-				for (j = 0; j < 4; j ++){
-					choi[i][j] = 0;
-					for (k = 0; k < 4; k ++)
-						choi[i][j] += mat[i][k] * conj(mat[j][k]);
-				}
-				trchoi += choi[i][i];
-			}
-			for (i = 0; i < 4; i ++)
-				for (j = 0; j < 4; j ++)
-					choi[i][j] = choi[i][j]/trchoi;
-			PrintComplexArray2D(choi, "Noise channel", 4, 4);
-
 			// Initialize the constants
 			struct constants_t *consts_logmetrics = malloc(sizeof(struct constants_t));
 			InitConstants(consts_logmetrics);
@@ -279,7 +264,7 @@ int main(int argc, char **argv)
 			double *metvals = malloc(sizeof(double) * nmetrics);
 			
 			// Call function to compute the metric values.
-			ComputeMetrics(metvals, nmetrics, metrics, choi, chname, consts_logmetrics);
+			ComputeMetrics(metvals, nmetrics, metrics, (double **) mat, chname, consts_logmetrics);
 			
 			// Print metric values
 			for (i = 0; i < nmetrics; i ++)
@@ -291,9 +276,6 @@ int main(int argc, char **argv)
 				free(metrics[i]);
 			free(metrics);
 			free(metvals);
-			for (i = 0; i < 4; i ++)
-				free(choi[i]);
-			free(choi);
 			FreeConstants(consts_logmetrics);
 			free(consts_logmetrics);
 		}
@@ -359,7 +341,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 2;
+			int nlevels = 1;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -403,11 +385,11 @@ int main(int argc, char **argv)
 
 			// ===
 			char *chname = malloc(100 * sizeof(char));
-			sprintf(chname, "rtas");
+			sprintf(chname, "dp");
 			// ===
 
 			// ===
-			int iscorr = 2;
+			int iscorr = 0;
 			// ===
 
 			// ===
@@ -438,7 +420,7 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 0;
+				decoders[i] = 1;
 			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
 			// ===
@@ -468,7 +450,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 1;
+			int importance = 0;
 			// ===
 
 			// ===

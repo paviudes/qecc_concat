@@ -94,4 +94,16 @@ extern void AllocDecoderBins(struct simul_t *simul, int *nphys);
 // Free memory allocated for decoding bins.
 extern void FreeDecoderBins(struct simul_t *simul);
 
+// Allocate memory for a 2D double array.
+extern void AllocateDoubleArray2D(double **arr, int nrows, int ncols);
+
+// Free memory for a 2D double array.
+extern void FreeDoubleArray2D(double **arr, int nrows);
+
+// Allocate memory for a 2D double complex array.
+extern void AllocateDoubleComplexArray2D(double complex **arr, int nrows, int ncols);
+
+// Free memory for a 2D double complex array.
+extern void FreeDoubleComplexArray2D(double complex **arr, int nrows);
+
 #endif /* MEMORY_H */

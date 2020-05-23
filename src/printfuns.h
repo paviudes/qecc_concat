@@ -33,4 +33,10 @@ extern void LoadDoubleArray1D(double *array, char *fname, int size);
 // Load a int 1D array from a file.
 extern void LoadIntArray1D(int *array, char *fname, int size);
 
+// Print the diagonal of a double 2D array.
+extern void PrintDoubleArrayDiag(double **array, char *name, int nrows);
+
+// Copy the elements of one array into another.
+extern void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols);
+
 #endif /* PRINTFUNS_H */

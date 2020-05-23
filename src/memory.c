@@ -8,6 +8,49 @@
 #include "linalg.h"
 #include "memory.h"
 
+void AllocateDoubleArray2D(double **arr, int nrows, int ncols){
+	// Allocate memory for a 2D double array.
+	int r, c;
+	arr = malloc(sizeof(double *) * nrows);
+	for (r = 0; r < nrows; r ++){
+		arr[r] = malloc(sizeof(double) * ncols);
+		for (c = 0; c < ncols; c ++){
+			arr[r][c] = 0;
+		}
+	}
+}
+
+void FreeDoubleArray2D(double **arr, int nrows){
+	// Free memory for a 2D double array.
+	int r;
+	for (r = 0; r < nrows; r ++){
+		free(arr[r]);
+	}
+	free(arr);
+}
+
+void AllocateDoubleComplexArray2D(double complex **arr, int nrows, int ncols){
+	// Allocate memory for a 2D double complex array.
+	int r, c;
+	arr = malloc(sizeof(double complex *) * nrows);
+	for (r = 0; r < nrows; r ++){
+		arr[r] = malloc(sizeof(double complex) * ncols);
+		for (c = 0; c < ncols; c ++){
+			arr[r][c] = 0 + 0 * I;
+		}
+	}
+}
+
+void FreeDoubleComplexArray2D(double complex **arr, int nrows){
+	// Free memory for a 2D double complex array.
+	int r;
+	for (r = 0; r < nrows; r ++){
+		free(arr[r]);
+	}
+	free(arr);
+}
+
+
 void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 {
 	// Allocate memory for parameters of the simulation structure that depend upon

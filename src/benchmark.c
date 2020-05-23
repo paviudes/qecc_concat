@@ -101,6 +101,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 					(qcode[l]->action)[i][s][q] = normalizer[normcount + i * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->N + q];
 		normcount += qcode[l]->nlogs * qcode[l]->nstabs * qcode[l]->N;
 
+		// PrintIntArray2D((qcode[l]->action)[0], "S", qcode[l]->nstabs, qcode[l]->N);
+		// PrintIntArray2D((qcode[l]->action)[1], "X S", qcode[l]->nstabs, qcode[l]->N);
+		// PrintIntArray2D((qcode[l]->action)[2], "Y S", qcode[l]->nstabs, qcode[l]->N);
+		// PrintIntArray2D((qcode[l]->action)[3], "Z S", qcode[l]->nstabs, qcode[l]->N);
+
 		// printf("normcount = %d\n", normcount);
 
 		for (i = 0; i < qcode[l]->nlogs; i++)
@@ -155,8 +160,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		AllocSimParams(sims[s], qcode[0]->N, qcode[0]->K);
 
 		// Type of decoding algorithm to be used.
-		(sims[s]->decoders)[l] = decoders[l];
-		
+		for (l = 0; l < nlevels; l++)
+			(sims[s]->decoders)[l] = decoders[l];
+		// PrintIntArray1D((sims[s]->decoders), "Decoders", sims[s]->nlevels);
 		// Logical frame for Quantum error correction
 		if (frame == 0)
 			for (l = 0; l < nlevels; l++)

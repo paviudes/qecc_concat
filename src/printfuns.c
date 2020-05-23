@@ -28,6 +28,30 @@ void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncol
 	printf("-----\n");
 }
 
+
+void PrintDoubleArrayDiag(double **array, char *name, int nrows){
+	// Print the diagonal of a double 2D array.
+	int r;
+	printf("-----\n");
+	printf("Diagonal array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		printf("    %.12f", (array[r][r]));
+	}
+	printf("\n");
+	printf("-----\n");
+}
+
+void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols){
+	// Copy the elements of one array into another.
+	int r, c;
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++){
+			to[r][c] = from[r][c];
+		}
+	}
+}
+
+
 void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	// Print a double 2D array.
 	int r, c;
@@ -35,7 +59,7 @@ void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++){
 		for (c = 0; c < ncols; c ++)
-			printf("    %g", (array[r][c]));
+			printf("    %.9f", (array[r][c]));
 		printf("\n");
 	}
 	printf("-----\n");
@@ -47,7 +71,7 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++)
-		printf("    %g", (array[r]));
+		printf("    %.15f", (array[r]));
 	printf("\n");
 	printf("-----\n");
 }

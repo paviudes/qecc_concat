@@ -41,13 +41,6 @@ void InitQECC(struct qecc_t *qecc)
 	for (s = 0; s < qecc->nstabs; s++)
 		qecc->dclookup[s] = 0;
 
-	// DOES NOT WORK FOR CLIFFORD CORRECTIONS
-	qecc->degeneracies = malloc(qecc->nlogs * sizeof(int *));
-	for (i = 0; i < qecc->nlogs; i++){
-		qecc->degeneracies[i] = malloc((qecc->nstabs + 1) * sizeof(int));
-		qecc->degeneracies[i][0] = 0;
-	}
-
 	// printf("Done InitQECC.\n");
 }
 
@@ -73,10 +66,6 @@ void FreeQECC(struct qecc_t *qecc)
 	free(qecc->phases);
 
 	free(qecc->dclookup);
-
-	for (i = 0; i < qecc->nlogs; i++)
-		free((qecc->degeneracies)[i]);
-	free(qecc->degeneracies);
 }
 
 void ChoiToProcess(double **process, double complex **choi, double complex ***pauli)
@@ -192,6 +181,7 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
 		(sim->cumulative)[s] = (sim->cumulative)[s - 1] + (sim->syndprobs)[s];
+	// PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
 	// PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
 }
 
@@ -305,23 +295,16 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
 	// printf("Function: MLDecoder\n");
-	int nele, s;
+	int s;
 	for (s = 0; s < qecc->nstabs; s++)
 	{
 		if (dcalg == 0)
 			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
 		else
 			(sim->corrections)[s] = (qecc->dclookup)[s];
-
-		// Compute the degeneracies -- for each logical correction, compute the list of syndromes that have this logical correction.
-		nele = (qecc->degeneracies)[(sim->corrections)[s]][0];
-		nele += 1;
-		(qecc->degeneracies)[(sim->corrections)[s]][nele] = s;
-		(qecc->degeneracies)[(sim->corrections)[s]][0] = nele;
 	}
 	// printf("dcalg = %d.\n", dcalg);
 	// PrintIntArray1D(sim->corrections, "sim->corrections", qecc->nstabs);
-	// PrintIntArray2D(qecc->degeneracies, "degeneracies", qecc->nlogs, 1 + qecc->nstabs);
 }
 
 
@@ -364,6 +347,20 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 		}
 	}
 	// printf("Population done.\n");
+	// Normalization
+	for (l = 0; l < qecc->nlogs; l ++){
+		for (lp = 0; lp < qecc->nlogs; lp ++){
+			(sim->effprocess)[synd][l][lp] /= (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+		}
+	}
+	// Consistency checks.
+	// 1. Check G[0,0] = 1
+	// printf("s = %d, P(s) = %.10f\nG[0][0] = %.18f\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
+	// // 2. First column of G should be all zeros
+	// for (l = 1; l < qecc->nlogs; l ++){
+	// 	printf("G[%d][0] = %.18f\n", l, (sim->effprocess)[synd][l][0]);
+	// }
+	// printf("-------\n");
 }		
 
 
@@ -378,178 +375,12 @@ void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct c
 				// let s = degeneracies[l][i]
 				// effective channel for the syndrome s is E.
 	*/
-	int l, i, synd;
-	double **effchan = malloc(qecc->nlogs * sizeof(double *));
-	for (l = 0; l < qecc->nlogs; l++)
-		effchan[l] = malloc(qecc->nlogs * sizeof(double));
-	
-	for (l = 0; l < qecc->nlogs; l++){
-		if ((qecc->degeneracies)[l][0] > 0){
-			// We need to compute effchan and copy it for all the syndromes.
-			EffChanSynd((qecc->degeneracies)[l][1], qecc, sim, consts, isPauli);
-			for (i = 1; i <= (qecc->degeneracies)[l][0]; i++){
-				// Copy effchan to the effective process matrices.
-				synd = (qecc->degeneracies)[l][i];
-				CopyDoubleArray2D((sim->effprocess)[(qecc->degeneracies)[l][1]], (sim->effprocess)[synd], qecc->nlogs, qecc->nlogs);
-			}
-		}
-	}
-	// Normalization
-	int lp, s;
-	for (s = 0; s < qecc->nstabs; s ++){
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (lp = 0; lp < qecc->nlogs; lp ++){
-				(sim->effprocess)[s][l][lp] /= pow(2, qecc->N - qecc->K) * (sim->syndprobs)[s];
-			}
-		}
-	}
-
-	// // Consistency checks
-	// for (s = 0; s < qecc->nstabs; s ++){
-	// 	// 1. Check G[0,0] = 1
-	// 	printf("s = %d, G[0][0] = %.18f\n", s, (sim->effprocess)[s][0][0]);
-	// 	// 2. First column of G should be all zeros
-	// 	for (l = 1; l < qecc->nlogs; l ++){
-	// 		printf("G[%d][0] = %.18f\n", l, (sim->effprocess)[s][l][0]);
-	// 	}
-	// 	printf("-------\n");
-	// }
-
-	// Free memory
-	for (l = 0; l < qecc->nlogs; l++)
-		free(effchan[l]);
-	free(effchan);
-}
-
-
-
-void ComputeEffectiveStateSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli)
-{
-	// Compute the Choi matrix of the effective logical channel for a given syndrome, after applying
-	// noise + error correction. The effective Choi matrix (state) is given by:
-	// L Ts PI_s E(r) PI_s T_s L which can be written in its unencoded form by
-	// expanding in the Pauli basis. un-encoded state = sum_(a,b) Tr( L Ts PI_s
-	// E(r) PI_s T_s L . (PI_0 Pa PI_0 \o Pb)). CHOI[a,b] = sum_(i: Pi is in the
-	// logical class of Pb) sum_(j: Pj is in the logical class of [L Pa L])
-	// CHI[i,j] * (-1)^(P_j) * (-1)**(if {L, Pb} == 0). This function should be
-	// vectorized for performance.
-	// printf("Function: ComputeEffectiveStates with isPauli = %d, nlogs = %d, nstabs = %d.\n", isPauli, qecc->nlogs, qecc->nstabs);
-	// PrintIntArray2D((qecc->projector), "projector", qecc->nstabs, qecc->nstabs);
-	const double atol = 10E-16;
-	int a, b, i, j;
-	// Initializing all elements to zero
-	for (i = 0; i < qecc->nlogs; i++)
-		for (j = 0; j < qecc->nlogs; j++)
-			(sim->effective)[synd][i][j] = 0;
-
-	if ((sim->syndprobs)[synd] > atol)
-	{
-		if (isPauli == 0)
-			for (i = 0; i < qecc->nlogs; i++)
-				for (j = 0; j < qecc->nlogs; j++)
-					for (a = 0; a < qecc->nlogs; a++)
-						for (b = 0; b < qecc->nlogs; b++)
-							(sim->effective)[synd][i][j] += pow(-1, ((int)(b == 2))) * (consts->algebra)[1][(sim->corrections)[synd]][a] * SumDotInt((sim->process)[b][(consts->algebra)[0][(sim->corrections)[synd]][a]], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) * (consts->pauli)[a][i / 2][j / 2] * (consts->pauli)[b][i % 2][j % 2];
-		else
-			for (i = 0; i < qecc->nlogs; i++)
-				for (j = 0; j < qecc->nlogs; j++)
-					for (a = 0; a < qecc->nlogs; a++)
-						for (b = 0; b < qecc->nlogs; b++)
-							if ((consts->algebra)[0][(sim->corrections)[synd]][a] == b)
-								(sim->effective)[synd][i][j] += pow(-1, ((int)(b == 2))) * (consts->algebra)[1][(sim->corrections)[synd]][a] * DiagGDotIntV((sim->process)[b][b], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) * (consts->pauli)[a][i / 2][j / 2] * (consts->pauli)[b][i % 2][j % 2];
-		// Normalization
-		for (i = 0; i < qecc->nlogs; i++)
-			for (j = 0; j < qecc->nlogs; j++)
-				(sim->effective)[synd][i][j] /= (4 * (double)((sim->syndprobs)[synd] * qecc->nstabs));
-		// printf("s = %d, P(s) = %g\n", synd, (sim->syndprobs)[synd]);
-		// PrintComplexArray2D((sim->effective)[synd], "effective channel", qecc->nlogs, qecc->nlogs);
-		// if (IsState((sim->effective)[synd]) == 1)
-		// 	printf("_/ is a quantum state.\n");
-		// else{
-		// 	printf("X not a quantum state.\n");
-		// 	exit(0);
-		// }
-	}
-}
-
-
-void ComputeEffectiveStates(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli)
-{
-	// Compute the Choi matrix of the effective logical channel, after applying
-	// noise + error correction. The effective Choi matrix (state) is given by: L
-	// Ts PI_s E(r) PI_s T_s L which can be written in its unencoded form by
-	// expanding in the Pauli basis. un-encoded state = sum_(a,b) Tr( L Ts PI_s
-	// E(r) PI_s T_s L . (PI_0 Pa PI_0 \o Pb)). CHOI[a,b] = sum_(i: Pi is in the
-	// logical class of Pb) sum_(j: Pj is in the logical class of [L Pa L])
-	// CHI[i,j] * (-1)^(P_j) * (-1)**(if {L, Pb} == 0). This function should be
-	// vectorized for performance.
-	// printf("Function: ComputeEffectiveStates with isPauli = %d, nlogs = %d, nstabs = %d.\n", isPauli, qecc->nlogs, qecc->nstabs);
-	// PrintIntArray2D((qecc->projector), "projector", qecc->nstabs, qecc->nstabs);
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
-	{
-		ComputeEffectiveStateSyndrome(s, qecc, sim, consts, isPauli);
-	}
+		EffChanSynd(s, qecc, sim, consts, isPauli);
 }
 
 
-/*
-void ComputeEffectiveStates(struct qecc_t *qecc, struct simul_t *sim, struct
-constants_t *consts, int isPauli){
-	   // Compute the Choi matrix of the effective logical channel, after
-applying noise + error correction.
-	   // The effective Choi matrix (state) is given by: L Ts PI_s E(r) PI_s
-T_s L which can be written in its unencoded form by expanding in the Pauli
-basis.
-	   // un-encoded state = sum_(a,b) Tr( L Ts PI_s E(r) PI_s T_s L . (PI_0 Pa
-PI_0 \o Pb)).
-	   // CHOI[a,b] = sum_(i: Pi is in the logical class of Pb) sum_(j: Pj is
-in the logical class of [L Pa L]) CHI[i,j] * (-1)^(P_j) * (-1)**(if {L, Pb} ==
-0).
-	   // printf("Function: ComputeEffectiveStates with isPauli = %d, nlogs =
-%d, nstabs = %d.\n", isPauli, qecc->nlogs, qecc->nstabs);
-	   // PrintIntArray2D((qecc->projector), "projector", qecc->nstabs,
-qecc->nstabs); const double atol = 10E-10; int r, c, s, a, b, i, j; for (s = 0;
-s < qecc->nstabs; s ++){
-			 // Initializing all elements to zero
-			 for (r = 0; r < qecc->nlogs; r ++)
-				    for (c = 0; c < qecc->nlogs; c ++)
-						  (sim->effective)[s][r][c] = 0;
-
-			 if ((sim->syndprobs)[s] > atol){
-				    if (isPauli == 0)
-						  for (r = 0; r < qecc->nlogs; r ++)
-								for (c = 0; c < qecc->nlogs; c ++)
-									   for (a = 0; a < qecc->nlogs; a
-++) for (b = 0; b < qecc->nlogs; b ++) for (i = 0; i < qecc->nstabs; i ++) for
-(j = 0; j < qecc->nstabs; j ++) (sim->effective)[s][r][c] += pow(-1, ((int)(b ==
-2))) * (consts->algebra)[1][(sim->corrections)[s]][a] *
-(sim->process)[b][(consts->algebra)[0][(sim->corrections)[s]][a]][i][j] *
-(qecc->projector)[s][j] * (consts->pauli)[a][r/2][c/2] *
-(consts->pauli)[b][r%2][c%2]; else for (r = 0; r < qecc->nlogs; r ++) for (c =
-0; c < qecc->nlogs; c ++) for (a = 0; a < qecc->nlogs; a ++) for (b = 0; b <
-qecc->nlogs; b ++) if (b == (consts->algebra)[0][(sim->corrections)[s]][a]) for
-(i = 0; i < qecc->nstabs; i ++) (sim->effective)[s][r][c] += pow(-1, ((int)(b ==
-2))) * (consts->algebra)[1][(sim->corrections)[s]][a] *
-(sim->process)[b][b][i][i] * (qecc->projector)[s][i] *
-(consts->pauli)[a][r/2][c/2] * (consts->pauli)[b][r%2][c%2];
-				    // Normalization
-				    for (r = 0; r < qecc->nlogs; r ++)
-						  for (c = 0; c < qecc->nlogs; c ++)
-								(sim->effective)[s][r][c] /= (4 *
-(double)((sim->syndprobs)[s] * qecc->nstabs));
-				    // printf("s = %d, P(s) = %g\n", s,
-(sim->syndprobs)[s]);
-				    // PrintComplexArray2D((sim->effective)[s], "effective
-channel", qecc->nlogs, qecc->nlogs);
-				    // if (IsState((sim->effective)[s]) == 1)
-				    // 	printf("_/ is a quantum state.\n");
-				    // else
-				    // 	printf("X not a quantum state.\n");
-			 }
-	   }
-}
-*/
 
 void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *process, int isPauli)
 {
@@ -576,8 +407,6 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, st
 {
 	// Compute the effective logical channel, when error correction is applied over a set of input physical channels.
 	// printf("Constructing the full process matrix\n");
-	// int s;
-	// double atol = 10E-10;
 	if ((iscorr == 0) || (iscorr == 2))
 		GetFullProcessMatrix(qecc, sim, isPauli);
 	// Compute the probabilities of all the syndromes.
@@ -586,29 +415,6 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, st
 	// probabilities of the logical classes and pick the one that is most likely.
 	// printf("Maximum likelihood decoding\n");
 	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli);
-	// For every syndrome, apply the correction and compute the new effective choi
-	// matrix of the single qubit logical channel.
-	// printf("Computing the effective logical channels.\n");
-	// ComputeEffectiveStates(qecc, sim, consts, isPauli);
-	// Convert the effective channels from choi representation to the process
-	// matrix form. printf("Converting effective channels to PTM.\n");
-	// #pragma ivdep
-	// double infid = 0.0, infid_s = 0.0;
-
+	// For every syndrome, apply the correction and compute the new effective channel.
 	ComputeEffectiveChannels(qecc, sim, consts, isPauli);
-
-	// for (s = 0; s < qecc->nstabs; s++)
-	// {
-	// 	// ChoiToProcess((sim->effprocess)[s], (sim->effective)[s], consts->pauli);
-
-	// 	if ((sim->syndprobs)[s] >= atol)
-	// 		EffChanSynd(s, qecc, sim, consts, isPauli);
-
-	// 	// infid_s = 1 - Trace((sim->effprocess)[s], qecc->nlogs)/4;
-	// 	// infid += (sim->syndprobs)[s] * infid_s;
-	// 	// printf("s = %d, infid_s = %.18f.\n", s, infid_s);
-	// 	// PrintDoubleArray2D((sim->effprocess)[s], "process", qecc->nlogs, qecc->nlogs);
-	// }
-	// printf("Infidelity = %.18f.\n", infid);
-	// printf("Single shot error correction completed.\n");
 }

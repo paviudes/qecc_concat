@@ -41,17 +41,6 @@ void PrintDoubleArrayDiag(double **array, char *name, int nrows){
 	printf("-----\n");
 }
 
-void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols){
-	// Copy the elements of one array into another.
-	int r, c;
-	for (r = 0; r < nrows; r ++){
-		for (c = 0; c < ncols; c ++){
-			to[r][c] = from[r][c];
-		}
-	}
-}
-
-
 void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	// Print a double 2D array.
 	int r, c;
@@ -64,6 +53,19 @@ void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	}
 	printf("-----\n");
 }
+
+void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols){
+	// Copy the elements of one array into another.
+	int r, c;
+	// PrintDoubleArray2D(from, "From", nrows, ncols);
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++){
+			to[r][c] = from[r][c];
+		}
+	}
+	// PrintDoubleArray2D(to, "To", nrows, ncols);
+}
+
 
 void PrintDoubleArray1D(double *array, char *name, int nrows){
 	// Print a double 1D array.

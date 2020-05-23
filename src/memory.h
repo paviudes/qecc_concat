@@ -18,7 +18,6 @@ struct simul_t
   double *restrict levelOneSynds;
   double *restrict levelOneCumul;
   int *restrict corrections;
-  double complex ***restrict effective;
   double ***restrict effprocess;
   double ***restrict levelOneChannels;
   int *restrict frames;

@@ -100,15 +100,12 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	// printf("_/ process\n");
 	(simul->corrections) = malloc(nstabs * sizeof(int));
 	// printf("_/ corrections\n");
-	(simul->effective) = malloc(nstabs * sizeof(double complex **));
 	(simul->effprocess) = malloc(nstabs * sizeof(double **));
 	for (s = 0; s < nstabs; s++)
 	{
-		(simul->effective)[s] = malloc(nlogs * sizeof(double complex *));
 		(simul->effprocess)[s] = malloc(nlogs * sizeof(double *));
 		for (i = 0; i < nlogs; i++)
 		{
-			(simul->effective)[s][i] = malloc(nlogs * sizeof(double complex));
 			(simul->effprocess)[s][i] = malloc(nlogs * sizeof(double));
 		}
 	}
@@ -299,13 +296,10 @@ void FreeSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	{
 		for (i = 0; i < nlogs; i++)
 		{
-			free((simul->effective)[s][i]);
 			free((simul->effprocess)[s][i]);
 		}
-		free(simul->effective[s]);
 		free(simul->effprocess[s]);
 	}
-	free(simul->effective);
 	free(simul->effprocess);
 	// printf("_/ effective, effprocess\n");
 	// Syndrome sampling.

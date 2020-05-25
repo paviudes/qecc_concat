@@ -420,7 +420,7 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 1;
+				decoders[i] = 0;
 			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
 			// ===
@@ -441,7 +441,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 100;
+			stats[0] = 100000;
 			// ===
 
 			// ===
@@ -462,8 +462,11 @@ int main(int argc, char **argv)
 			// ===
 
 			// Calling the Benchmark function
-			printf("Calling the Benchmark function with %d levels and rc = %d.\n", nlevels, rc);
-			Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+			int trials = 3;
+			for (i = 0; i < trials; i ++){
+				printf("Calling the Benchmark function for the %d time with %d levels and rc = %d.\n", i+1, nlevels, rc);
+				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+			}
 			// Free memory
 			free(nkd);
 			free(SS);

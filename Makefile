@@ -4,10 +4,15 @@
 # The Random number generator is defined in mt19937ar.c .
 # See https://gist.github.com/xuhdev/1873316.
 # See also for conditional statements in Makefile: https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html
-MODE?=RUN
+MODE=RUN
+ifdef ip
+	MODE=DEBUG
+endif
+$(info MODE is ${MODE})
+
 ifeq ($(MODE), DEBUG)
 	CC = gcc
-	OPTS = -O0
+	OPTS = -O3
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()

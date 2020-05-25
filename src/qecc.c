@@ -241,13 +241,13 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 	// simplified to P(L|s) = 1/P(s) * sum_(u: Paulis) sum_(i: P_i is in the [u]
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
-	// printf("Function: MLDecoder\n");
+	// printf("Function: MLDecodeSyndrome %d, currentframe = %d\n", synd, currentframe);
 	const double atol = 10E-16;
 	int i, j, u, l;
 	double prob, maxprob, contrib;
+	(sim->corrections)[synd] = 0;
 	if ((sim->syndprobs)[synd] > atol)
 	{
-		(sim->corrections)[synd] = 0;
 		maxprob = 0;
 		for (l = 0; l < currentframe; l++)
 		{
@@ -269,14 +269,13 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 				{
 					contrib = 0;
 					for (i = 0; i < qecc->nstabs; i++)
-						contrib = contrib +
-								  (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
+						contrib = contrib + (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
 					prob = prob + (consts->algebra)[1][l][u] * contrib;
 				}
 			}
 			if (prob > maxprob)
 			{
-				sim->corrections[synd] = l;
+				(sim->corrections)[synd] = l;
 				maxprob = prob;
 			}
 		}
@@ -303,8 +302,8 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 		else
 			(sim->corrections)[s] = (qecc->dclookup)[s];
 	}
+	// PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
 	// printf("dcalg = %d.\n", dcalg);
-	// PrintIntArray1D(sim->corrections, "sim->corrections", qecc->nstabs);
 }
 
 

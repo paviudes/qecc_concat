@@ -91,8 +91,10 @@ double PowerSearch(double *dist, int size, double *window, double *searchin){
 			if (incl[i] == 1)
 				pinc += dist[i];
 		// printf("pinc = %g.\n", pinc);
-		if (pinc >= window[0])
-			return 1;
+		if (pinc >= window[0]){
+			exponent = 1;
+			exit = 1;
+		}
 	}
 
 	// printf("Function: PowerSearch for an exponent k in [%g, %g] such that %g <= 1 - P_k(s=0).\n", searchin[0], searchin[1], window[0]);
@@ -109,19 +111,29 @@ double PowerSearch(double *dist, int size, double *window, double *searchin){
 			// printf("pinc = %g.\n", pinc);
 
 			position = WhereInWindow(pinc, window);
-			if (position == 0)
+			if (position == 0){
+				// Free the local variables before returning
+				free(incl);
+				free(powerdist);
 				return exponent;
+			}
 
 			else if (position == -1){
 				// If pinc is too small, reduce the exponent, i.e, take a higher root.
 				searchin[1] = exponent;
 				exponent = (searchin[0] + searchin[1])/((double)2);
+				// Free the local variables before returning
+				free(incl);
+				free(powerdist);
 				return PowerSearch(dist, size, window, searchin);
 			}
 			else if (position == 1){
 				// If pinc is too large, increase the exponent, (make the exponent closer to one) so that it goes closer to its real value.
 				searchin[0] = exponent;
 				exponent = (searchin[0] + searchin[1])/((double)2);
+				// Free the local variables before returning
+				free(incl);
+				free(powerdist);
 				return PowerSearch(dist, size, window, searchin);
 			}
 			else
@@ -129,7 +141,7 @@ double PowerSearch(double *dist, int size, double *window, double *searchin){
 		}
 	}
 
-	// Free local variables.
+	// Free local variables before ending.
 	free(incl);
 	free(powerdist);
 

@@ -34,7 +34,7 @@ void FreeBenchOut(struct BenchOut *pbout)
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *dcknowledge, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
 {
 	/*
 	Benchmark an error correcting scheme.
@@ -115,10 +115,19 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		// printf("norm_phcount = %d\n", norm_phcount);
 
-		// Lookup table for the minimum weight decoder
-		for (s = 0; s < qcode[l]->nstabs; s++)
-			(qcode[l]->dclookup)[s] = dclookups[s_count + s];
-		s_count += qcode[l]->nstabs;
+		if (decoders[l] == 2){
+			// This piece of code doesn't work when the code blocks are not identical.
+			for (i = 0; i < qcode[l]->nstabs * qcode[l]->nlogs; i ++)
+				(qcode[l]->dcknowledge)[i] = pow(dcknowledge[i], (pow(qcode[0]->D, l) + 1)/2);
+			Normalize(qcode[l]->dcknowledge, qcode[l]->nstabs * qcode[l]->nlogs);
+		}
+		else if (decoders[l] == 1){
+			// Lookup table for the minimum weight decoder
+			for (s = 0; s < qcode[l]->nstabs; s++)
+				(qcode[l]->dclookup)[s] = dclookups[s_count + s];
+			s_count += qcode[l]->nstabs;
+		}
+		else;
 
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}

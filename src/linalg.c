@@ -37,6 +37,23 @@ int SumInt(int *arr, int size){
 	return sum;
 }
 
+double SumDouble(double *arr, int size){
+	// Compute the sum of numbers in an array.
+	int i;
+	double sum = 0;
+	for (i = 0; i < size; i ++)
+		sum += arr[i];
+	return sum;
+}
+
+void Normalize(double *arr, int size){
+	// Normalize the array.
+	double sum = SumDouble(arr, size);
+	int i = 0;
+	for (i = 0; i < size; i ++)
+		arr[i] /= sum;
+}
+
 int BitParity(int num){
 	// Compute the parity of the integer's binary representation.
 	int parity = 0;

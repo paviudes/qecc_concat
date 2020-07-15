@@ -41,6 +41,10 @@ void InitQECC(struct qecc_t *qecc)
 	for (s = 0; s < qecc->nstabs; s++)
 		qecc->dclookup[s] = 0;
 
+	qecc->dcknowledge = malloc(qecc->nstabs * qecc->nlogs * sizeof(double));
+	for (s = 0; s < qecc->nstabs * qecc->nlogs; s++)
+		qecc->dcknowledge[s] = 0.0;	
+
 	// printf("Done InitQECC.\n");
 }
 
@@ -66,6 +70,7 @@ void FreeQECC(struct qecc_t *qecc)
 	free(qecc->phases);
 
 	free(qecc->dclookup);
+	free(qecc->dcknowledge);
 }
 
 void ChoiToProcess(double **process, double complex **choi, double complex ***pauli)
@@ -231,7 +236,7 @@ prob/(qecc->nlogs * qecc->nstabs * (sim->syndprobs)[s])); if (prob > maxprob){
 */
 
 
-void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli)
+void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli, int dcalg)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -241,7 +246,7 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 	// simplified to P(L|s) = 1/P(s) * sum_(u: Paulis) sum_(i: P_i is in the [u]
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
-	// printf("Function: MLDecodeSyndrome %d, currentframe = %d\n", synd, currentframe);
+	// printf("Function: MLDecodeSyndrome %d, dcalg = %d, currentframe = %d\n", synd, dcalg, currentframe);
 	const double atol = 10E-16;
 	int i, j, u, l;
 	double prob, maxprob, contrib;
@@ -265,12 +270,24 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 			}
 			else
 			{
-				for (u = 0; u < qecc->nlogs; u++)
-				{
-					contrib = 0;
-					for (i = 0; i < qecc->nstabs; i++)
-						contrib = contrib + (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
-					prob = prob + (consts->algebra)[1][l][u] * contrib;
+				if (dcalg == 0){
+					for (u = 0; u < qecc->nlogs; u++)
+					{
+						contrib = 0;
+						for (i = 0; i < qecc->nstabs; i++)
+							contrib = contrib + (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
+						prob = prob + (consts->algebra)[1][l][u] * contrib;
+					}
+				}
+				else{
+					// Case of the partial knowledge decoder, i.e., dcalg == 2.
+					for (u = 0; u < qecc->nlogs; u++)
+					{
+						contrib = 0;
+						for (i = 0; i < qecc->nstabs; i++)
+							contrib = contrib + (qecc->dcknowledge)[u * qecc->nstabs + i] * (qecc->projector)[synd][i];
+						prob = prob + (consts->algebra)[1][l][u] * contrib;
+					}
 				}
 			}
 			if (prob > maxprob)
@@ -298,7 +315,9 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	for (s = 0; s < qecc->nstabs; s++)
 	{
 		if (dcalg == 0)
-			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli, dcalg);
+		else if (dcalg == 2) // the partial knowledge decoder only accesses the diagonal entries.
+			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, 1, dcalg);
 		else
 			(sim->corrections)[s] = (qecc->dclookup)[s];
 	}

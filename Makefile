@@ -12,7 +12,7 @@ $(info MODE is ${MODE})
 
 ifeq ($(MODE), DEBUG)
 	CC = gcc
-	OPTS = -O3
+	OPTS = -O0
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
@@ -31,7 +31,8 @@ endif
 
 CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS)
 # $(REPORT)
-CFLAGS_MKL = -m64 -I${MKLROOT}/include
+# CFLAGS_MKL = -m64 -I${MKLROOT}/include # Only works on Linux and Windows
+CFLAGS_MKL = -I"%MKLROOT%"\include
 LIBS = -lm
 LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
 RM = rm

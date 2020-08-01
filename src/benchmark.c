@@ -111,15 +111,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < qcode[l]->nlogs; i++)
 			for (s = 0; s < qcode[l]->nstabs; s++)
 				(qcode[l]->phases)[i][s] = normphases_real[norm_phcount + i * qcode[l]->nstabs + s] + I * normphases_imag[norm_phcount + i * qcode[l]->nstabs + s];
-		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
-
+		
 		// printf("norm_phcount = %d\n", norm_phcount);
 
 		if (decoders[l] == 2){
 			// This piece of code doesn't work when the code blocks are not identical.
 			for (i = 0; i < qcode[l]->nstabs * qcode[l]->nlogs; i ++)
-				(qcode[l]->dcknowledge)[i] = pow(dcknowledge[i], (pow(qcode[0]->D, l) + 1)/2);
-			Normalize(qcode[l]->dcknowledge, qcode[l]->nstabs * qcode[l]->nlogs);
+				(qcode[l]->dcknowledge)[i] = dcknowledge[norm_phcount + i];
 		}
 		else if (decoders[l] == 1){
 			// Lookup table for the minimum weight decoder
@@ -128,6 +126,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			s_count += qcode[l]->nstabs;
 		}
 		else;
+
+		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
 
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}

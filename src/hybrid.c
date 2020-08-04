@@ -12,7 +12,7 @@ void Coarsegrain(int level, struct simul_t **sims, double *****channels, int nch
 	int b, i, j, s, c;
 	int *binsizes;
 	double ***avgchans;
-	for (s = 0; s < 1 + (int)(sims[0]->importance == 2); s ++){
+	for (s = 0; s < 1 + (int)((sims[0]->decoders)[level] == 2); s ++){
 		// printf("sims[%d]->hybrid = %d, sims[%d]->importance = %d\n", s, sims[s]->hybrid, s, sims[s]->importance);
 		if (sims[s]->hybrid > 0){
 			// printf("Coarse graining process with %d bins.\n", (sims[s]->ndecbins)[level]);

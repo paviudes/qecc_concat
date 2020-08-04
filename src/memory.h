@@ -80,11 +80,11 @@ extern int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels);
 
 // Allocate and Free memory for the tree of lower-level channels which determine
 // a logical channel.
-extern int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int importance, int tofree);
+extern int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree);
 
 // Allocate and free memory for the input channels structure in
 // ComputeLogicalChannels(...).
-extern void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int importance, int tofree);
+extern void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int decoder, int tofree);
 
 // Allocate memory for the bins according to which logical (effective) channels
 // must be averaged at intermediate decoding levels.

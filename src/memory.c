@@ -253,7 +253,7 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	// printf("_/ levelOneChannels, frames.\n");
 
 	// Specify the type of decoder being used: 0 for maximum likelihood and 1 for minimum weight.
-	simul->decoders = malloc(simul->nlevels * sizeof(int));  
+	simul->decoders = malloc(simul->nlevels * sizeof(int));
 	for (i = 0; i < nlogs; i++)
 		(simul->decoders)[i] = 0;
 }
@@ -400,7 +400,7 @@ int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels)
 	return chans[0];
 }
 
-int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int importance, int tofree)
+int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree)
 {
 	// Allocate and Free memory for the tree of lower-level channels which
 	// determine a logical channel. printf("Function: MemManageChannels, tofree =
@@ -418,8 +418,8 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 			nlogs = (int)pow(4, (double)nencs[l]);
 			for (c = 0; c < chans[l]; c++)
 			{
-				channels[l][c] = malloc(sizeof(double **) * (1 + (int)(importance == 2)));
-				for (s = 0; s < 1 + (int)(importance == 2); s++)
+				channels[l][c] = malloc(sizeof(double **) * (1 + (int)(decoder == 2)));
+				for (s = 0; s < 1 + (int)(decoder == 2); s++)
 				{
 					channels[l][c][s] = malloc(sizeof(double *) * (1 + nlogs));
 					for (j = 0; j < nlogs; j++)
@@ -437,7 +437,7 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 			nlogs = (int)pow(4, (double)nencs[l]);
 			for (c = 0; c < chans[l]; c++)
 			{
-				for (s = 0; s < 1 + (int)(importance == 2); s++)
+				for (s = 0; s < 1 + (int)(decoder == 2); s++)
 				{
 					for (j = 0; j < 1 + nlogs; j++)
 						free(channels[l][c][s][j]);
@@ -452,7 +452,7 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 	return nchans;
 }
 
-void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int importance, int tofree)
+void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int decoder, int tofree)
 {
 	// Allocate and free memory for the input channels structure in
 	// ComputeLogicalChannels(...). printf("Function: MemManageInputChannels,
@@ -463,8 +463,8 @@ void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int 
 		// Initialize the space required for the input channels.
 		for (q = 0; q < nphys; q++)
 		{
-			inputchannels[q] = malloc(sizeof(double **) * (1 + (int)(importance == 2)));
-			for (s = 0; s < 1 + (int)(importance == 2); s++)
+			inputchannels[q] = malloc(sizeof(double **) * (1 + (int)(decoder == 2)));
+			for (s = 0; s < 1 + (int)(decoder == 2); s++)
 			{
 				inputchannels[q][s] = malloc(sizeof(double *) * (nlogs + 1));
 				for (i = 0; i < nlogs; i++)
@@ -478,7 +478,7 @@ void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int 
 		// Free memory
 		for (q = 0; q < nphys; q++)
 		{
-			for (s = 0; s < 1 + (int)(importance == 2); s++)
+			for (s = 0; s < 1 + (int)(decoder == 2); s++)
 			{
 				for (i = 0; i < 1 + nlogs; i++)
 					free(inputchannels[q][s][i]);

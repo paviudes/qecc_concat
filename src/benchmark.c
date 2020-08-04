@@ -111,15 +111,15 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < qcode[l]->nlogs; i++)
 			for (s = 0; s < qcode[l]->nstabs; s++)
 				(qcode[l]->phases)[i][s] = normphases_real[norm_phcount + i * qcode[l]->nstabs + s] + I * normphases_imag[norm_phcount + i * qcode[l]->nstabs + s];
-		
+
 		// printf("norm_phcount = %d\n", norm_phcount);
 
-		if (decoders[l] == 2){
-			// This piece of code doesn't work when the code blocks are not identical.
-			for (i = 0; i < qcode[l]->nstabs * qcode[l]->nlogs; i ++)
-				(qcode[l]->dcknowledge)[i] = dcknowledge[norm_phcount + i];
-		}
-		else if (decoders[l] == 1){
+		// if (decoders[l] == 2){
+		// 	// This piece of code doesn't work when the code blocks are not identical.
+		// 	for (i = 0; i < qcode[l]->nstabs * qcode[l]->nlogs; i ++)
+		// 		(qcode[l]->dcknowledge)[i] = dcknowledge[norm_phcount + i];
+		// }
+		if (decoders[l] == 1){
 			// Lookup table for the minimum weight decoder
 			for (s = 0; s < qcode[l]->nstabs; s++)
 				(qcode[l]->dclookup)[s] = dclookups[s_count + s];
@@ -149,9 +149,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	CountIndepLogicalChannels(chans, nphys, nlevels);
 
 	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
-	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(importance == 2)));
+
+	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
 	int m, j, c, chan_count = 0;
-	for (s = 0; s < 1 + (int)(importance == 2); s++)
+	for (s = (decoders[0] == 2); s >=0   ; s--)
 	{
 		sims[s] = malloc(sizeof(struct simul_t));
 		sims[s]->nlevels = nlevels;
@@ -251,7 +252,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		double eprob = 0.5 + 0.5 * (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
 		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
-		
+
 		// printf("eprob = %g, Outlier probabilities lie in the range: [%g, %g].\n", eprob, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 
 		// printf("Allocations complete for s = %d.\n", s);
@@ -299,7 +300,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			}
 		}
 	}
-	// PrintDoubleArray1D((bout.logchans), "Logical channels", (nlevels + 1) * nlogs * nlogs);
+	PrintDoubleArray1D((bout.logchans), "Logical channels", (nlevels + 1) * nlogs * nlogs);
 
 	for (m = 0; m < nmetrics; m++)
 	{
@@ -324,7 +325,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	free(nphys);
 	free(chans);
 	// printf("Freeing %d simulation structures.\n", 1 + (int)(importance == 2));
-	for (s = 0; s < 1 + (int)(importance == 2); s++)
+	for (s = 0; s < 1 + (int)(decoders[0] == 2); s++)
 	{
 		FreeSimParams(sims[s], qcode[0]->N, qcode[0]->K);
 		if (sims[s]->hybrid > 0)

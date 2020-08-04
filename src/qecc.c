@@ -43,7 +43,7 @@ void InitQECC(struct qecc_t *qecc)
 
 	qecc->dcknowledge = malloc(qecc->nstabs * qecc->nlogs * sizeof(double));
 	for (s = 0; s < qecc->nstabs * qecc->nlogs; s++)
-		qecc->dcknowledge[s] = 0.0;	
+		qecc->dcknowledge[s] = 0.0;
 
 	// printf("Done InitQECC.\n");
 }
@@ -316,8 +316,8 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	{
 		if (dcalg == 0)
 			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli, dcalg);
-		else if (dcalg == 2) // the partial knowledge decoder only accesses the diagonal entries.
-			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, 1, dcalg);
+		// else if (dcalg == 2) // the partial knowledge decoder only accesses the diagonal entries.
+		// 	MLDecodeSyndrome(s, qecc, sim, consts, currentframe, 1, dcalg);
 		else
 			(sim->corrections)[s] = (qecc->dclookup)[s];
 	}
@@ -358,6 +358,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	else{
 		for (l = 0; l < qecc->nlogs; l ++){
 			for (s = 0; s < qecc->nstabs; s ++){
+				// printf("l = %d, s = %d\n",l,s);
 				f1 = (qecc->projector)[synd][s];
 				f2 = (consts->algebra)[1][(sim->corrections)[synd]][l];
 				(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
@@ -379,7 +380,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// 	printf("G[%d][0] = %.18f\n", l, (sim->effprocess)[synd][l][0]);
 	// }
 	// printf("-------\n");
-}		
+}
 
 
 void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli){
@@ -434,5 +435,6 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, st
 	// printf("Maximum likelihood decoding\n");
 	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli);
 	// For every syndrome, apply the correction and compute the new effective channel.
+	// printf("Computing effective channel\n");
 	ComputeEffectiveChannels(qecc, sim, consts, isPauli);
 }

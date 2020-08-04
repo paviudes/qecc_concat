@@ -474,11 +474,11 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	{
 		copy_lookup=0; // whether to copy the lookup table at the end of Computing level one channels
 		if(s==0 && (sims[0]->decoders)[0] == 2)
-			decoder_to_use=1;
+			decoder_to_use = 1;
 		else if(s==1)
 		{
 			copy_lookup = 1;
-		  decoder_to_use=0;
+		  decoder_to_use = 0;
 		}
 		else
 			decoder_to_use = (sims[s]->decoders)[0];
@@ -499,14 +499,14 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
 					for (i = 0; i < qcode[0]->nlogs; i++)
 						for (j = 0; j < qcode[0]->nlogs; j++)
-							for (s = 0; s < 1 + (int)((sims[0]->decoders)[l] == 2); s++)
+							for (s = 0; s < 2; s++)
 								channels[0][c][s][i][j] = (sims[s]->levelOneChannels)[randsynd][i][j];
-					channels[0][c][0][qcode[0]->nlogs][0] = (sims[0]->levelOneImpDist)[randsynd] / (sims[1]->levelOneSynds)[randsynd];
+					channels[0][c][0][qcode[0]->nlogs][0] = 1.0;
 					channels[0][c][0][qcode[0]->nlogs][1] = (sims[0]->levelOneSynds)[randsynd];
 					channels[0][c][0][qcode[0]->nlogs][2] = (sims[0]->levelOneSynds)[randsynd];
 
-					channels[0][c][1][qcode[0]->nlogs][0] = 1;
-					channels[0][c][1][qcode[0]->nlogs][1] = 1;
+					channels[0][c][1][qcode[0]->nlogs][0] = 1.0;
+					channels[0][c][1][qcode[0]->nlogs][1] = (sims[1]->levelOneSynds)[randsynd];
 					channels[0][c][1][qcode[0]->nlogs][2] = (sims[1]->levelOneSynds)[randsynd];
 				}
 				else if (sims[0]->importance == 0) {

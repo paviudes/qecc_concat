@@ -495,7 +495,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
 					for (i = 0; i < qcode[0]->nlogs; i++)
 						for (j = 0; j < qcode[0]->nlogs; j++)
-							for (s = 0; s < 1 + (int)((sims[0]->decoders)[0] == 2); s++)
+							for (s = 0; s < 2; s++)
 								channels[0][c][s][i][j] = (sims[s]->levelOneChannels)[randsynd][i][j];
 					channels[0][c][0][qcode[0]->nlogs][0] = 1.0;
 					channels[0][c][0][qcode[0]->nlogs][1] = (sims[0]->levelOneSynds)[randsynd];

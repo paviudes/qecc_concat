@@ -311,12 +311,12 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 
 	for (l = 1; l < sims[0]->nlevels; l++){
 		// Allocate memory for the simulation parameters which depend on the error correcting code
-		for (s = 0; s < 1 + (int)((sims[0]->decoders)[l] == 2); s++)
+		for (s = 0; s < 1 + (int)((sims[0]->decoders)[0] == 2); s++)
 			AllocSimParamsQECC(sims[s], qcode[l]->N, qcode[l]->K);
 
 		// Allocate memory for inputchannels
 		inputchannels = (double ****)realloc(inputchannels, sizeof(double ***) * qcode[l]->N);
-		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[l], 0);
+		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[0], 0);
 
 		// Perform coarsegraining of logical channels
 		Coarsegrain(l - 1, sims, channels, chans[l], qcode[l]->nlogs);
@@ -325,7 +325,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 		// printf("batch = %d of %d\n", b, chans[l]);
 		// Load the input channels on to the simulation structures and perform QECC.
 		// Iterating in reverse order to accommodate partial ML decoder
-		for (s = (int)((sims[0]->decoders)[l] == 2); s>=0; s--) {
+		for (s = (int)((sims[0]->decoders)[0] == 2); s>=0; s--) {
 			bias = 1;
 			history = 1;
 			isPauli[s] = 1;
@@ -346,16 +346,16 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			}
 			// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
 			// Pass minimum weight for main channel as decoding algo if partial ML decoding on
-			if(s==0 && (sims[0]->decoders)[l] == 2)
+			if(s==0 && (sims[0]->decoders)[0] == 2)
 				SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts);
 			else if(s==1)
 				SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts);
 			else
-				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[l], (sims[s]->frames)[l], qcode[l], sims[s], consts);
+				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts);
 
 			// If doing partial ML decoder for main channel,
 			// copy the lookup table for the next simulation.
-			if (s==1 && (sims[0]->decoders)[l] == 2){
+			if (s==1 && (sims[0]->decoders)[0] == 2){
 			for (int synd = 0; synd < qcode[l]->nstabs; synd++)
 			{
 				// printf("Copying lookup inside compute logical for synd %d, correction = %d \n",synd,(sims[1]->corrections)[synd]);
@@ -370,7 +370,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 		if (l < (sims[0]->nlevels - 1)) {
 			// Implementing partial ML decoder case
 			// Main channel draws syndrome and passes to auxillary
-			if ((sims[0]->decoders)[l] == 2){
+			if ((sims[0]->decoders)[0] == 2){
 
 				if (sims[0]->importance == 1){
 					searchin[0] = 0;
@@ -442,7 +442,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			}
 		}
 		// Free memory for inputchannels
-		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[l], 1);
+		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[0], 1);
 		// Free simulation parameters that depend on the qcode
 		for (s = 0; s < 1 + (int)(sims[0]->decoders[l] == 2); s++)
 			FreeSimParamsQECC(sims[s], qcode[l]->N, qcode[l]->K);

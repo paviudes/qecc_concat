@@ -514,16 +514,26 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 			// level-1 channels. printf("Stat %ld, nchans = %d.\n", t, nchans);
 			for (c = 0; c < nchans; c++) {
 				if ((sims[0]->decoders)[l] == 2){
-					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
+					if(sims[0]->importance == 1)
+						randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
+					else
+						randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
 					for (i = 0; i < qcode[0]->nlogs; i++)
 						for (j = 0; j < qcode[0]->nlogs; j++)
 							for (s = 0; s < 2; s++)
 								channels[0][c][s][i][j] = (sims[s]->levelOneChannels)[randsynd][i][j];
-					channels[0][c][0][qcode[0]->nlogs][0] = 1.0;
+					if(sims[0]->importance == 1){
+						channels[0][c][0][qcode[0]->nlogs][0] = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
+						channels[0][c][1][qcode[0]->nlogs][0] = (sims[1]->levelOneSynds)[randsynd] / (sims[1]->levelOneImpDist)[randsynd];
+					}
+					else{
+						channels[0][c][0][qcode[0]->nlogs][0] = 1.0;
+						channels[0][c][1][qcode[0]->nlogs][0] = 1.0;
+					}
+
 					channels[0][c][0][qcode[0]->nlogs][1] = (sims[0]->levelOneSynds)[randsynd];
 					channels[0][c][0][qcode[0]->nlogs][2] = (sims[0]->levelOneSynds)[randsynd];
 
-					channels[0][c][1][qcode[0]->nlogs][0] = 1.0;
 					channels[0][c][1][qcode[0]->nlogs][1] = (sims[1]->levelOneSynds)[randsynd];
 					channels[0][c][1][qcode[0]->nlogs][2] = (sims[1]->levelOneSynds)[randsynd];
 				}

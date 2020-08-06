@@ -513,7 +513,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 			// Fill the lowest level of the channels array with "nchans" samples of
 			// level-1 channels. printf("Stat %ld, nchans = %d.\n", t, nchans);
 			for (c = 0; c < nchans; c++) {
-				if ((sims[0]->decoders)[l] == 2){
+				if ((sims[0]->decoders)[0] == 2){
 					if(sims[0]->importance == 1)
 						randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
 					else

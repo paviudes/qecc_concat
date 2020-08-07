@@ -152,7 +152,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
 	int m, j, c, chan_count = 0;
-	for (s = (decoders[0] == 2); s >=0   ; s--)
+	for (s =0; s<=(decoders[0] == 2); s++)
 	{
 		sims[s] = malloc(sizeof(struct simul_t));
 		sims[s]->nlevels = nlevels;
@@ -163,7 +163,12 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		sims[s]->maxbin = maxbin;
 		sims[s]->nbreaks = nbreaks;
 		sims[s]->nstats = stats[nbreaks - 1];
-		sims[s]->iscorr = iscorr;
+		if(s==1)
+			sims[s]->iscorr = 1;
+		else
+			sims[s]->iscorr = iscorr;
+
+
 
 		// printf("Allocating simulation parameters for\ns = %d, nlevels = %d, nmetrics = %d, importance = %d, decoder = %d, nbins = %d, maxbin = %d, nstats = %ld, nbreaks = %d.\n", s, sims[s]->nlevels, sims[s]->nmetrics, sims[s]->importance, sims[s]->hybrid, sims[s]->nbins, sims[s]->maxbin, sims[s]->nstats, sims[s]->nbreaks);
 

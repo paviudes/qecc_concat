@@ -408,18 +408,20 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 	// Pauli channels, the process matrix input must be a 1 x 4^n, each column
 	// specifying a unique Pauli error probability, where the errors are ordered
 	// as SLT.
-	int i, j, k, l;
+	int l1, l2, s1, s2;
+	int nlogs = qecc->nlogs, nstabs = qecc->nstabs;
+	// PrintDoubleArray1D((sim->physical), "sim->physical", nlogs * nlogs * nstabs * nstabs);
 	if (isPauli == 0)
-		for (i = 0; i < qecc->nlogs; i++)
-			for (j = 0; j < qecc->nlogs; j++)
-				for (k = 0; k < qecc->nstabs; k++)
-					for (l = 0; l < qecc->nstabs; l++)
-						(sim->process)[i][j][k][l] = process[i * qecc->nlogs * qecc->nstabs * qecc->nstabs + j * qecc->nstabs * qecc->nstabs + k * qecc->nstabs + l];
+		for (l1 = 0; l1 < nlogs; l1 ++)
+			for (l2 = 0; l2 < nlogs; l2 ++)
+				for (s1 = 0; s1 < nstabs; s1 ++)
+					for (s2 = 0; s2 < nstabs; s2 ++)
+						(sim->process)[l1][l2][s1][s2] = process[l1 * nlogs * nstabs * nstabs + s1 * nlogs * nstabs + l2 * nstabs + s2];
 	else
-		for (i = 0; i < qecc->nlogs; i++)
-			for (j = 0; j < qecc->nstabs; j++)
-				(sim->process)[i][i][j][j] = process[i * qecc->nstabs + j];
-	// printf("Full process matrix set.\n");
+		for (l1 = 0; l1 < nlogs; l1 ++)
+			for (s1 = 0; s1 < nstabs; s1 ++)
+				(sim->process)[l1][l1][s1][s1] = process[l1 * nstabs + s1];
+	// printf("Full process matrix set for isPauli = %d.\n", isPauli);
 }
 
 void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts)

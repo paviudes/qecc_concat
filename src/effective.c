@@ -228,14 +228,18 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		// printf("Loaded virtual channels, isPauli = %d.\n", isPauli);
 		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts);
 	}
-	else if (sim->iscorr == 1){
+	else{
+		if (sim->iscorr == 1)
+			isPauli = 1;
+		else
+			isPauli = 0;
+		// This runs for iscorr = 1 as well as iscorr = 3.
 		// Correlated channel -- the physical channel contains the full process matrix
-		// printf("Simulating a correlated Pauli channel using decoder %d.\n",decoder);
+		// printf("Simulating a correlated channel: iscorr = %d, using decoder %d.\n", sim->iscorr, decoder);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
 		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts);
 	}
-	else;
 
 	// printf("Completed SingleShotErrorCorrection.\n");
 

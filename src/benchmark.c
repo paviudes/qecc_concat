@@ -163,12 +163,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		sims[s]->maxbin = maxbin;
 		sims[s]->nbreaks = nbreaks;
 		sims[s]->nstats = stats[nbreaks - 1];
-		if(s==1)
+		if (s == 1)
 			sims[s]->iscorr = 1;
 		else
 			sims[s]->iscorr = iscorr;
-
-
 
 		// printf("Allocating simulation parameters for\ns = %d, nlevels = %d, nmetrics = %d, importance = %d, decoder = %d, nbins = %d, maxbin = %d, nstats = %ld, nbreaks = %d.\n", s, sims[s]->nlevels, sims[s]->nmetrics, sims[s]->importance, sims[s]->hybrid, sims[s]->nbins, sims[s]->maxbin, sims[s]->nstats, sims[s]->nbreaks);
 
@@ -216,8 +214,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			nparams = qcode[0]->nlogs * qcode[0]->nlogs;
 		else if (sims[s]->iscorr == 1)
 			nparams = qcode[0]->nlogs * qcode[0]->nstabs;
-		else
+		else if (sims[s]->iscorr == 2)
 			nparams = qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs;
+		else
+			nparams = qcode[0]->nlogs * qcode[0]->nstabs * qcode[0]->nlogs * qcode[0]->nstabs;
 
 		// PrintDoubleArray1D(physical, "physical", nparams);
 
@@ -231,8 +231,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			if (sims[s]->iscorr == 0)
 				(sims[s]->logical)[0][i / (qcode[0]->nlogs)][i % (qcode[0]->nlogs)] = (sims[s]->physical)[i];
 		}
-		// PrintDoubleArray1D((sims[s]->physical), "sim->physical", nparams);
-
+		
 		// printf("Loading %d metrics to be computed.\n", nmetrics);
 
 		for (m = 0; m < nmetrics; m++)

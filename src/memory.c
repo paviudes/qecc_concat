@@ -150,8 +150,10 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 		nparams = nlogs * nlogs;
 	else if (simul->iscorr == 1)
 		nparams = nlogs * nstabs;
-	else
+	else if (simul->iscorr == 2)
 		nparams = nphys * nlogs * nlogs;
+	else
+		nparams = nlogs * nstabs * nlogs * nstabs;
 	simul->physical = malloc(nparams * sizeof(double));
 	for (i = 0; i < nparams; i++)
 		simul->physical[i] = 0;

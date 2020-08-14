@@ -464,11 +464,15 @@ int main(int argc, char **argv)
 			int rc = 0;
 			// ===
 
+			//
+			double infidelity = -1;
+			//
+
 			// Calling the Benchmark function
 			int trials = 1;
 			for (i = 0; i < trials; i ++){
 				printf("Calling the Benchmark function for the %d time with %d levels and rc = %d.\n", i+1, nlevels, rc);
-				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, dcknowledge, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan);
+				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, dcknowledge, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan, infidelity);
 			}
 			// Free memory
 			free(nkd);

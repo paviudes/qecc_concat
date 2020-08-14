@@ -34,7 +34,7 @@ void FreeBenchOut(struct BenchOut *pbout)
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *dcknowledge, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan)
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *dcknowledge, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity)
 {
 	/*
 	Benchmark an error correcting scheme.
@@ -253,7 +253,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
-		double eprob = 0.5 + 0.5 * (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+		if (infidelity == -1)
+			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+		double eprob = 0.5 + 0.5 * infidelity;
 		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
 

@@ -9,7 +9,9 @@ struct simul_t
   char *restrict chname;
   int iscorr;
   double *restrict physical;
+  double *restrict mpinfo;
   double ***restrict virtchan;
+  double **restrict pauli_probs;
   // Quantum error correction and logical noise
   double ***restrict logical;
   double ****restrict process;
@@ -19,7 +21,9 @@ struct simul_t
   double *restrict levelOneCumul;
   int *restrict corrections;
   double ***restrict effprocess;
+  double **restrict cosetprobs;
   double ***restrict levelOneChannels;
+  double **restrict levelOneCosets;
   int *restrict frames;
   // Metrics.
   int nmetrics;

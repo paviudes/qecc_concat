@@ -77,6 +77,6 @@ struct BenchOut
 
         All the multi-dimensional arrays are (row) vectorized.
 */
-extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *dcknowledge, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity);
+extern struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int *operators_LST, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity);
 
 #endif /* BENCHMARK_H */

@@ -8,6 +8,7 @@
 #include "linalg.h"
 #include "memory.h"
 #include "printfuns.h"
+#include "decode.h"
 #include "qecc.h"
 
 void InitQECC(struct qecc_t *qecc)
@@ -19,18 +20,28 @@ void InitQECC(struct qecc_t *qecc)
 	// printf("Function: InitQECC: nlogs = %d, nstabs = %d.\n", qecc->nlogs,
 	// qecc->nstabs);
 
-	int s;
+	int s, t, l, i;
 	qecc->projector = malloc(qecc->nstabs * sizeof(int *));
 	for (s = 0; s < qecc->nstabs; s++)
 		qecc->projector[s] = malloc(qecc->nstabs * sizeof(int));
 
-	int i;
 	qecc->action = malloc(qecc->nlogs * sizeof(int **));
 	for (i = 0; i < qecc->nlogs; i++)
 	{
 		(qecc->action)[i] = malloc(qecc->nstabs * sizeof(int *));
 		for (s = 0; s < qecc->nstabs; s++)
 			(qecc->action)[i][s] = malloc(qecc->N * sizeof(int));
+	}
+
+	qecc->TLS = malloc(qecc->nstabs * sizeof(int ***));
+	for (t = 0; t < qecc->nstabs; t ++){
+		(qecc->TLS)[t] = malloc(qecc->nlogs * sizeof(int **));
+		for (l = 0; l < qecc->nlogs; l ++){
+			(qecc->TLS)[t][l] = malloc(qecc->nstabs * sizeof(int *));
+			for (s = 0; s < qecc->nstabs; s ++){
+				(qecc->TLS)[t][l][s] = malloc(qecc->N * sizeof(int));
+			}
+		}
 	}
 
 	qecc->phases = malloc(qecc->nlogs * sizeof(double complex *));
@@ -46,12 +57,11 @@ void InitQECC(struct qecc_t *qecc)
 void FreeQECC(struct qecc_t *qecc)
 {
 	// Free the memory assigned to a quantum error correcting code.
-	int s;
+	int t, l, s, i;
 	for (s = 0; s < qecc->nstabs; s++)
 		free((qecc->projector)[s]);
 	free(qecc->projector);
 
-	int i;
 	for (i = 0; i < qecc->nlogs; i++)
 	{
 		for (s = 0; s < qecc->nstabs; s++)
@@ -59,6 +69,17 @@ void FreeQECC(struct qecc_t *qecc)
 		free((qecc->action)[i]);
 	}
 	free(qecc->action);
+
+	for (t = 0; t < qecc->nstabs; t ++){
+		for (l = 0; l < qecc->nlogs; l ++){
+			for (s = 0; s < qecc->nstabs; s ++){
+				free((qecc->TLS)[t][l][s]);
+			}
+			free((qecc->TLS)[t][l]);
+		}
+		free((qecc->TLS)[t]);
+	}
+	free(qecc->TLS);
 
 	for (i = 0; i < qecc->nlogs; i++)
 		free((qecc->phases)[i]);
@@ -230,7 +251,7 @@ prob/(qecc->nlogs * qecc->nstabs * (sim->syndprobs)[s])); if (prob > maxprob){
 */
 
 
-void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli, int dcalg)
+void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -264,24 +285,12 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 			}
 			else
 			{
-				if (dcalg == 0){
-					for (u = 0; u < qecc->nlogs; u++)
-					{
-						contrib = 0;
-						for (i = 0; i < qecc->nstabs; i++)
-							contrib = contrib + (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
-						prob = prob + (consts->algebra)[1][l][u] * contrib;
-					}
-				}
-				else{
-					// Case of the partial knowledge decoder, i.e., dcalg == 2.
-					for (u = 0; u < qecc->nlogs; u++)
-					{
-						contrib = 0;
-						for (i = 0; i < qecc->nstabs; i++)
-							contrib = contrib + (qecc->dcknowledge)[u * qecc->nstabs + i] * (qecc->projector)[synd][i];
-						prob = prob + (consts->algebra)[1][l][u] * contrib;
-					}
+				for (u = 0; u < qecc->nlogs; u++)
+				{
+					contrib = 0;
+					for (i = 0; i < qecc->nstabs; i++)
+						contrib = contrib + (sim->process)[u][u][i][i] * (qecc->projector)[synd][i];
+					prob = prob + (consts->algebra)[1][l][u] * contrib;
 				}
 			}
 			if (prob > maxprob)
@@ -309,12 +318,15 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	for (s = 0; s < qecc->nstabs; s++)
 	{
 		if (dcalg == 0)
-			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli, dcalg);
-		// else if (dcalg == 2) // the partial knowledge decoder only accesses the diagonal entries.
-		// 	MLDecodeSyndrome(s, qecc, sim, consts, currentframe, 1, dcalg);
-		else
+			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+		else if (dcalg == 1)
 			(sim->corrections)[s] = (qecc->dclookup)[s];
+		else;
 	}
+	if (dcalg == 3){
+		ComputeCosetProbs(sim->pauli_probs, qecc->TLS, qecc->N, qecc->nlogs, qecc->nstabs, sim->cosetprobs);
+		GetMaxCoset(sim->cosetprobs, qecc->nstabs, qecc->nlogs, sim->corrections);
+	}	
 	// PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
 	// printf("dcalg = %d.\n", dcalg);
 }

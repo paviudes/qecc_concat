@@ -34,7 +34,7 @@ void FreeBenchOut(struct BenchOut *pbout)
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *dcknowledge, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity)
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int *operators_LST, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity)
 {
 	/*
 	Benchmark an error correcting scheme.
@@ -128,9 +128,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			for (log = 0; log < qcode[l]->nlogs; log ++)
 				for (s = 0; s < qcode[l]->nstabs; s ++)
 					for (q = 0; q < qcode[l]->N; q ++)
-						(qcode[l]->TLS)[t][log][s] = operators_TLS[tls_count + log * qcode[l]->nstabs * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->nstabs * qcode[l]->N + t * qcode[l]->N + q]
-		tls_count += 4^qcode[l]->N;
+						(qcode[l]->TLS)[t][log][s][q] = operators_LST[tls_count + log * qcode[l]->nstabs * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->nstabs * qcode[l]->N + t * qcode[l]->N + q];
+		tls_count += (int) pow(4, qcode[l]->N) * qcode[l]->N;
 		
+		// PrintIntArray2D((qcode[l]->TLS)[0][0], "T_0 L_0 S", qcode[l]->nstabs, qcode[l]->N);
+
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}
 
@@ -267,6 +269,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		// Randomized compiling of quantum gates
 		sims[s]->rc = rc;
+
+		// Initial knowledge of pI, pX, pY and pZ for a message passing decoder.
+		// printf("infidelity = %g.\n", infidelity);
+		(sims[s]->mpinfo)[0] = 1 - infidelity;
+		for (l = 1; l < qcode[0]->nlogs; l ++){
+			(sims[s]->mpinfo)[l] = infidelity/(qcode[0]->nlogs - 1);
+		}
 	}
 
 	// printf("Going to start Performance.\n");

@@ -341,7 +341,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 1;
+			int nlevels = 2;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 0;
+			int iscorr = 2;
 			// ===
 
 			// ===
@@ -420,12 +420,12 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 0;
+				decoders[i] = 1;
+			PrintIntArray1D(decoders, "Decoders", nlevels);
 			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
-			double *dcknowledge = malloc(nlogs * nstabs * sizeof(double));
-			LoadDoubleArray1D(dcknowledge, "./../chflow/input/debug_testing/dcknowledge.txt", nlogs * nstabs);
-			// PrintDoubleArray1D(dcknowledge, "dcknowledge", nlogs * nstabs);
+			int *operators_LST = malloc(nlevels * nstabs * nlogs * nstabs * n * sizeof(int));
+			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", nlevels * nstabs * nlogs * nstabs * n);
 			// ===
 
 			// ===
@@ -444,7 +444,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 100000;
+			stats[0] = 10000;
 			// ===
 
 			// ===
@@ -472,7 +472,7 @@ int main(int argc, char **argv)
 			int trials = 1;
 			for (i = 0; i < trials; i ++){
 				printf("Calling the Benchmark function for the %d time with %d levels and rc = %d.\n", i+1, nlevels, rc);
-				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, dcknowledge, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan, infidelity);
+				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, operators_LST, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan, infidelity);
 			}
 			// Free memory
 			free(nkd);
@@ -487,7 +487,7 @@ int main(int argc, char **argv)
 			free(stats);
 			free(decoders);
 			free(dclookups);
-			free(dcknowledge);
+			free(operators_LST);
 		}
 	}
 

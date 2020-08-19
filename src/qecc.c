@@ -40,11 +40,6 @@ void InitQECC(struct qecc_t *qecc)
 	qecc->dclookup = malloc(qecc->nstabs * sizeof(int));
 	for (s = 0; s < qecc->nstabs; s++)
 		qecc->dclookup[s] = 0;
-
-	qecc->dcknowledge = malloc(qecc->nstabs * qecc->nlogs * sizeof(double));
-	for (s = 0; s < qecc->nstabs * qecc->nlogs; s++)
-		qecc->dcknowledge[s] = 0.0;
-
 	// printf("Done InitQECC.\n");
 }
 
@@ -70,7 +65,6 @@ void FreeQECC(struct qecc_t *qecc)
 	free(qecc->phases);
 
 	free(qecc->dclookup);
-	free(qecc->dcknowledge);
 }
 
 void ChoiToProcess(double **process, double complex **choi, double complex ***pauli)

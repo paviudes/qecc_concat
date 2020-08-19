@@ -79,7 +79,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	// Initialize the error correcting code structure.
 	// printf("Quantum error correcting code with %d levels.\n", nlevels);
 	struct qecc_t **qcode = malloc(sizeof(struct qecc_t *) * nlevels);
-	int l, s, g, i, q, s_count = 0, ss_count = 0, normcount = 0, norm_phcount = 0;
+	int log, t, l, s, g, i, q, s_count = 0, ss_count = 0, normcount = 0, norm_phcount = 0, tls_count = 0;
 	for (l = 0; l < nlevels; l++)
 	{
 		// printf("l = %d\n", l);
@@ -114,11 +114,6 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		// printf("norm_phcount = %d\n", norm_phcount);
 
-		// if (decoders[l] == 2){
-		// 	// This piece of code doesn't work when the code blocks are not identical.
-		// 	for (i = 0; i < qcode[l]->nstabs * qcode[l]->nlogs; i ++)
-		// 		(qcode[l]->dcknowledge)[i] = dcknowledge[norm_phcount + i];
-		// }
 		if (decoders[l] == 1){
 			// Lookup table for the minimum weight decoder
 			for (s = 0; s < qcode[l]->nstabs; s++)
@@ -129,6 +124,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
 
+		for (t = 0; t < qcode[l]->nstabs; t ++)
+			for (log = 0; log < qcode[l]->nlogs; log ++)
+				for (s = 0; s < qcode[l]->nstabs; s ++)
+					for (q = 0; q < qcode[l]->N; q ++)
+						(qcode[l]->TLS)[t][log][s] = operators_TLS[tls_count + log * qcode[l]->nstabs * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->nstabs * qcode[l]->N + t * qcode[l]->N + q]
+		tls_count += 4^qcode[l]->N;
+		
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
 	}
 

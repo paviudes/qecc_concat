@@ -262,7 +262,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			sq_infidelity = infidelity;
 		}
 		else{
-			sq_infidelity = 1 - pow(1 - infidelity, 1/qcode[0]->N);
+			sq_infidelity = 1 - pow(1 - infidelity, 1/(double) qcode[0]->N);
 		}
 		double eprob = 0.5 + 0.5 * infidelity;
 		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
@@ -276,7 +276,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		sims[s]->rc = rc;
 
 		// Initial knowledge of pI, pX, pY and pZ for a message passing decoder.
-		// printf("infidelity = %g.\n", sq_infidelity);
+		printf("infidelity = %g.\n", sq_infidelity);
 		(sims[s]->mpinfo)[0] = 1 - sq_infidelity;
 		for (l = 1; l < qcode[0]->nlogs; l ++){
 			(sims[s]->mpinfo)[l] = sq_infidelity/(qcode[0]->nlogs - 1);

@@ -210,6 +210,11 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	// PrintIntArray1D((sim->decoders), "Decoders", sim->nlevels);
 	// printf("Allocating resources level one for %d logical and %d physical qubits\n", qcode->K, qcode->N);
 	AllocSimParamsQECC(sim, qcode->N, qcode->K);
+
+	for (q = 0; q < qcode->N; q++)
+		for (i = 0; i < qcode->nlogs; i++)
+			(sim->pauli_probs)[q][i] = (sim->mpinfo)[i];
+
 	if ((sim->iscorr == 0) || (sim->iscorr == 2)) {
 		for (q = 0; q < qcode->N; q++) {
 			for (i = 0; i < qcode->nlogs; i++){
@@ -219,7 +224,6 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 					else
 						(sim->virtchan)[q][i][j] = (sim->physical)[q * qcode->nlogs * qcode->nlogs + i * qcode->nlogs + j];
 				}
-				(sim->pauli_probs)[q][i] = (sim->mpinfo)[i];
 			}
 			if (isPauli > 0)
 				isPauli = isPauli * IsDiagonal((sim->virtchan)[q], qcode->nlogs);
@@ -520,8 +524,8 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	long t;
 	if (sims[0]->nlevels > 1) {
 		for (t = 0; t < sims[0]->nstats; t++) {
-			// Fill the lowest level of the channels array with "nchans" samples of
-			// level-1 channels. printf("Stat %ld, nchans = %d.\n", t, nchans);
+			// Fill the lowest level of the channels array with "nchans" samples of level-1 channels.
+			// printf("Stat %ld, nchans = %d.\n", t, nchans);
 			for (c = 0; c < nchans; c++) {
 				if ((sims[0]->decoders)[0] == 2){
 					if(sims[0]->importance == 1)

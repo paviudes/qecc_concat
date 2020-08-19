@@ -271,14 +271,14 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		sims[s]->rc = rc;
 
 		// Initial knowledge of pI, pX, pY and pZ for a message passing decoder.
-		// printf("infidelity = %g.\n", infidelity);
+		printf("infidelity = %g.\n", infidelity);
 		(sims[s]->mpinfo)[0] = 1 - infidelity;
 		for (l = 1; l < qcode[0]->nlogs; l ++){
 			(sims[s]->mpinfo)[l] = infidelity/(qcode[0]->nlogs - 1);
 		}
 	}
 
-	// printf("Going to start Performance.\n");
+	printf("Going to start Performance.\n");
 
 	// ###################################
 

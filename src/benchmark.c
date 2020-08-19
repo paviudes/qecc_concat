@@ -151,7 +151,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		nphys[l] = qcode[l]->N;
 	int *chans = malloc(sizeof(int) * nlevels);
 	CountIndepLogicalChannels(chans, nphys, nlevels);
-
+	double sq_infidelity = 0;
 	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
 
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
@@ -257,8 +257,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
-		if (infidelity == -1)
+		if (infidelity == -1){
 			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+			sq_infidelity = infidelity;
+		}
+		else{
+			sq_infidelity = 1 - pow(1 - infidelity, 1/qcode[0]->N);
+		}
 		double eprob = 0.5 + 0.5 * infidelity;
 		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
@@ -271,14 +276,14 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		sims[s]->rc = rc;
 
 		// Initial knowledge of pI, pX, pY and pZ for a message passing decoder.
-		printf("infidelity = %g.\n", infidelity);
-		(sims[s]->mpinfo)[0] = 1 - infidelity;
+		// printf("infidelity = %g.\n", sq_infidelity);
+		(sims[s]->mpinfo)[0] = 1 - sq_infidelity;
 		for (l = 1; l < qcode[0]->nlogs; l ++){
-			(sims[s]->mpinfo)[l] = infidelity/(qcode[0]->nlogs - 1);
+			(sims[s]->mpinfo)[l] = sq_infidelity/(qcode[0]->nlogs - 1);
 		}
 	}
 
-	printf("Going to start Performance.\n");
+	// printf("Going to start Performance.\n");
 
 	// ###################################
 

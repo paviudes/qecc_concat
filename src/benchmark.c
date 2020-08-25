@@ -258,7 +258,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		printf("infidelity = %g.\n", infidelity);
 		if (infidelity == -1)
 			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
-		(sims[s]->outlierprobs)[1] = max(0.4, infidelity);
+		(sims[s]->outlierprobs)[1] = Max(0.4, infidelity);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
 
 		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);

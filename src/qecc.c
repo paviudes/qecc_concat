@@ -262,11 +262,10 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
 	// printf("Function: MLDecodeSyndrome %d, dcalg = %d, currentframe = %d\n", synd, dcalg, currentframe);
-	const double atol = 10E-16;
 	int i, j, u, l;
 	double prob, maxprob, contrib;
 	(sim->corrections)[synd] = 0;
-	if ((sim->syndprobs)[synd] > atol)
+	if ((sim->syndprobs)[synd] > consts->atol)
 	{
 		maxprob = 0;
 		for (l = 0; l < currentframe; l++)
@@ -303,7 +302,7 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 }
 
 
-void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int dcalg, int currentframe, int isPauli)
+void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int dcalg, int currentframe, int isPauli, int is_cosetprobs_computed)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -317,16 +316,19 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
 	{
-		if (dcalg == 0)
-			MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
-		else if (dcalg == 1)
-			(sim->corrections)[s] = (qecc->dclookup)[s];
-		else;
+		(sim->corrections)[s] = 0;
+		if ((sim->syndprobs)[s] > consts->atol){
+			if (dcalg == 0)
+				MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+			else if (dcalg == 1)
+				(sim->corrections)[s] = (qecc->dclookup)[s];
+			else{
+				if (is_cosetprobs_computed == 0)
+					ComputeCosetProbs(s, sim->pauli_probs, qecc->TLS, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
+				(sim->corrections)[s] = ArgMax((sim->cosetprobs)[s], qecc->nlogs);
+			}
+		}
 	}
-	if (dcalg == 3){
-		ComputeCosetProbs(sim->pauli_probs, qecc->TLS, qecc->N, qecc->nlogs, qecc->nstabs, sim->cosetprobs);
-		GetMaxCoset(sim->cosetprobs, qecc->nstabs, qecc->nlogs, sim->corrections);
-	}	
 	// PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
 	// printf("dcalg = %d.\n", dcalg);
 }
@@ -402,7 +404,8 @@ void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct c
 	*/
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
-		EffChanSynd(s, qecc, sim, consts, isPauli);
+		if ((sim->syndprobs)[s] > consts->atol)
+			EffChanSynd(s, qecc, sim, consts, isPauli);
 }
 
 
@@ -430,7 +433,7 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 	// printf("Full process matrix set for isPauli = %d.\n", isPauli);
 }
 
-void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts)
+void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed)
 {
 	// Compute the effective logical channel, when error correction is applied over a set of input physical channels.
 	// printf("Constructing the full process matrix\n");
@@ -441,7 +444,7 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, st
 	// Maximum Likelihood Decoding (MLD) -- For every syndrome, compute the
 	// probabilities of the logical classes and pick the one that is most likely.
 	// printf("Maximum likelihood decoding\n");
-	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli);
+	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli, is_cosetprobs_computed);
 	// For every syndrome, apply the correction and compute the new effective channel.
 	// printf("Computing effective channel\n");
 	ComputeEffectiveChannels(qecc, sim, consts, isPauli);

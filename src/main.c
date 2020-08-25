@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 3;
 			// ===
 
 			// ===
@@ -398,15 +398,18 @@ int main(int argc, char **argv)
 				nparams = nlogs * nlogs;
 			else if (iscorr == 1)
 				nparams = nstabs * nlogs;
-			else
+			else if (iscorr == 2)
 				nparams = n * nlogs * nlogs;
+			else
+				nparams = nstabs * nlogs * nstabs * nlogs;
 			// ===
 
 			// ===
+			// printf("nparams = %d\n", nparams);
 			double *physical = malloc(nparams * sizeof(double));
 			LoadDoubleArray1D(physical, "./../chflow/input/debug_testing/physical.txt", nparams);
 			printf("Loaded physical.\n");
-			PrintDoubleArray1D(physical, "physical", nparams);
+			// PrintDoubleArray1D(physical, "physical", nparams);
 			// ===
 
 			// ===
@@ -426,6 +429,9 @@ int main(int argc, char **argv)
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
 			int *operators_LST = malloc(nlevels * nstabs * nlogs * nstabs * n * sizeof(int));
 			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", nlevels * nstabs * nlogs * nstabs * n);
+			double *mpinfo = malloc((int)pow(4, n) * sizeof(double));
+			LoadDoubleArray1D(mpinfo, "./../chflow/input/debug_testing/mpinfo.txt", (int)pow(4, n));
+			// PrintDoubleArray1D(mpinfo, "Message passing initialize", (int)pow(4, n));
 			// ===
 
 			// ===
@@ -444,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 100;
+			stats[0] = 100000;
 			// ===
 
 			// ===
@@ -453,7 +459,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 0;
+			int importance = 1;
 			// ===
 
 			// ===
@@ -465,14 +471,14 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = -1;
+			double infidelity = 0.0005;
 			//
 
 			// Calling the Benchmark function
 			int trials = 1;
 			for (i = 0; i < trials; i ++){
 				printf("Calling the Benchmark function for the %d time with %d levels and rc = %d.\n", i+1, nlevels, rc);
-				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, operators_LST, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan, infidelity);
+				Benchmark(nlevels, nkd, SS, normalizer, normphases_real, normphases_imag, chname, iscorr, physical, rc, nmetrics, metrics, decoders, dclookups, mpinfo, operators_LST, hybrid, decoderbins, ndecoderbins, frame, nbreaks, stats, nbins, maxbin, importance, refchan, infidelity);
 			}
 			// Free memory
 			free(nkd);
@@ -487,6 +493,7 @@ int main(int argc, char **argv)
 			free(stats);
 			free(decoders);
 			free(dclookups);
+			free(mpinfo);
 			free(operators_LST);
 		}
 	}

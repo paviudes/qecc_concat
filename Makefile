@@ -12,7 +12,7 @@ $(info MODE is ${MODE})
 
 ifeq ($(MODE), DEBUG)
 	CC = gcc
-	OPTS = -O0
+	OPTS = -O3
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()

@@ -48,10 +48,12 @@ double SumDouble(double *arr, int size){
 
 void Normalize(double *arr, int size){
 	// Normalize the array.
+	const double atol = 1E-12;
 	double sum = SumDouble(arr, size);
 	int i = 0;
-	for (i = 0; i < size; i ++)
-		arr[i] /= sum;
+	if (sum > atol)
+		for (i = 0; i < size; i ++)
+			arr[i] /= sum;
 }
 
 int BitParity(int num){
@@ -149,7 +151,7 @@ double DiagGDotV(double **matA, double *vecB, int rowsA, int colsA, int sizeB){
 	// The vector is provided as a 1D array (row vector), but we intend to use it as a column vector and multiply it to the right of the given matrix.
 	// For high-performance, we will use the cblas_ddot function of the BLAS library.
 	// See https://software.intel.com/en-us/mkl-developer-reference-c-cblas-dot.
-	const double atol = 10E-12;
+	const double atol = 1E-12;
 	double prod = 0;
 	if ((rowsA != colsA) && (colsA != sizeB))
 		printf("Cannot multiply a matrix of shape (%d x %d) to a vector of shape (%d x 1).\n", rowsA, colsA, sizeB);

@@ -13,6 +13,7 @@
 #include "logmetrics.h"
 #include "sampling.h"
 #include "hybrid.h"
+#include "decode.h"
 #include "effective.h"
 
 int IsElement(long *arr, int size, long item) {
@@ -211,9 +212,8 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	// printf("Allocating resources level one for %d logical and %d physical qubits\n", qcode->K, qcode->N);
 	AllocSimParamsQECC(sim, qcode->N, qcode->K);
 
-	for (q = 0; q < qcode->N; q++)
-		for (i = 0; i < qcode->nlogs; i++)
-			(sim->pauli_probs)[q][i] = (sim->mpinfo)[i];
+	if ((sim->decoders)[0] == 3)
+		ComputeCosetProbsLevelOne(sim->mpinfo, qcode->nlogs, qcode->nstabs, sim->cosetprobs);
 
 	if ((sim->iscorr == 0) || (sim->iscorr == 2)) {
 		for (q = 0; q < qcode->N; q++) {
@@ -232,7 +232,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		}
 
 		// printf("Loaded virtual channels, isPauli = %d.\n", isPauli);
-		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts);
+		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts, 1);
 	}
 	else{
 		if (sim->iscorr == 1)
@@ -244,7 +244,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		// printf("Simulating a correlated channel: iscorr = %d, using decoder %d.\n", sim->iscorr, decoder);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
-		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts);
+		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts, 1);
 	}
 
 	// printf("Completed SingleShotErrorCorrection.\n");
@@ -362,11 +362,11 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
 			// Pass minimum weight for main channel as decoding algo if partial ML decoding on
 			if(s==0 && (sims[0]->decoders)[0] == 2)
-				SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts);
+				SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
 			else if(s==1)
-				SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts);
+				SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
 			else
-				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts);
+				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
 
 			// If doing partial ML decoder for main channel,
 			// copy the lookup table for the next simulation.
@@ -536,8 +536,8 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 						for (i = 0; i < qcode[0]->nlogs; i++){
 							for (j = 0; j < qcode[0]->nlogs; j++)
 								channels[0][c][s][i][j] = (sims[s]->levelOneChannels)[randsynd][i][j];
-						channels[0][c][s][1 + qcode[0]->nlogs][i] = (sims[s]->levelOneCosets)[randsynd][i];
-					}
+							channels[0][c][s][1 + qcode[0]->nlogs][i] = (sims[s]->levelOneCosets)[randsynd][i];
+						}
 					if(sims[0]->importance == 1){
 						channels[0][c][0][qcode[0]->nlogs][0] = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
 						channels[0][c][1][qcode[0]->nlogs][0] = (sims[1]->levelOneSynds)[randsynd] / (sims[1]->levelOneImpDist)[randsynd];

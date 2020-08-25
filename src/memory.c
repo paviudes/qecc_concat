@@ -164,7 +164,7 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 		simul->physical[i] = 0;
 
 	// Initial guess for the message passing decoder.
-	simul->mpinfo = malloc(sizeof(double) * nlogs);
+	simul->mpinfo = malloc(sizeof(double) * (int) pow(4, nphys));
 
 	// Metrics to be computed at every level.
 	int m, l;

@@ -34,7 +34,7 @@ void FreeBenchOut(struct BenchOut *pbout)
 	free(pbout->running);
 }
 
-struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, int *operators_LST, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity)
+struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, double *normphases_real, double *normphases_imag, char *chname, int iscorr, double *physical, int rc, int nmetrics, char **metrics, int *decoders, int *dclookups, double *mpinfo, int *operators_LST, int hybrid, int *decoderbins, int *ndecoderbins, int frame, int nbreaks, long *stats, int nbins, int maxbin, int importance, double *refchan, double infidelity)
 {
 	/*
 	Benchmark an error correcting scheme.
@@ -151,12 +151,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		nphys[l] = qcode[l]->N;
 	int *chans = malloc(sizeof(int) * nlevels);
 	CountIndepLogicalChannels(chans, nphys, nlevels);
-	double sq_infidelity = 0;
 	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
 
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
 	int m, j, c, chan_count = 0;
-	for (s =0; s<=(decoders[0] == 2); s++)
+	for (s = 0; s <= (int) (decoders[0] == 2); s++)
 	{
 		sims[s] = malloc(sizeof(struct simul_t));
 		sims[s]->nlevels = nlevels;
@@ -179,7 +178,6 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// Type of decoding algorithm to be used.
 		for (l = 0; l < nlevels; l++)
 			(sims[s]->decoders)[l] = decoders[l];
-		// PrintIntArray1D((sims[s]->decoders), "Decoders", sims[s]->nlevels);
 		// Logical frame for Quantum error correction
 		if (frame == 0)
 			for (l = 0; l < nlevels; l++)
@@ -257,15 +255,10 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
-		if (infidelity == -1){
+		if (infidelity == -1)
 			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
-			sq_infidelity = infidelity;
-		}
-		else{
-			sq_infidelity = 1 - pow(1 - infidelity, 1/(double) qcode[0]->N);
-		}
-		double eprob = 0.5 + 0.5 * infidelity;
-		(sims[s]->outlierprobs)[1] = Max(0.6, eprob);
+		double eprob = 0.4 + 0.5 * infidelity;
+		(sims[s]->outlierprobs)[1] = Max(0.4, eprob);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
 
 		// printf("eprob = %g, Outlier probabilities lie in the range: [%g, %g].\n", eprob, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
@@ -275,14 +268,14 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// Randomized compiling of quantum gates
 		sims[s]->rc = rc;
 
-		// Initial knowledge of pI, pX, pY and pZ for a message passing decoder.
-		printf("infidelity = %g.\n", sq_infidelity);
-		(sims[s]->mpinfo)[0] = 1 - sq_infidelity;
-		for (l = 1; l < qcode[0]->nlogs; l ++){
-			(sims[s]->mpinfo)[l] = sq_infidelity/(qcode[0]->nlogs - 1);
-		}
+		// Initial knowledge of Pauli error probabilities for a message passing decoder.
+		// PrintIntArray1D((sims[s]->decoders), "Decoders", sims[s]->nlevels);
+		if ((sims[s]->decoders)[0] == 3)
+			for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
+				(sims[s]->mpinfo)[i] = mpinfo[i];
 	}
 
+	// PrintIntArray1D((sims[0]->decoders), "Decoders", sims[0]->nlevels);
 	// printf("Going to start Performance.\n");
 
 	// ###################################

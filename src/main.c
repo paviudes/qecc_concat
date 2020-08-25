@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.0005;
+			double infidelity = 0.00087753;
 			//
 
 			// Calling the Benchmark function

@@ -43,13 +43,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			   1. number of concatenation layers: int levels
 			   2. N,K,D for each code
 					int **nkd : 2D array of integers
-					    where the i-th row gives the N,K,D values of the i-th code.
+						where the i-th row gives the N,K,D values of the i-th code.
 			   3. Stabilizer syndrome signs for each code
 					 int ***SS: 3D array of integers
-						    where the i-th array gives the stabilizer syndrome signs for the i-th code.
+							where the i-th array gives the stabilizer syndrome signs for the i-th code.
 			   4. Logical action each code
 					 int ****normalizer: 4D array of integers
-						    where the i-th array gives the logical action for the i-th code.
+							where the i-th array gives the logical action for the i-th code.
 			   5. Logical action phases for each code.
 					 int ***normphases: 3D array where the i-th array gives the phases for the i-th code.
 		(b). Error channel
@@ -255,13 +255,13 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
+		printf("infidelity = %g.\n", infidelity);
 		if (infidelity == -1)
 			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
-		double eprob = 0.4 + 0.5 * infidelity;
-		(sims[s]->outlierprobs)[1] = Max(0.4, eprob);
+		(sims[s]->outlierprobs)[1] = max(0.4, infidelity);
 		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
 
-		// printf("eprob = %g, Outlier probabilities lie in the range: [%g, %g].\n", eprob, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
+		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 
 		// printf("Allocations complete for s = %d.\n", s);
 
@@ -304,8 +304,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	for (l = 0; l < nlevels + 1; l++)
 	{
-		// printf("l = %d\n", l);
-		// PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
+		printf("l = %d\n", l);
+		PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
 		for (i = 0; i < nlogs; i++)
 		{
 			for (j = 0; j < nlogs; j++)
@@ -315,7 +315,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			}
 		}
 	}
-	PrintDoubleArray1D((bout.logchans), "Logical channels", (nlevels + 1) * nlogs * nlogs);
+	// PrintDoubleArray1D((bout.logchans), "Logical channels", (nlevels + 1) * nlogs * nlogs);
 
 	for (m = 0; m < nmetrics; m++)
 	{

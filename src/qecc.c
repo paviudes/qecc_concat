@@ -312,7 +312,9 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	// simplified to P(L|s) = 1/P(s) * sum_(u: Paulis) sum_(i: P_i is in the [u]
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
-	// printf("Function: MLDecoder\n");
+	printf("Function: MLDecoder\n");
+	if (is_cosetprobs_computed == 0)
+		PrintDoubleArray2D(sim->pauli_probs, "Pauli probs for the coset probs computation.", qecc->N, qecc->nlogs);
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
 	{
@@ -329,8 +331,8 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 			}
 		}
 	}
-	// PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
-	// printf("dcalg = %d.\n", dcalg);
+	PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
+	printf("dcalg = %d.\n", dcalg);
 }
 
 

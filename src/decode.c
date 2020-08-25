@@ -53,7 +53,7 @@ int ArgMax(double *arr, int size){
 	int i, amax = 0;
 	double max = 0;
 	for (i = 0; i < size; i ++){
-		if (arr[i] >= max){
+		if (arr[i] > max){
 			max = arr[i];
 			amax = i;
 		}

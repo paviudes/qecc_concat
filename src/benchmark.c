@@ -73,13 +73,22 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			   3. Number of distinct (bins) channels at each intermediate
 	level: int *ndecoderbins
 	*/
+	
+	/*
+		iscorr
+		physical
+		decoders
+		mpinfo
+		importance
+		infidelity
+	*/
 	struct constants_t *consts = malloc(sizeof(struct constants_t));
 	InitConstants(consts);
 
 	// Initialize the error correcting code structure.
 	// printf("Quantum error correcting code with %d levels.\n", nlevels);
 	struct qecc_t **qcode = malloc(sizeof(struct qecc_t *) * nlevels);
-	int log, t, l, s, g, i, q, s_count = 0, ss_count = 0, normcount = 0, norm_phcount = 0, tls_count = 0;
+	int log, t, l, s, g, i, q, s_count = 0, ss_count = 0, normcount = 0, norm_phcount = 0, tls_count = 0, nparams = 0;
 	for (l = 0; l < nlevels; l++)
 	{
 		// printf("l = %d\n", l);
@@ -211,7 +220,6 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// Error model and metrics
 		// printf("Loading error channel, iscorr = %d.\n", iscorr);
 		sprintf(sims[s]->chname, "%s", chname);
-		int nparams = 0;
 		if (sims[s]->iscorr == 0)
 			nparams = qcode[0]->nlogs * qcode[0]->nlogs;
 		else if (sims[s]->iscorr == 1)
@@ -220,8 +228,6 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			nparams = qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs;
 		else
 			nparams = qcode[0]->nlogs * qcode[0]->nstabs * qcode[0]->nlogs * qcode[0]->nstabs;
-
-		// PrintDoubleArray1D(physical, "physical", nparams);
 
 		for (i = 0; i < nparams; i++)
 		{
@@ -255,7 +261,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
-		printf("infidelity = %g.\n", infidelity);
+		// printf("infidelity = %g.\n", infidelity);
 		if (infidelity == -1)
 			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
 		(sims[s]->outlierprobs)[1] = Max(0.4, infidelity);
@@ -275,8 +281,18 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 				(sims[s]->mpinfo)[i] = mpinfo[i];
 	}
 
-	// PrintIntArray1D((sims[0]->decoders), "Decoders", sims[0]->nlevels);
-	// printf("Going to start Performance.\n");
+	printf("**************************************\n");
+	printf("INPUTS:\n");
+	printf("iscorr = %d\n", iscorr);
+	printf("nparams = %d\n", nparams);
+	// PrintDoubleArray1D(physical, "Physical channel", nparams);
+	PrintIntArray1D(decoders, "Decoders", nlevels);
+	// PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
+	printf("importance = %d\n", importance);
+	printf("infidelity = %g\n", infidelity);
+	printf("**************************************\n");
+
+	printf("Going to start Performance.\n");
 
 	// ###################################
 

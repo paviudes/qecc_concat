@@ -361,9 +361,9 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			}
 			// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
 			// Pass minimum weight for main channel as decoding algo if partial ML decoding on
-			if(s==0 && (sims[0]->decoders)[0] == 2)
+			if ((s == 0) && (sims[0]->decoders)[0] == 2)
 				SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
-			else if(s==1)
+			else if (s == 1)
 				SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
 			else
 				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);

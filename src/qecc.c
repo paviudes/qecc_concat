@@ -33,13 +33,13 @@ void InitQECC(struct qecc_t *qecc)
 			(qecc->action)[i][s] = malloc(qecc->N * sizeof(int));
 	}
 
-	qecc->TLS = malloc(qecc->nstabs * sizeof(int ***));
-	for (t = 0; t < qecc->nstabs; t ++){
-		(qecc->TLS)[t] = malloc(qecc->nlogs * sizeof(int **));
-		for (l = 0; l < qecc->nlogs; l ++){
-			(qecc->TLS)[t][l] = malloc(qecc->nstabs * sizeof(int *));
-			for (s = 0; s < qecc->nstabs; s ++){
-				(qecc->TLS)[t][l][s] = malloc(qecc->N * sizeof(int));
+	qecc->LST = malloc(qecc->nlogs * sizeof(int ***));
+	for (l = 0; l < qecc->nlogs; l ++){
+		(qecc->LST)[l] = malloc(qecc->nstabs * sizeof(int **));
+		for (s = 0; s < qecc->nstabs; s ++){
+			(qecc->LST)[l][s] = malloc(qecc->nstabs * sizeof(int *));
+			for (t = 0; t < qecc->nstabs; t ++){
+				(qecc->LST)[l][s][t] = malloc(qecc->N * sizeof(int));
 			}
 		}
 	}
@@ -70,16 +70,16 @@ void FreeQECC(struct qecc_t *qecc)
 	}
 	free(qecc->action);
 
-	for (t = 0; t < qecc->nstabs; t ++){
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (s = 0; s < qecc->nstabs; s ++){
-				free((qecc->TLS)[t][l][s]);
+	for (l = 0; l < qecc->nlogs; l ++){
+		for (s = 0; s < qecc->nstabs; s ++){
+			for (t = 0; t < qecc->nstabs; t ++){
+				free((qecc->LST)[l][s][t]);
 			}
-			free((qecc->TLS)[t][l]);
+			free((qecc->LST)[l][s]);
 		}
-		free((qecc->TLS)[t]);
+		free((qecc->LST)[l]);
 	}
-	free(qecc->TLS);
+	free(qecc->LST);
 
 	for (i = 0; i < qecc->nlogs; i++)
 		free((qecc->phases)[i]);
@@ -312,13 +312,15 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	// simplified to P(L|s) = 1/P(s) * sum_(u: Paulis) sum_(i: P_i is in the [u]
 	// logical class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] *
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
-	printf("Function: MLDecoder\n");
-	if (is_cosetprobs_computed == 0)
-		PrintDoubleArray2D(sim->pauli_probs, "Pauli probs for the coset probs computation.", qecc->N, qecc->nlogs);
+	// printf("Function: MLDecoder\n");
+	// if (is_cosetprobs_computed == 0)
+	// 	PrintDoubleArray2D(sim->pauli_probs, "Pauli probs for the coset probs computation.", qecc->N, qecc->nlogs);
 	int s;
+	double *maxprobs = malloc(sizeof(double) * qecc->nstabs);
 	for (s = 0; s < qecc->nstabs; s++)
 	{
 		(sim->corrections)[s] = 0;
+		maxprobs[s] = 0;
 		if ((sim->syndprobs)[s] > consts->atol){
 			if (dcalg == 0)
 				MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
@@ -326,13 +328,18 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 				(sim->corrections)[s] = (qecc->dclookup)[s];
 			else{
 				if (is_cosetprobs_computed == 0)
-					ComputeCosetProbs(s, sim->pauli_probs, qecc->TLS, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
+					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
 				(sim->corrections)[s] = ArgMax((sim->cosetprobs)[s], qecc->nlogs);
+				maxprobs[s] = (sim->cosetprobs)[s][(sim->corrections)[s]];
 			}
 		}
 	}
+	PrintDoubleArray1D(sim->syndprobs, "Syndrome probabilities", qecc->nstabs);
+	printf("Sum = %g\n", SumDouble(sim->syndprobs, qecc->nstabs));
 	PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
+	PrintDoubleArray1D(maxprobs, "Leading coset probabilities", qecc->nstabs);
 	printf("dcalg = %d.\n", dcalg);
+	free(maxprobs);
 }
 
 

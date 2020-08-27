@@ -14,7 +14,7 @@ struct qecc_t {
   int ***restrict action;
   double complex **restrict phases;
   int *dclookup; // Lookup table specifying the corrections for each syndrome.
-  int ****TLS;
+  int ****LST;
 };
 
 // Allocate memory for the elements of the quantum error correcting code.

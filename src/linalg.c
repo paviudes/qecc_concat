@@ -48,12 +48,25 @@ double SumDouble(double *arr, int size){
 
 void Normalize(double *arr, int size){
 	// Normalize the array.
-	const double atol = 1E-12;
+	// https://stackoverflow.com/questions/18069269/normalizing-a-list-of-very-small-double-numbers-likelihoods
+	int i;
+	double *logarr = malloc(sizeof(double) * size);
+	double maxlog = log10(arr[0]);
+	for (i = 0; i < size; i ++){
+		logarr[i] = log10(arr[i]);
+		if (maxlog <= logarr[i])
+			maxlog = logarr[i];
+	}
+	for (i = 0; i < size; i ++)
+		logarr[i] = logarr[i] - maxlog;
+	for (i = 0; i < size; i ++)
+		arr[i] = pow(10, logarr[i]);
+
 	double sum = SumDouble(arr, size);
-	int i = 0;
-	if (sum > atol)
-		for (i = 0; i < size; i ++)
-			arr[i] /= sum;
+	for (i = 0; i < size; i ++)
+		arr[i] = arr[i]/sum;
+	
+	free(logarr);
 }
 
 int BitParity(int num){

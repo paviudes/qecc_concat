@@ -333,12 +333,14 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 				maxprobs[s] = (sim->cosetprobs)[s][(sim->corrections)[s]];
 			}
 		}
+		// printf("s = %d\n", s);
+		// printf("Sum of coset probabilities: %g, P(s) = %g, difference: %g.\n", SumDouble(sim->cosetprobs[s], qecc->nlogs), sim->syndprobs[s], sim->syndprobs[s] - SumDouble(sim->cosetprobs[s], qecc->nlogs));
 	}
-	PrintDoubleArray1D(sim->syndprobs, "Syndrome probabilities", qecc->nstabs);
-	printf("Sum = %g\n", SumDouble(sim->syndprobs, qecc->nstabs));
-	PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
-	PrintDoubleArray1D(maxprobs, "Leading coset probabilities", qecc->nstabs);
-	printf("dcalg = %d.\n", dcalg);
+	// PrintDoubleArray1D(sim->syndprobs, "Syndrome probabilities", qecc->nstabs);
+	// printf("Sum = %g\n", SumDouble(sim->syndprobs, qecc->nstabs));
+	// PrintIntArray1D(sim->corrections, "Corrections after decoding", qecc->nstabs);
+	// PrintDoubleArray1D(maxprobs, "Leading coset probabilities", qecc->nstabs);
+	// printf("dcalg = %d.\n", dcalg);
 	free(maxprobs);
 }
 

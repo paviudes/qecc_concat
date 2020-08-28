@@ -268,7 +268,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		// PrintDoubleArray1D((sim->levelOneCosets)[s], "Level 1 coset probability", qcode->nlogs);
 		// PrintDoubleArray2D((sim->levelOneChannels)[s], "Level 1 channel", qcode->nlogs, qcode->nlogs);
 	}
-	PrintDoubleArray2D((sim->levelOneCosets), "Level 1 coset probabilities", qcode->nstabs, qcode->nlogs);
+	// PrintDoubleArray2D((sim->levelOneCosets), "Level 1 coset probabilities", qcode->nstabs, qcode->nlogs);
 
 	ConstructCumulative(sim->levelOneSynds, sim->levelOneCumul, qcode->nstabs);
 	// Compute the importance distribution for level-1 if necessary.

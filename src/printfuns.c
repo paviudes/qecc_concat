@@ -48,7 +48,7 @@ void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++){
 		for (c = 0; c < ncols; c ++)
-			printf("    %.8f", (array[r][c]));
+			printf("    %.16f", (array[r][c]));
 		printf("\n");
 	}
 	printf("-----\n");
@@ -73,7 +73,7 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++)
-		printf("    %.8f", (array[r]));
+		printf("    %.16f", (array[r]));
 	printf("\n");
 	printf("-----\n");
 }

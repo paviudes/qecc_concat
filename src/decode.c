@@ -24,7 +24,7 @@ void ComputeCosetProbs(int synd, double **pauli_probs, int ****LST, int nphys, i
 		}
 		// cosetprobs_sum += cosetprobs[synd][l];
 	}
-	// Normalize(cosetprobs, nlogs);
+	Normalize(cosetprobs, nlogs);
 	// printf("Coset probabilities for s = %d.\n", synd);
 	// PrintDoubleArray1D(cosetprobs, "Coset probabilities", nlogs);
 }

@@ -17,9 +17,9 @@ void ComputeCosetProbs(int synd, double **pauli_probs, int ****LST, int nphys, i
 	for (l = 0; l < nlogs; l ++){
 		cosetprobs[l] = 0;
 		for (s = 0; s < nstabs; s ++){
-			prob = 1;
-			for (q = 0; q < nphys; q ++)
-				prob *= pauli_probs[q][LST[l][s][synd][q]];
+			prob = pauli_probs[0][LST[l][s][synd][0]];
+			for (q = 1; q < nphys; q ++)
+				prob = prob * pauli_probs[q][LST[l][s][synd][q]];
 			cosetprobs[l] += prob;
 		}
 		// cosetprobs_sum += cosetprobs[synd][l];
@@ -57,4 +57,37 @@ int ArgMax(double *arr, int size){
 		if (arr[i] > arr[amax])
 			amax = i;
 	return amax;
+}
+
+void RotatePauli(double *arr, int size, int pauli){
+	// Rotate a probability of Pauli operators by a Pauli.
+	// Letting I --> 0, X --> 1, Y --> 2 and Z --> 3
+	// I: [0, 1, 2, 3]
+	// X: [1, 0, 3, 2]
+	// Y: [2, 3, 0, 1]
+	// Z: [3, 2, 1, 0]
+	double *old = malloc(sizeof(double) * size);
+	int i;
+	for (i = 0; i < size; i ++)
+		old[i] = arr[i];
+	if (pauli == 1){
+		arr[0] = old[1];
+		arr[1] = old[0];
+		arr[2] = old[3];
+		arr[3] = old[2];
+	}
+	else if (pauli == 2){
+		arr[0] = old[2];
+		arr[1] = old[3];
+		arr[2] = old[0];
+		arr[3] = old[1];
+	}
+	else if (pauli == 3){
+		arr[0] = old[3];
+		arr[1] = old[2];
+		arr[2] = old[1];
+		arr[3] = old[0];
+	}
+	else;
+	free(old);
 }

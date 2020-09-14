@@ -118,7 +118,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 		(sim->statsperlevel)[level + 1] ++;
 	}
 	else{
-		printf("(sim->statsperlevel)[%d] = %ld.\n", level + 1, (sim->statsperlevel)[level + 1]);
+		// printf("(sim->statsperlevel)[%d] = %ld.\n", level + 1, (sim->statsperlevel)[level + 1]);
 		PrintDoubleArray1D(sim->metricValues[level + 1], "Metrics", sim->nmetrics);
 		// After all the simulations are done, the average metrics are to be computed by diving the metricValues by the total number of statistics done for that level.
 		for (m = 0; m < sim->nmetrics; m++) {
@@ -341,8 +341,8 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 		// Perform coarsegraining of logical channels
 		Coarsegrain(l - 1, sims, channels, chans[l], qcode[l]->nlogs);
 
-		for (b = 0; b < chans[l + 1]; b++) {
-		// printf("batch = %d of %d\n", b, chans[l + 1]);
+		for (b = 0; b < chans[l]; b++) {
+		// printf("batch = %d of %d\n", b, chans[l]);
 		// Load the input channels on to the simulation structures and perform QECC.
 		// Iterating in reverse order to accommodate partial ML decoder
 		for (s = (int)((sims[0]->decoders)[0] == 2); s>=0; s--) {
@@ -419,14 +419,14 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					channels[l][b][1][qcode[l]->nlogs][2] = (sims[1]->syndprobs)[randsynd];
 				}
 				else{
-				channels[l][b][0][qcode[l]->nlogs][0] = 1;
-				channels[l][b][0][qcode[l]->nlogs][1] = sims[0]->syndprobs[randsynd];
-				channels[l][b][0][qcode[l]->nlogs][2] = sims[0]->syndprobs[randsynd];
-				// 2. Drawing syndromes for the auxillary channel according to the
-				// noisy channel syndrome distribution.
-				channels[l][b][1][qcode[l]->nlogs][0] = 1;
-				channels[l][b][1][qcode[l]->nlogs][1] = sims[1]->syndprobs[randsynd];
-				channels[l][b][1][qcode[l]->nlogs][2] = sims[1]->syndprobs[randsynd];
+					channels[l][b][0][qcode[l]->nlogs][0] = 1;
+					channels[l][b][0][qcode[l]->nlogs][1] = sims[0]->syndprobs[randsynd];
+					channels[l][b][0][qcode[l]->nlogs][2] = sims[0]->syndprobs[randsynd];
+					// 2. Drawing syndromes for the auxillary channel according to the
+					// noisy channel syndrome distribution.
+					channels[l][b][1][qcode[l]->nlogs][0] = 1;
+					channels[l][b][1][qcode[l]->nlogs][1] = sims[1]->syndprobs[randsynd];
+					channels[l][b][1][qcode[l]->nlogs][2] = sims[1]->syndprobs[randsynd];
 				}
 			}
 			else if (sims[0]->importance == 0) {
@@ -530,6 +530,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 
 	int c, i, j, m, randsynd;
 	long t;
+	// int fixedsynds[7] = {0, 2, 4, 6, 9, 17, 53}; // Only for debugging
 	if (sims[0]->nlevels > 1) {
 		for (t = 0; t < sims[0]->nstats; t++) {
 			// Fill the lowest level of the channels array with "nchans" samples of level-1 channels.
@@ -563,7 +564,8 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 				}
 				else if (sims[0]->importance == 0) {
 					// Direct sampling
-					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
+					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs); // Uncomment for runs
+					// randsynd = fixedsynds[c]; // DEBUGGING
 					// printf("Random syndrome = %d, with probability: %g.\n", randsynd,
 					// (sims[0]->levelOneSynds)[randsynd]);
 					// printf("randsynd = %d\n", randsynd);

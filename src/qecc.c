@@ -331,6 +331,7 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
 				(sim->corrections)[s] = ArgMax((sim->cosetprobs)[s], qecc->nlogs);
 				maxprobs[s] = (sim->cosetprobs)[s][(sim->corrections)[s]];
+				RotatePauli((sim->cosetprobs)[s], qecc->nlogs, (sim->corrections)[s]);
 			}
 		}
 		// printf("s = %d\n", s);

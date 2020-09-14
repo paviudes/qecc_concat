@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 3;
+			int iscorr = 1;
 			// ===
 
 			// ===
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10;
+			stats[0] = 2;
 			// ===
 
 			// ===
@@ -459,7 +459,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 0;
+			int importance = 1;
 			// ===
 
 			// ===
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.00094239869044;
+			double infidelity = 0.00425652874761;
 			//
 
 			// Calling the Benchmark function

@@ -311,7 +311,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	printf("infidelity = %.14f\n", infidelity);
 	printf("**************************************\n");
 
-	printf("Going to start Performance.\n");
+	// printf("Going to start Performance.\n");
 
 	// ###################################
 

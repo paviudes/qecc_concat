@@ -11,8 +11,8 @@ endif
 $(info MODE is ${MODE})
 
 ifeq ($(MODE), DEBUG)
-	CC = icc
-	OPTS = -O3 -xavx
+	CC = gcc
+	OPTS = -O3
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()

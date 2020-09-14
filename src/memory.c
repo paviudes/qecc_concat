@@ -410,11 +410,11 @@ void FreeSimParams(struct simul_t *simul, int nphys, int nenc)
 int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels)
 {
 	// Determine the number of independent logical channels at every level, that
-	// determine the logical channels of higher levels. printf("Function:
-	// CountIndepLogicalChannels\n")
-	chans[nlevels] = 1;
+	// determine the logical channels of higher levels.
+	// printf("Function: CountIndepLogicalChannels\n")
+	chans[nlevels-1] = 1;
 	int l;
-	for (l = nlevels - 1; l >= 0; l--)
+	for (l = nlevels - 2; l >= 0; l--)
 		chans[l] = nphys[l] * chans[l + 1];
 	return chans[0];
 }
@@ -425,7 +425,7 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 	// determine a logical channel. printf("Function: MemManageChannels, tofree =
 	// %d\n", tofree);
 	int c, j, s, l, nchans, nlogs;
-	int *chans = malloc(sizeof(int) * (nlevels + 1));
+	int *chans = malloc(sizeof(int) * (nlevels));
 	nchans = CountIndepLogicalChannels(chans, nphys, nlevels);
 	// printf("Creating %d channels.\n", nchans);
 	if (tofree == 0)

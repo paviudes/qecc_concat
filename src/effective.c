@@ -432,9 +432,11 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			else if (sims[0]->importance == 0) {
 				randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
 				// printf("Random syndrome = %d\n", randsynd);
-				for (i = 0; i < qcode[l]->nlogs; i++)
+				for (i = 0; i < qcode[l]->nlogs; i++){
 					for (j = 0; j < qcode[l]->nlogs; j++)
 						channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
+					channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
+				}
 				channels[l][b][0][qcode[l]->nlogs][0] = 1;
 				channels[l][b][0][qcode[l]->nlogs][1] = history * sims[0]->syndprobs[randsynd];
 				channels[l][b][0][qcode[l]->nlogs][2] = sims[0]->syndprobs[randsynd];
@@ -451,9 +453,11 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
 				randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
 				// printf("randsynd = %d\n", randsynd);
-				for (i = 0; i < qcode[l]->nlogs; i++)
+				for (i = 0; i < qcode[l]->nlogs; i++){
 					for (j = 0; j < qcode[l]->nlogs; j++)
 						channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
+					channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
+				}
 				// printf("Populated channels.\n");
 				channels[l][b][0][qcode[l]->nlogs][0] = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
 				channels[l][b][0][qcode[l]->nlogs][1] = history * (sims[0]->syndprobs)[randsynd];

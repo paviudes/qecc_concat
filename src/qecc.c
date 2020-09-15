@@ -326,13 +326,19 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 				MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
 			else if (dcalg == 1)
 				(sim->corrections)[s] = (qecc->dclookup)[s];
-			else{
+			else if (dcalg == 3){
 				if (is_cosetprobs_computed == 0)
 					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
 				(sim->corrections)[s] = ArgMax((sim->cosetprobs)[s], qecc->nlogs);
 				maxprobs[s] = (sim->cosetprobs)[s][(sim->corrections)[s]];
 				RotatePauli((sim->cosetprobs)[s], qecc->nlogs, (sim->corrections)[s]);
 			}
+			else if (dcalg == 4){
+				if (is_cosetprobs_computed == 0)
+					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
+				// No correction needs to be applied.
+			}
+			else;
 		}
 		// printf("s = %d\n", s);
 		// printf("Sum of coset probabilities: %g, P(s) = %g, difference: %g.\n", SumDouble(sim->cosetprobs[s], qecc->nlogs), sim->syndprobs[s], sim->syndprobs[s] - SumDouble(sim->cosetprobs[s], qecc->nlogs));
@@ -351,7 +357,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// The effective channel in the Pauli Liouville representation is given by:
 	// G_{L,L'} = \sum_S,S' G_{LS, L* L' L* S'}/P(s)
 	// where L* is the correction applied by the decoder.
-	// printf("Function: EffChanSynd\n");
+	// printf("Function: EffChanSynd(%d,...)\n", synd);
 	int l, lp, s, sp;
 	int f1, f2, f3;
 	// Initialization

@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 2;
+			stats[0] = 10000;
 			// ===
 
 			// ===

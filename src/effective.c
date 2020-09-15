@@ -75,11 +75,9 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 		for (s = 0; s < qcode->nstabs; s++) {
 			if ((sim->syndprobs)[s] > consts->atol) {
 				// Compute metrics.
-				ComputeMetrics(metvals, sim->nmetrics, sim->metricsToCompute, sim->effprocess[s], sim->chname, consts);
-				// if (s < 2) {
-				// 	printf("s = %d\n", s);
-				// 	PrintDoubleArray1D(metvals, "metric values for s", sim->nmetrics);
-				// }
+				ComputeMetrics(metvals, sim->nmetrics, sim->metricsToCompute, (sim->effprocess)[s], sim->chname, consts);
+				// printf("s = %d\n", s);
+				// PrintDoubleArray1D(metvals, "metric values for s", sim->nmetrics);
 				for (m = 0; m < sim->nmetrics; m++)
 					avg[m] += metvals[m] * (sim->syndprobs)[s];
 				// Compute average channel.
@@ -119,7 +117,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 	}
 	else{
 		// printf("(sim->statsperlevel)[%d] = %ld.\n", level + 1, (sim->statsperlevel)[level + 1]);
-		PrintDoubleArray1D(sim->metricValues[level + 1], "Metrics", sim->nmetrics);
+		// PrintDoubleArray1D((sim->metricValues)[level + 1], "Metrics", sim->nmetrics);
 		// After all the simulations are done, the average metrics are to be computed by diving the metricValues by the total number of statistics done for that level.
 		for (m = 0; m < sim->nmetrics; m++) {
 			(sim->metricValues)[level + 1][m] /= ((double)((sim->statsperlevel)[level + 1]));
@@ -145,7 +143,7 @@ void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct
 	int i, j, q;
 
 	// printf("nlogs = %d, nqubits = %d\n", nlogs, nqubits);
-
+ 
 	if (sim->iscorr == 0){
 		// ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
 		ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, (sim->logical)[0], sim->chname, consts);
@@ -342,129 +340,108 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 		Coarsegrain(l - 1, sims, channels, chans[l], qcode[l]->nlogs);
 
 		for (b = 0; b < chans[l]; b++) {
-		// printf("batch = %d of %d\n", b, chans[l]);
-		// Load the input channels on to the simulation structures and perform QECC.
-		// Iterating in reverse order to accommodate partial ML decoder
-		for (s = (int)((sims[0]->decoders)[0] == 2); s>=0; s--) {
-			bias = 1;
-			history = 1;
-			isPauli[s] = 1;
-			for (q = 0; q < qcode[l]->N; q++) {
-				// printf("Simulation channel number %d, qubit %d:\n",s, q);
-				for (i = 0; i < qcode[l]->nlogs; i++){
-					for (j = 0; j < qcode[l]->nlogs; j++)
-						(sims[s]->virtchan)[q][i][j] = channels[l - 1][qcode[l]->N * b + q][s][i][j];
-					(sims[s]->pauli_probs)[q][i] = channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs + 1][i];
+			// printf("batch = %d of %d\n", b, chans[l]);
+			// Load the input channels on to the simulation structures and perform QECC.
+			// Iterating in reverse order to accommodate partial ML decoder
+			for (s = (int)((sims[0]->decoders)[0] == 2); s>=0; s--) {
+				bias = 1;
+				history = 1;
+				isPauli[s] = 1;
+				for (q = 0; q < qcode[l]->N; q++) {
+					// printf("Simulation channel number %d, qubit %d:\n",s, q);
+					for (i = 0; i < qcode[l]->nlogs; i++){
+						for (j = 0; j < qcode[l]->nlogs; j++)
+							(sims[s]->virtchan)[q][i][j] = channels[l - 1][qcode[l]->N * b + q][s][i][j];
+						(sims[s]->pauli_probs)[q][i] = channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs + 1][i];
+					}
+
+					if (isPauli[s] > 0)
+						isPauli[s] = isPauli[s] * IsDiagonal((sims[s]->virtchan)[q], qcode[l]->nlogs);
+
+					// PrintDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
+					// PrintDoubleArray1D((sims[s]->pauli_probs)[q], "coset probabilities of chosen channel", qcode[l]->nlogs);
+					bias *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0];
+					history *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1];
+					// printf("Syndrome probability: %g, bias = %g.\n", channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1], channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
+					// printf("======\n");
 				}
+				// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
+				// Pass minimum weight for main channel as decoding algo if partial ML decoding on
+				if (s == 0){
+					if ((sims[0]->decoders)[0] == 2)
+						SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
+					else if (((sims[0]->decoders)[0] == 3) && (l < (sims[0]->nlevels - 1))) // Soft decoding -- should not apply logical operations at intermediate levels.
+						SingleShotErrorCorrection(isPauli[s], 0, 4, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
+					else
+						SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
+				}
+				else if (s == 1)
+					SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
+				else;
 
-				if (isPauli[s] > 0)
-					isPauli[s] = isPauli[s] * IsDiagonal((sims[s]->virtchan)[q], qcode[l]->nlogs);
-
-				// PrintDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
-				// PrintDoubleArray1D((sims[s]->pauli_probs)[q], "coset probabilities of chosen channel", qcode[l]->nlogs);
-				bias *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0];
-				history *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1];
-				// printf("Syndrome probability: %g, bias = %g.\n", channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1], channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
-				// printf("======\n");
+				// If doing partial ML decoder for main channel, copy the lookup table for the next simulation.
+				if ((s == 1) && ((sims[0]->decoders)[0] == 2)){
+					for (int synd = 0; synd < qcode[l]->nstabs; synd++){
+						// printf("Copying lookup inside compute logical for synd %d, correction = %d \n",synd,(sims[1]->corrections)[synd]);
+						(qcode[l]->dclookup)[synd]= (sims[1]->corrections)[synd];
+					}
+				}
+				// Reference channel does ML while the original channel does lookup with the table generated by ML on the reference.
 			}
-			// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
-			// Pass minimum weight for main channel as decoding algo if partial ML decoding on
-			if ((s == 0) && (sims[0]->decoders)[0] == 2)
-				SingleShotErrorCorrection(isPauli[s], 0, 1, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
-			else if (s == 1)
-				SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
-			else
-				SingleShotErrorCorrection(isPauli[s], 0, (sims[s]->decoders)[0], (sims[s]->frames)[l], qcode[l], sims[s], consts, 0);
 
-			// If doing partial ML decoder for main channel,
-			// copy the lookup table for the next simulation.
-			if (s==1 && (sims[0]->decoders)[0] == 2){
-				for (int synd = 0; synd < qcode[l]->nstabs; synd++){
-					// printf("Copying lookup inside compute logical for synd %d, correction = %d \n",synd,(sims[1]->corrections)[synd]);
-					(qcode[l]->dclookup)[synd]= (sims[1]->corrections)[synd];
-				}
-			}
-			// Reference channel does ML while the original channel does lookup with the table generated by ML on the reference.
-		}
+			UpdateMetrics(l, bias, history, 0, qcode[l], sims[0], consts);
 
-		UpdateMetrics(l, bias, history, 0, qcode[l], sims[0], consts);
-
-		if (l < (sims[0]->nlevels - 1)) {
-			// Implementing partial ML decoder case
-			// Main channel draws syndrome and passes to auxillary
-			if ((sims[0]->decoders)[0] == 2){
-
-				if (sims[0]->importance == 1){
-					searchin[0] = 0;
-					searchin[1] = 1;
-					expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
-					ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
-					ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
-					randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
-				}
-				else
-					randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
-				// printf("Random syndrome = %d\n", randsynd);
-				for (i = 0; i < qcode[l]->nlogs; i++)
-					for (j = 0; j < qcode[l]->nlogs; j++)
-					  for (s = 0; s < 2; s++)
-							channels[l][b][s][i][j] = (sims[s]->effprocess)[randsynd][i][j];
-				if(sims[0]->importance == 1){
-					channels[l][b][0][qcode[l]->nlogs][0] = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
-					channels[l][b][0][qcode[l]->nlogs][1] = history *(sims[0]->syndprobs)[randsynd];
-					channels[l][b][0][qcode[l]->nlogs][2] = (sims[0]->syndprobs)[randsynd];
-
-					channels[l][b][1][qcode[l]->nlogs][0] = (sims[1]->syndprobs)[randsynd] / impdist[randsynd];
-					channels[l][b][1][qcode[l]->nlogs][1] = history *(sims[1]->syndprobs)[randsynd];
-					channels[l][b][1][qcode[l]->nlogs][2] = (sims[1]->syndprobs)[randsynd];
+			if (l < (sims[0]->nlevels - 1)) {
+				// Implementing partial ML decoder case
+				// Main channel draws syndrome and passes to auxillary
+				if ((sims[0]->decoders)[0] == 2){
+					if (sims[0]->importance == 1){
+						searchin[0] = 0;
+						searchin[1] = 1;
+						expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
+						ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
+						ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
+						randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
+						bias = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
+					}
+					else{
+						randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
+						bias = 1;
+					}
+					// printf("Random syndrome = %d\n", randsynd);
+					for (s = 0; s < 2; s++){
+						for (i = 0; i < qcode[l]->nlogs; i++)
+							for (j = 0; j < qcode[l]->nlogs; j++)
+								channels[l][b][s][i][j] = (sims[s]->effprocess)[randsynd][i][j];
+						channels[l][b][s][qcode[l]->nlogs][0] = bias;
+						channels[l][b][s][qcode[l]->nlogs][1] = history *(sims[s]->syndprobs)[randsynd];
+						channels[l][b][s][qcode[l]->nlogs][2] = (sims[s]->syndprobs)[randsynd];
+					}
 				}
 				else{
-					channels[l][b][0][qcode[l]->nlogs][0] = 1;
-					channels[l][b][0][qcode[l]->nlogs][1] = sims[0]->syndprobs[randsynd];
-					channels[l][b][0][qcode[l]->nlogs][2] = sims[0]->syndprobs[randsynd];
-					// 2. Drawing syndromes for the auxillary channel according to the
-					// noisy channel syndrome distribution.
-					channels[l][b][1][qcode[l]->nlogs][0] = 1;
-					channels[l][b][1][qcode[l]->nlogs][1] = sims[1]->syndprobs[randsynd];
-					channels[l][b][1][qcode[l]->nlogs][2] = sims[1]->syndprobs[randsynd];
+					if (sims[0]->importance == 0){
+						randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
+						bias = 1;
+					}
+					else if (sims[0]->importance == 1){
+						searchin[0] = 0;
+						searchin[1] = 1;
+						expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
+						ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
+						ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
+						randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
+						bias = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
+					}
+					else;
+					for (i = 0; i < qcode[l]->nlogs; i++){
+						for (j = 0; j < qcode[l]->nlogs; j++)
+							channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
+						channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
+					}
+					channels[l][b][0][qcode[l]->nlogs][0] = bias;
+					channels[l][b][0][qcode[l]->nlogs][1] = history * (sims[0]->syndprobs)[randsynd];
+					channels[l][b][0][qcode[l]->nlogs][2] = (sims[0]->syndprobs)[randsynd];
 				}
-			}
-			else if (sims[0]->importance == 0) {
-				randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
-				// printf("Random syndrome = %d\n", randsynd);
-				for (i = 0; i < qcode[l]->nlogs; i++){
-					for (j = 0; j < qcode[l]->nlogs; j++)
-						channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
-					channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
-				}
-				channels[l][b][0][qcode[l]->nlogs][0] = 1;
-				channels[l][b][0][qcode[l]->nlogs][1] = history * sims[0]->syndprobs[randsynd];
-				channels[l][b][0][qcode[l]->nlogs][2] = sims[0]->syndprobs[randsynd];
-			}
-			else if (sims[0]->importance == 1) {
-				// Compute a probability distribution where the probability of every
-				// syndrome is given by a power of the original syndrome distribution.
-				// The new distribution Q(s) is given by Eq. 6 of the article.
-				// Sample a syndrome according to Q(s) and add a bias P(s)/Q(s).
-				searchin[0] = 0;
-				searchin[1] = 1;
-				expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
-				ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
-				ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
-				randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
-				// printf("randsynd = %d\n", randsynd);
-				for (i = 0; i < qcode[l]->nlogs; i++){
-					for (j = 0; j < qcode[l]->nlogs; j++)
-						channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
-					channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
-				}
-				// printf("Populated channels.\n");
-				channels[l][b][0][qcode[l]->nlogs][0] = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
-				channels[l][b][0][qcode[l]->nlogs][1] = history * (sims[0]->syndprobs)[randsynd];
-				channels[l][b][0][qcode[l]->nlogs][2] = (sims[0]->syndprobs)[randsynd];
-			}
-			else
-				continue;
 			}
 		}
 		// Free memory for inputchannels
@@ -512,20 +489,24 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	ComputeLevelZeroMetrics(sims[0], qcode[0]->N, qcode[0]->nlogs, consts);
 	// Compute level-1 effective channels and syndromes.
 	// PrintIntArray1D((sims[0]->decoders), "Performance: Decoders", sims[0]->nlevels);
-	int s, decoder_to_use, copy_lookup;
+	int s, decoder_to_use;
+	int copy_lookup = 0; // whether to copy the lookup table at the end of Computing level one channels
 	// Iterating reverse order to accommodate partial ML decoder
-	for ( s = (int)((sims[0]->decoders)[0] == 2);s >= 0; s--)
+	for (s = (int)((sims[0]->decoders)[0] == 2); s >= 0; s--)
 	{
-		copy_lookup=0; // whether to copy the lookup table at the end of Computing level one channels
-		if(s==0 && (sims[0]->decoders)[0] == 2)
-			decoder_to_use = 1;
-		else if(s==1)
-		{
-			copy_lookup = 1;
-		  decoder_to_use = 0;
+		if (s == 0){
+			if ((sims[0]->decoders)[0] == 2)
+				decoder_to_use = 1;
+			else if (((sims[0]->decoders)[0] == 3) && (sims[0]->nlevels > 1)) // Soft decoding -- should not apply logical operations at intermediate levels.
+				decoder_to_use = 4;
+			else
+				decoder_to_use = (sims[s]->decoders)[0];
 		}
-		else
-			decoder_to_use = (sims[s]->decoders)[0];
+		else if (s == 1){
+			copy_lookup = 1;
+			decoder_to_use = 0;
+		}
+		else;
 		// printf("Computing level one channels in performance for channel %d\n", s);
 		ComputeLevelOneChannels(sims[s], qcode[0], consts, decoder_to_use, copy_lookup);
 	}
@@ -533,8 +514,8 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	// PrintDoubleArray2D((sims[0]->logical)[1], "Logical channel", qcode[0]->nlogs, qcode[0]->nlogs);
 
 	int c, i, j, m, randsynd;
+	double bias, truedist, impdist;
 	long t;
-	// int fixedsynds[7] = {0, 2, 4, 6, 9, 17, 53}; // Only for debugging
 	if (sims[0]->nlevels > 1) {
 		for (t = 0; t < sims[0]->nstats; t++) {
 			// Fill the lowest level of the channels array with "nchans" samples of level-1 channels.
@@ -566,38 +547,28 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 					channels[0][c][1][qcode[0]->nlogs][1] = (sims[1]->levelOneSynds)[randsynd];
 					channels[0][c][1][qcode[0]->nlogs][2] = (sims[1]->levelOneSynds)[randsynd];
 				}
-				else if (sims[0]->importance == 0) {
-					// Direct sampling
-					randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs); // Uncomment for runs
-					// randsynd = fixedsynds[c]; // DEBUGGING
-					// printf("Random syndrome = %d, with probability: %g.\n", randsynd,
-					// (sims[0]->levelOneSynds)[randsynd]);
-					// printf("randsynd = %d\n", randsynd);
+				else{
+					if (sims[0]->importance == 0){
+						randsynd = SampleCumulative(sims[0]->levelOneCumul, qcode[0]->nstabs);
+						bias = 1;
+						truedist = (sims[0]->levelOneSynds)[randsynd];
+						impdist = (sims[0]->levelOneSynds)[randsynd];
+					}
+					else{
+						randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
+						bias = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
+						truedist = (sims[0]->levelOneSynds)[randsynd];
+						impdist = (sims[0]->levelOneImpDist)[randsynd];
+					}
 					for (i = 0; i < qcode[0]->nlogs; i++){
 						for (j = 0; j < qcode[0]->nlogs; j++)
 							channels[0][c][0][i][j] = (sims[0]->levelOneChannels)[randsynd][i][j];
 						channels[0][c][0][1 + qcode[0]->nlogs][i] = (sims[0]->levelOneCosets)[randsynd][i];
 					}
-					channels[0][c][0][qcode[0]->nlogs][0] = 1.0;
-					channels[0][c][0][qcode[0]->nlogs][1] = (sims[0]->levelOneSynds)[randsynd];
-					channels[0][c][0][qcode[0]->nlogs][2] = (sims[0]->levelOneSynds)[randsynd];
+					channels[0][c][0][qcode[0]->nlogs][0] = bias;
+					channels[0][c][0][qcode[0]->nlogs][1] = truedist;
+					channels[0][c][0][qcode[0]->nlogs][2] = impdist;
 				}
-				else if (sims[0]->importance == 1) {
-					// Draw a syndrome from the importance distribution specified by the
-					// power-law scaling.
-					randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
-					// printf("randsynd = %d\n", randsynd);
-					for (i = 0; i < qcode[0]->nlogs; i++){
-						for (j = 0; j < qcode[0]->nlogs; j++)
-							channels[0][c][0][i][j] = (sims[0]->levelOneChannels)[randsynd][i][j];
-						channels[0][c][0][1 + qcode[0]->nlogs][i] = (sims[0]->levelOneCosets)[randsynd][i];
-					}
-					channels[0][c][0][qcode[0]->nlogs][0] = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
-					channels[0][c][0][qcode[0]->nlogs][1] = (sims[0]->levelOneSynds)[randsynd];
-					channels[0][c][0][qcode[0]->nlogs][2] = (sims[0]->levelOneSynds)[randsynd];
-				}
-				else
-					continue;
 			}
 
 			// Compute average logical channels and average logical error rates.

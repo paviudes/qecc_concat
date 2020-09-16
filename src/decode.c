@@ -51,12 +51,23 @@ void ComputeCosetProbsLevelOne(double *pauli_probs, int nlogs, int nstabs, doubl
 	// printf("Sum of level one coset probabilities for all syndromes = %g.\n", cosetprobs_sum);
 }
 
+/*
 int ArgMax(double *arr, int size){
 	// Compute the coset with maximum probability, for each syndrome.
 	double prec = pow(10,12);
 	int i, amax = 0;
 	for (i = 1; i < size; i ++)
 		if ( floorf(arr[i] * prec) / prec > floorf(arr[amax] * prec) / prec)
+			amax = i;
+	return amax;
+}
+*/
+
+int ArgMax(double *arr, int size){
+	// Compute the coset with maximum probability, for each syndrome.
+	int i, amax = 0;
+	for (i = 1; i < size; i ++)
+		if (arr[i] > arr[amax])
 			amax = i;
 	return amax;
 }

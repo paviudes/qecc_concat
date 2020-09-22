@@ -24,8 +24,8 @@ ifneq ($(MODE), DEBUG)
 	TARGET = bmark.so
 	LDFLAGS = -shared
 endif
-ifeq ($(strip $(shell command -v icc)),)
-	CC = gcc
+ifeq ($(strip $(shell icc --version)),)
+	CC = icc
 	OPTS = -O3
 endif
 

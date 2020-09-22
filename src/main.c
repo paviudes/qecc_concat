@@ -341,7 +341,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 2;
+			int nlevels = 1;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 3;
 			// ===
 
 			// ===
@@ -423,7 +423,7 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 3;
+				decoders[i] = 1;
 			PrintIntArray1D(decoders, "Decoders", nlevels);
 			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10000;
+			stats[0] = 1;
 			// ===
 
 			// ===
@@ -459,7 +459,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 1;
+			int importance = 0;
 			// ===
 
 			// ===

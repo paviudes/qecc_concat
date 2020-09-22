@@ -12,6 +12,12 @@ extern void PrintComplexArray2D(double complex **array, char *name, int nrows, i
 // Print a double 2D array.
 extern void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols);
 
+// Print a column of a double 2D array.
+extern void PrintDoubleColumn(double **array, char *name, int nrows, int col);
+
+// Print a row of a double 2D array.
+extern void PrintDoubleRow(double **array, char *name, int ncols, int row);
+
 // Print a double 1D array.
 extern void PrintDoubleArray1D(double *array, char *name, int nrows);
 

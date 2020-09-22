@@ -201,7 +201,7 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
 		(sim->cumulative)[s] = (sim->cumulative)[s - 1] + (sim->syndprobs)[s];
-	// PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+	PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
 	// PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
 }
 
@@ -448,7 +448,9 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 		for (l1 = 0; l1 < nlogs; l1 ++)
 			for (s1 = 0; s1 < nstabs; s1 ++)
 				(sim->process)[l1][l1][s1][s1] = process[l1 * nstabs + s1];
-	// printf("Full process matrix set for isPauli = %d.\n", isPauli);
+	printf("Full process matrix set for isPauli = %d.\n", isPauli);
+	PrintDoubleColumn((sim->process)[0][0], "process[0,0]", qecc->nstabs, 0);
+	PrintDoubleRow((sim->process)[0][0], "process[0,0]", qecc->nstabs, 0);
 }
 
 void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed)

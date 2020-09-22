@@ -28,6 +28,29 @@ void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncol
 	printf("-----\n");
 }
 
+void PrintDoubleColumn(double **array, char *name, int nrows, int col){
+	// Print a column of a double 2D array.
+	int r;
+	printf("-----\n");
+	printf("Column %d of the array: %s\n", col, name);
+	for (r = 0; r < nrows; r ++){
+		printf("    %.12f", (array[r][col]));
+	}
+	printf("\n");
+	printf("-----\n");
+}
+
+void PrintDoubleRow(double **array, char *name, int ncols, int row){
+	// Print a row of a double 2D array.
+	int c;
+	printf("-----\n");
+	printf("Row %d of the array: %s\n", row, name);
+	for (c = 0; c < ncols; c ++){
+		printf("    %.12f", (array[row][c]));
+	}
+	printf("\n");
+	printf("-----\n");
+}
 
 void PrintDoubleArrayDiag(double **array, char *name, int nrows){
 	// Print the diagonal of a double 2D array.

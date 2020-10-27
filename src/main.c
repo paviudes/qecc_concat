@@ -385,7 +385,7 @@ int main(int argc, char **argv)
 
 			// ===
 			char *chname = malloc(100 * sizeof(char));
-			sprintf(chname, "dp");
+			sprintf(chname, "npcorr");
 			// ===
 
 			// ===
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.00425652874761;
+			double infidelity = 0.00951405382779;
 			//
 
 			// Calling the Benchmark function

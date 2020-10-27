@@ -201,8 +201,8 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
 		(sim->cumulative)[s] = (sim->cumulative)[s - 1] + (sim->syndprobs)[s];
-	// PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
-	// PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+	PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+	PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
 }
 
 

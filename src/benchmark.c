@@ -162,8 +162,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	CountIndepLogicalChannels(chans, nphys, nlevels);
 	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
 
-	double *mpinfo_file, *physical_file;
-	double diff;
+	// double *mpinfo_file, *physical_file;
+	// double diff;
 
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
 	int m, j, c, chan_count = 0;
@@ -282,34 +282,33 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		if ((sims[s]->decoders)[0] == 3)
 			for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
 				(sims[s]->mpinfo)[i] = mpinfo[i];
-		mpinfo_file = malloc((int)pow(4, qcode[0]->N) * sizeof(double));
-		LoadDoubleArray1D(mpinfo_file, "./../input/debug_testing/mpinfo.txt", (int)pow(4, qcode[0]->N));
-		diff = 0;
-		for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
-			diff += fabs(mpinfo[i] - mpinfo_file[i]);
-		printf("Disparity in mpinfo = %g.\n", diff);
-		free(mpinfo_file);
-
-		physical_file = malloc(nparams * sizeof(double));
-		LoadDoubleArray1D(physical_file, "./../input/debug_testing/physical.txt", nparams);
-		diff = 0;
-		for (i = 0; i < nparams; i ++)
-			diff += fabs(physical[i] - physical_file[i]);
-		printf("Disparity in physical = %g.\n", diff);
-		free(physical_file);
+		// mpinfo_file = malloc((int)pow(4, qcode[0]->N) * sizeof(double));
+		// LoadDoubleArray1D(mpinfo_file, "./../input/debug_testing/mpinfo.txt", (int)pow(4, qcode[0]->N));
+		// diff = 0;
+		// for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
+		// 	diff += fabs(mpinfo[i] - mpinfo_file[i]);
+		// printf("Disparity in mpinfo = %g.\n", diff);
+		// free(mpinfo_file);
+		// physical_file = malloc(nparams * sizeof(double));
+		// LoadDoubleArray1D(physical_file, "./../input/debug_testing/physical.txt", nparams);
+		// diff = 0;
+		// for (i = 0; i < nparams; i ++)
+		// 	diff += fabs(physical[i] - physical_file[i]);
+		// // printf("Disparity in physical = %g.\n", diff);
+		// free(physical_file);
 	}
 
 
-	printf("**************************************\n");
-	printf("INPUTS:\n");
-	printf("iscorr = %d\n", iscorr);
-	printf("nparams = %d\n", nparams);
+	// printf("**************************************\n");
+	// printf("INPUTS:\n");
+	// printf("iscorr = %d\n", iscorr);
+	// printf("nparams = %d\n", nparams);
 	// PrintDoubleArray1D(physical, "Physical channel", nparams);
-	PrintIntArray1D(decoders, "Decoders", nlevels);
+	// PrintIntArray1D(decoders, "Decoders", nlevels);
 	// PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
-	printf("importance = %d\n", importance);
-	printf("infidelity = %.14f\n", infidelity);
-	printf("**************************************\n");
+	// printf("importance = %d\n", importance);
+	// printf("infidelity = %.14f\n", infidelity);
+	// printf("**************************************\n");
 
 	// printf("Going to start Performance.\n");
 

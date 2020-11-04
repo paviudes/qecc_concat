@@ -86,6 +86,14 @@ int BitParity(int num){
 	return parity;
 }
 
+double Divide(double num, double den){
+	// Divide small numbers.
+	double mag_num = 12 + ceil(-log10(fabs(num)));
+	double mag_den = 12 + ceil(-log10(fabs(den)));
+	// printf("mag_num = %g, mag_den = %g\n", mag_num, mag_den);
+	return round(num * pow(10, mag_num))/round(den * pow(10, mag_den)) * pow(10, mag_den - mag_num);
+}
+
 int BinaryDot(int a, int b){
 	// Compute dot product modulo 2, between two integer's binary representations.
 	// https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2

@@ -32,7 +32,7 @@ int IsPositive(double complex **choi){
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	Diagonalize(choi, 4, eigvals, 0, NULL);
-	PrintComplexArray1D(eigvals, "eigenvalues", 4);
+	// PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	const double atol = 10E-8;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
@@ -50,7 +50,7 @@ int IsHermitian(double complex **choi){
 	// Check is a complex 4x4 matrix is Hermitian.
 	// For a Hermitian matrix A, we have: A[i][j] = (A[j][i])^*.
 	int i, j;
-	const double atol = 10E-8;
+	const double atol = 10E-12;
 	for (i = 0; i < 4; i ++){
 		for (j = 0; j < 4; j ++){
 			if (cabs(choi[i][j] - conj(choi[j][i])) > atol){
@@ -68,7 +68,7 @@ int IsTraceOne(double complex **choi){
 	double complex trace = 0 + 0 * I;
 	for (i = 0; i < 4; i ++)
 		trace = trace + choi[i][i];
-	printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
+	// printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
 	if (fabsl(cimagl(trace)) > atol)
 		return 0;
 	if (fabsl(creall(trace)  -  1.0) > atol)

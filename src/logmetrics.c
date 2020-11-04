@@ -15,6 +15,7 @@ void ProcessToChoi(double **process, double complex **choi, int nlogs, double co
 	// and E is the error channel. E(P) = 1/K * sum_Q G_(P,Q) Q where G(P, Q) =
 	// Tr(E(P).Q) is the process matrix and Q runs over Pauli operators. hence we
 	// have: J = 1/K sum_(P, Q) G_(P,Q) Q o P^T
+	// printf("Function: ProcessToChoi.\n");
 	int v, i, j, p, q;
 	for (v = 0; v < nlogs * nlogs; v++)
 		choi[v / nlogs][v % nlogs] = 0;

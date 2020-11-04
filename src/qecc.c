@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "rand.h"
 #include "checks.h" // only for testing purposes.
+#include "logmetrics.h" // only for testing purposes.
 #include "constants.h"
 #include "linalg.h"
 #include "memory.h"
@@ -186,7 +187,7 @@ void ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *s
 }
 
 
-void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
+void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int isPauli, struct constants_t *consts)
 {
 	// Compute the probability of all the syndromes in the qecc code, for the
 	// given error channel and input state. Sample a syndrome from the resulting
@@ -197,12 +198,22 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 	// Initialize syndrome probabilities
 	for (s = 0; s < qecc->nstabs; s++)
 		ComputeSyndromeProbability(s, qecc, sim, isPauli);
+	for (s = 0; s < qecc->nstabs; s++)
+		if (fabs((sim->syndprobs)[s]) < consts->atol)
+			(sim->syndprobs)[s] = 0;
 	// Construct the cumulative distribution
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
 		(sim->cumulative)[s] = (sim->cumulative)[s - 1] + (sim->syndprobs)[s];
-	// PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
-	// PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+	// =====================
+	// Exit if any syndrome has probability less than 0.
+	for (s = 0; s < qecc->nstabs; s++){
+		if ((sim->syndprobs)[s] < 0){
+			PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+			PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+			exit(0);
+		}
+	}
 }
 
 
@@ -338,7 +349,7 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
 				// No correction needs to be applied.
 			}
-			else;
+			else{};
 		}
 		// printf("s = %d\n", s);
 		// printf("Sum of coset probabilities: %g, P(s) = %g, difference: %g.\n", SumDouble(sim->cosetprobs[s], qecc->nlogs), sim->syndprobs[s], sim->syndprobs[s] - SumDouble(sim->cosetprobs[s], qecc->nlogs));
@@ -360,52 +371,80 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// printf("Function: EffChanSynd(%d,...)\n", synd);
 	int l, lp, s, sp;
 	int f1, f2, f3;
+	// const double ROUND_OFF = 1E12;
+	// ==========
+	// double complex **choi = NULL;
+	// choi = malloc(sizeof(double complex *) * qecc->nlogs);
+	// int r, c;
+	// for (r = 0; r < qecc->nlogs; r ++){
+	// 	choi[r] = malloc(sizeof(double complex) * qecc->nlogs);
+	// 	for (c = 0; c < qecc->nlogs; c ++){
+	// 		choi[r][c] = 0 + 0 * I;
+	// 	}
+	// }
+	// ==========
+
 	// Initialization
 	for (l = 0; l < qecc->nlogs; l ++){
 		for (lp = 0; lp < qecc->nlogs; lp ++){
 			(sim->effprocess)[synd][l][lp] = 0;
 		}
 	}
-	// printf("Initialization done.\n");
-	if (isPauli == 0){
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (lp = 0; lp < qecc->nlogs; lp ++){
-				for (s = 0; s < qecc->nstabs; s ++){
-					for (sp = 0; sp < qecc->nstabs; sp ++){
-						f1 = (qecc->projector)[synd][sp];
-						f2 = (consts->algebra)[1][(sim->corrections)[synd]][lp];
-						f3 = (consts->algebra)[0][(sim->corrections)[synd]][lp];
-						(sim->effprocess)[synd][l][lp] += f1 * f2 * (sim->process)[l][f3][s][sp];
+	if (fabs((sim->syndprobs)[synd]) > consts->atol){
+		// printf("Initialization done.\n");
+		if (isPauli == 0){
+			for (l = 0; l < qecc->nlogs; l ++){
+				for (lp = 0; lp < qecc->nlogs; lp ++){
+					for (s = 0; s < qecc->nstabs; s ++){
+						for (sp = 0; sp < qecc->nstabs; sp ++){
+							f1 = (qecc->projector)[synd][sp];
+							f2 = (consts->algebra)[1][(sim->corrections)[synd]][lp];
+							f3 = (consts->algebra)[0][(sim->corrections)[synd]][lp];
+							(sim->effprocess)[synd][l][lp] += f1 * f2 * (sim->process)[l][f3][s][sp];
+						}
 					}
 				}
 			}
 		}
-	}
-	else{
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (s = 0; s < qecc->nstabs; s ++){
-				// printf("l = %d, s = %d\n",l,s);
-				f1 = (qecc->projector)[synd][s];
-				f2 = (consts->algebra)[1][(sim->corrections)[synd]][l];
-				(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
+		else{
+			for (l = 0; l < qecc->nlogs; l ++){
+				for (s = 0; s < qecc->nstabs; s ++){
+					// printf("l = %d, s = %d\n",l,s);
+					f1 = (qecc->projector)[synd][s];
+					f2 = (consts->algebra)[1][(sim->corrections)[synd]][l];
+					(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
+				}
 			}
 		}
-	}
-	// printf("Population done.\n");
-	// Normalization
-	for (l = 0; l < qecc->nlogs; l ++){
-		for (lp = 0; lp < qecc->nlogs; lp ++){
-			(sim->effprocess)[synd][l][lp] /= (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+		// printf("Population done.\n");
+		// Normalization
+		for (l = 0; l < qecc->nlogs; l ++){
+			for (lp = 0; lp < qecc->nlogs; lp ++){
+				// (sim->effprocess)[synd][l][lp] /= (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				// (sim->effprocess)[synd][l][lp] = round(ROUND_OFF * (sim->effprocess)[synd][l][lp])/round(ROUND_OFF * (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+				// if ((l == 0) && (lp == 0))
+				// 	printf("Exact G[0,0] = %.15Lf\n", ((long double)(sim->effprocess)[synd][l][lp]) / (long double)(pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+				// (sim->effprocess)[synd][l][lp] = (double)(((long double)(sim->effprocess)[synd][l][lp]) / (long double)(pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+			}
 		}
+		// Consistency checks.
+		// 1. Check G[0,0] = 1
+		// printf("s = %d, P(s) = %.15f\nG[0][0] = %.15f\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
+		// 2. First column of G should be all zeros
+		// for (l = 1; l < qecc->nlogs; l ++){
+		// 	printf("G[%d][0] = %.15f\n", l, (sim->effprocess)[synd][l][0]);
+		// }
+		// 3. Check if the channel is valid
+		// ProcessToChoi((sim->effprocess)[synd], choi, qecc->nlogs, consts->pauli);
+		// if (IsState(choi) == 0)
+		// 	printf("Invalid channel\n");
+		// printf("***********\n");
 	}
-	// Consistency checks.
-	// 1. Check G[0,0] = 1
-	// printf("s = %d, P(s) = %.10f\nG[0][0] = %.18f\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
-	// // 2. First column of G should be all zeros
-	// for (l = 1; l < qecc->nlogs; l ++){
-	// 	printf("G[%d][0] = %.18f\n", l, (sim->effprocess)[synd][l][0]);
-	// }
-	// printf("-------\n");
+	// for (r = 0; r < qecc->nlogs; r ++)
+	// 	free(choi[r]);
+	// free(choi);
+	// printf("Q = %.15f\n", Divide(-1 * (double) 0.000004250577607697, (double) 0.000004250577608019));
 }
 
 
@@ -422,8 +461,11 @@ void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct c
 	*/
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
-		if ((sim->syndprobs)[s] > consts->atol)
-			EffChanSynd(s, qecc, sim, consts, isPauli);
+		EffChanSynd(s, qecc, sim, consts, isPauli);
+	// for (s = 0; s < qecc->nstabs; s++){
+	// 	printf("s = %d\n", s);
+	// 	PrintDoubleArray2D(sim->effprocess[s], "process", qecc->nlogs, qecc->nlogs);
+	// }
 }
 
 
@@ -460,7 +502,7 @@ void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, st
 	if ((iscorr == 0) || (iscorr == 2))
 		GetFullProcessMatrix(qecc, sim, isPauli);
 	// Compute the probabilities of all the syndromes.
-	ComputeSyndromeDistribution(qecc, sim, isPauli);
+	ComputeSyndromeDistribution(qecc, sim, isPauli, consts);
 	// Maximum Likelihood Decoding (MLD) -- For every syndrome, compute the
 	// probabilities of the logical classes and pick the one that is most likely.
 	// printf("Maximum likelihood decoding\n");

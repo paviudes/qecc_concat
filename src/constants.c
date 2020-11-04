@@ -5,7 +5,7 @@
 
 void InitConstants(struct constants_t *consts){
 	// Initialize and fill values into the constants used in the simulation.
-	consts->atol = 1E-15;
+	consts->atol = 1E-10;
 	// Assign Pauli matrices.
 	consts->pauli = malloc(sizeof(double complex**) * 4);
 	int p, r;

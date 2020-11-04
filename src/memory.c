@@ -71,11 +71,11 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 			(simul->virtchan)[q][i] = malloc(nlogs * sizeof(double));
 	}
 	// printf("_/ virtchan\n");
-	simul->rcpauli = malloc((nstabs) * sizeof(int));
-	int pure = RandomRangeInt(0, nstabs);
-	// printf("Applying RC by compiling with the pure error %d.\n", pure);
-	for (i = 0; i < nstabs; i ++)
-	 	(simul->rcpauli)[i] = BinaryDot(i, pure);
+	// simul->rcpauli = malloc((nstabs) * sizeof(int));
+	// int pure = RandomRangeInt(0, nstabs);
+	// // printf("Applying RC by compiling with the pure error %d.\n", pure);
+	// for (i = 0; i < nstabs; i ++)
+	//  	(simul->rcpauli)[i] = BinaryDot(i, pure);
 	// Syndrome sampling
 	(simul->syndprobs) = malloc(nstabs * sizeof(double));
 	(simul->cumulative) = malloc(nstabs * sizeof(double));
@@ -266,7 +266,7 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 
 	// Specify the type of decoder being used: 0 for maximum likelihood and 1 for minimum weight.
 	simul->decoders = malloc(simul->nlevels * sizeof(int));
-	for (i = 0; i < nlogs; i++)
+	for (i = 0; i < simul->nlevels; i++)
 		(simul->decoders)[i] = 0;
 }
 
@@ -289,7 +289,7 @@ void FreeSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	}
 	free(simul->virtchan);
 	free(simul->pauli_probs);
-	free(simul->rcpauli);
+	// free(simul->rcpauli);
 	// printf("_/ virtchan\n");
 	// Quantum error correction.
 	int j, s;
@@ -427,6 +427,7 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 	int c, j, s, l, nchans, nlogs;
 	int *chans = malloc(sizeof(int) * (nlevels));
 	nchans = CountIndepLogicalChannels(chans, nphys, nlevels);
+	// PrintIntArray1D(chans, "Channels", nlevels);
 	// printf("Creating %d channels.\n", nchans);
 	if (tofree == 0)
 	{

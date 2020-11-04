@@ -101,6 +101,6 @@ void RotatePauli(double *arr, int size, int pauli){
 		arr[2] = old[1];
 		arr[3] = old[0];
 	}
-	else;
+	else{};
 	free(old);
 }

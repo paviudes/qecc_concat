@@ -96,7 +96,7 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++)
-		printf("    %.16f", (array[r]));
+		printf("    %.15f", (array[r]));
 	printf("\n");
 	printf("-----\n");
 }

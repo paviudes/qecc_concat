@@ -13,6 +13,9 @@ extern double Min(double a, double b);
 // Compute the sum of numbers in an array.
 extern int SumInt(int *arr, int size);
 
+// Divide small numbers.
+extern double Divide(double num, double den);
+
 // Compute the sum of numbers in an array.
 extern double SumDouble(double *arr, int size);
 

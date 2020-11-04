@@ -21,6 +21,7 @@ void ConstructImportanceDistribution(double* truedist, double *impdist, int nele
 	double norm = 0.0;
 	for (s = 0; s < nelems; s ++)
 		norm = norm + impdist[s];
+	// printf("Normalization = %g\n", norm);
 	for (s = 0; s < nelems; s ++)
 		impdist[s] = impdist[s]/norm;
 	// PrintDoubleArray1D(impdist, "impdist", nelems);
@@ -44,7 +45,7 @@ int SampleCumulative(double *cumulative, int size){
 	for (i = 0; i < size; i ++)
 		if (urand < cumulative[i])
 			return i;
-	return i;
+	return (size - 1);
 }
 
 int WhereInWindow(double number, double window[2]){

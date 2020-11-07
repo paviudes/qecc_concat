@@ -2,6 +2,16 @@
 #define SAMPLING_H
 
 /*
+	Setting outlier syndrome probabilities.
+	Upper and lower limits for the probability of the outlier syndromes.
+	We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2
+	For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
+	Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
+	We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.		
+*/
+extern void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs);
+
+/*
 	Given an exponent k and a probability distribution P(s), construct a new probability distribution Q(s) where
 	Q(s) = P(s)^k/(sum_s P(s)^k), i.e, a normalized power-law scaled version of P(s).
 	If k = 0 (i.e, less than 10E-5) then simply set the probability distribution to be flat.

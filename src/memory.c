@@ -197,6 +197,8 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	}
 
 	// Syndrome sampling.
+	simul->outlierprobs = malloc(2 * sizeof(double));
+
 	simul->levelOneSynds = malloc(nstabs * sizeof(double));
 	simul->levelOneImpDist = malloc(nstabs * sizeof(double));
 	simul->levelOneCumul = malloc(nstabs * sizeof(double));
@@ -355,6 +357,7 @@ void FreeSimParams(struct simul_t *simul, int nphys, int nenc)
 	free(simul->logical);
 	// printf("Freed logical.\n");
 	// Syndrome sampling.
+	free(simul->outlierprobs);
 	free(simul->statsperlevel);
 	free(simul->levelOneSynds);
 	free(simul->levelOneCumul);

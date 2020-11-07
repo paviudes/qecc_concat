@@ -274,6 +274,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	if (sim->importance == 1) {
 		searchin[0] = 0;
 		searchin[1] = 1;
+		SetOutlierProbs(sim->infidelity, qcode->D, 1, sim->outlierprobs);
 		double expo = PowerSearch(sim->syndprobs, qcode->nstabs, sim->outlierprobs, searchin);
 		ConstructImportanceDistribution(sim->syndprobs, sim->levelOneImpDist, qcode->nstabs, expo);
 		ConstructCumulative(sim->levelOneImpDist, sim->levelOneImpCumul, qcode->nstabs);
@@ -400,6 +401,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					if (sims[0]->importance == 1){
 						searchin[0] = 0;
 						searchin[1] = 1;
+						SetOutlierProbs(sims[0]->infidelity, qcode[0]->D, l+1, sims[0]->outlierprobs);
 						expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
 						ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
 						ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
@@ -428,6 +430,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					else if (sims[0]->importance == 1){
 						searchin[0] = 0;
 						searchin[1] = 1;
+						SetOutlierProbs(sims[0]->infidelity, qcode[0]->D, l+1, sims[0]->outlierprobs);
 						expo = PowerSearch(sims[0]->syndprobs, qcode[l]->nstabs, sims[0]->outlierprobs, searchin);
 						// printf("exponent = %g.\n", expo);
 						ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);

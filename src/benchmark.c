@@ -258,17 +258,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(sims[s]->runstats)[i] = stats[i];
 
-		// Setting outlier syndrome probabilities.
-		// Upper and lower limits for the probability of the outlier syndromes.
-		// We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2
-		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
-		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
-		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
 		// printf("infidelity = %g.\n", infidelity);
 		if (infidelity == -1)
-			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
-		(sims[s]->outlierprobs)[1] = Max(0.05, infidelity);
-		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
+			sims[s]->infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+		else
+			sims[s]->infidelity = infidelity;
 
 		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 

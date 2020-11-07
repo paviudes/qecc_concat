@@ -36,7 +36,8 @@ struct simul_t
   int importance;
   double *restrict levelOneImpDist;
   double *restrict levelOneImpCumul;
-  double outlierprobs[2];
+  double infidelity;
+  double *restrict outlierprobs;
   double **restrict sampling;
   long *restrict statsperlevel;
   int nbins;

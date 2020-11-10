@@ -13,9 +13,10 @@ void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs
 	// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 	// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 	// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.		
-	double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
-	// double infidelity = phy_infid;
-	outlierprobs[1] = 0.2 * (1 - Min(3 * infidelity, 1 - 1E-5));
+	// double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
+	double infidelity = phy_infid;
+	outlierprobs[1] = 0.1 * infidelity; // We are assuming that infidelity = alpha, here.
+	// outlierprobs[1] = 0.2 * (1 - Min(3 * infidelity, 1 - 1E-5));
 	outlierprobs[0] = 0.80 * outlierprobs[1];
 }
 

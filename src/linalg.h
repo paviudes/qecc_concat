@@ -3,6 +3,11 @@
 
 #include <complex.h>
 
+/*
+	Compute the combinatorial factor: n choose k.
+	C(n, k) = [n * (n-1) * .... * (n-k+1)] / [k * (k-1) * .... * 1]
+*/
+extern long Comb(int n, int k);
 
 // Compute the maximum of two numbers.
 extern double Max(double a, double b);

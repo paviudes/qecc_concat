@@ -423,7 +423,7 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 3;
+				decoders[i] = 1;
 			PrintIntArray1D(decoders, "Decoders", nlevels);
 			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
 			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1000;
+			stats[0] = 3;
 			// ===
 
 			// ===
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.02049932363630;
+			double infidelity = 0.1;
 			//
 
 			// Calling the Benchmark function

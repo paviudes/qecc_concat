@@ -17,6 +17,20 @@
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
 
+long Comb(int n, int k){
+	// Compute the combinatorial factor: n choose k.
+	// C(n, k) = [n * (n-1) * .... * (n-k+1)] / [k * (k-1) * .... * 1]
+	if (k > n - k){
+		k = n - k;
+	}
+	double fact = 1;
+	int i;
+	for (i = 0; i < k; ++i){
+		fact *= ((double) (n - i))/((double) (k - i));
+	}
+	return (long) fact;
+}
+
 double Max(double a, double b){
 	// Compute the maximum of two numbers.
 	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/

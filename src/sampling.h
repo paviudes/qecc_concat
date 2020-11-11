@@ -2,6 +2,13 @@
 #define SAMPLING_H
 
 /*
+	Computing an exponent of the true distribution such that outlier events whose probability is of the order of the average infidelity, is increased to a threshold: \lambda..
+	1. Compute an upperbound to 1 - F, for the given level and physical infidelity.
+	2. The exponent is give by: k = log(\lambda)/log(1 - F).
+*/
+extern double SetExponent(double phy_infid, int dist, int nphys, int level);
+
+/*
 	Setting outlier syndrome probabilities.
 	Upper and lower limits for the probability of the outlier syndromes.
 	We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2

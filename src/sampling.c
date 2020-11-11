@@ -13,11 +13,36 @@ void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs
 	// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 	// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
 	// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.		
-	// double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
-	double infidelity = phy_infid;
-	outlierprobs[1] = 0.1 * infidelity; // We are assuming that infidelity = alpha, here.
+	double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
+	// double infidelity = phy_infid;
+	outlierprobs[1] = 0.99 * infidelity; // We are assuming that infidelity = alpha, here.
 	// outlierprobs[1] = 0.2 * (1 - Min(3 * infidelity, 1 - 1E-5));
 	outlierprobs[0] = 0.80 * outlierprobs[1];
+}
+
+double UpperBoundInfidelity(double p, int d, int n, int level){
+	// Upper bound the infidelity by simply taking 1 - probabability of correctable errors.
+	double sum_corr;
+	int i, l;
+	for (l = 0; l < level; ++l){
+		sum_corr = 0;
+		for(i = 0; i <= (d-1)/2; ++i)
+			sum_corr += (double) Comb(n, i) * pow(p, i) * pow(1 - p, n - i);
+		p = 1 - sum_corr;
+	}
+	return 1 - sum_corr;
+}
+
+double SetExponent(double phy_infid, int dist, int nphys, int level){
+	// Computing an exponent of the true distribution such that outlier events whose probability is of the order of the average infidelity, is increased to a threshold: \lambda..
+	// 1. Compute an upperbound to 1 - F, for the given level and physical infidelity.
+	// 2. The exponent is give by: k = log(\lambda)/log(1 - F).
+	double p = 1 - pow(1 - phy_infid, 1/(double) nphys);
+	const double threshold = 0.1;
+	double infidelity = UpperBoundInfidelity(p, dist, nphys, level);
+	double expo = log(threshold)/log(infidelity);
+	// printf("L = %d, 1 - F = %.8f, exponent = %.3f\n", level, infidelity, expo);
+	return expo;
 }
 
 void ConstructImportanceDistribution(double* truedist, double *impdist, int nelems, double expo){

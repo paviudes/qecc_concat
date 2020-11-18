@@ -32,7 +32,6 @@ int IsPositive(double complex **choi){
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	Diagonalize(choi, 4, eigvals, 0, NULL);
-	// PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	const double atol = 10E-8;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
@@ -40,6 +39,10 @@ int IsPositive(double complex **choi){
 			ispos = 0;
 		if (creal(eigvals[i]) < -1 * atol)
 			ispos = 0;
+	}
+	if (ispos == 0){
+		PrintComplexArray2D(choi, "Channel", 4, 4);
+		PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	}
 	// Free memory
 	free(eigvals);

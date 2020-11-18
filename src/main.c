@@ -341,7 +341,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 3;
+			int nlevels = 2;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 3;
+			stats[0] = 10;
 			// ===
 
 			// ===

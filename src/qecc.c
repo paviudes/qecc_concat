@@ -368,20 +368,20 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// The effective channel in the Pauli Liouville representation is given by:
 	// G_{L,L'} = \sum_S,S' G_{LS, L* L' L* S'}/P(s)
 	// where L* is the correction applied by the decoder.
-	// printf("Function: EffChanSynd(%d,...)\n", synd);
+	printf("Function: EffChanSynd(%d,...), P(%d) = %.8lf\n", synd, synd, 64*(sim->syndprobs)[synd]);
 	int l, lp, s, sp;
 	int f1, f2, f3;
 	// const double ROUND_OFF = 1E12;
 	// ==========
-	// double complex **choi = NULL;
-	// choi = malloc(sizeof(double complex *) * qecc->nlogs);
-	// int r, c;
-	// for (r = 0; r < qecc->nlogs; r ++){
-	// 	choi[r] = malloc(sizeof(double complex) * qecc->nlogs);
-	// 	for (c = 0; c < qecc->nlogs; c ++){
-	// 		choi[r][c] = 0 + 0 * I;
-	// 	}
-	// }
+	double complex **choi = NULL;
+	choi = malloc(sizeof(double complex *) * qecc->nlogs);
+	int r, c;
+	for (r = 0; r < qecc->nlogs; r ++){
+		choi[r] = malloc(sizeof(double complex) * qecc->nlogs);
+		for (c = 0; c < qecc->nlogs; c ++){
+			choi[r][c] = 0 + 0 * I;
+		}
+	}
 	// ==========
 
 	// Initialization
@@ -436,10 +436,10 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 		// 	printf("G[%d][0] = %.15f\n", l, (sim->effprocess)[synd][l][0]);
 		// }
 		// 3. Check if the channel is valid
-		// ProcessToChoi((sim->effprocess)[synd], choi, qecc->nlogs, consts->pauli);
-		// if (IsState(choi) == 0)
-		// 	printf("Invalid channel\n");
-		// printf("***********\n");
+		ProcessToChoi((sim->effprocess)[synd], choi, qecc->nlogs, consts->pauli);
+		if (IsState(choi) == 0)
+			printf("Invalid channel\n");
+		printf("***********\n");
 	}
 	// for (r = 0; r < qecc->nlogs; r ++)
 	// 	free(choi[r]);

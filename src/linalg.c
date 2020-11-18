@@ -102,8 +102,9 @@ int BitParity(int num){
 
 double Divide(double num, double den){
 	// Divide small numbers.
-	double mag_num = 12 + ceil(-log10(fabs(num)));
-	double mag_den = 12 + ceil(-log10(fabs(den)));
+	const int SHIFT = 15;
+	double mag_num = SHIFT + ceil(-log10(fabs(num)));
+	double mag_den = SHIFT + ceil(-log10(fabs(den)));
 	// printf("mag_num = %g, mag_den = %g\n", mag_num, mag_den);
 	return round(num * pow(10, mag_num))/round(den * pow(10, mag_den)) * pow(10, mag_den - mag_num);
 }

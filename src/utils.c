@@ -112,13 +112,20 @@ int BitParity(int num){
 }
 
 double Divide(double num, double den){
-	// Divide small numbers.
-	// const int SHIFT = 15;
-	// double mag_num = SHIFT + ceil(-log10(fabs(num)));
-	// double mag_den = SHIFT + ceil(-log10(fabs(den)));
-	// // printf("mag_num = %g, mag_den = %g\n", mag_num, mag_den);
-	// return round(num * pow(10, mag_num))/round(den * pow(10, mag_den)) * pow(10, mag_den - mag_num);
+	/*
+		Divide small numbers.
+		To avoid precision issues, we will perform this division in three steps.
+		1. If the numerator's first N digits are "0", return 0.
+		2. If the numerator and the denominator are alike up to first N digits, return 1.
+		3. Do the log division otherwise.
+	*/
+	const int digits = 13;
 	double sign = (double) (Sign(num) * Sign(den));
+	if (fabs(num) <= pow(10, -1 * (digits + 1)))
+		return 0;
+	else if (fabs(fabs(num) - fabs(den)) <= pow(10, -1 * digits))
+		return sign;
+	else{};
 	return (sign * pow(10, log10(fabs(num)) - log10(fabs(den))));
 }
 

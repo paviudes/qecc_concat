@@ -70,7 +70,7 @@ int IsHermitian(double complex **choi){
 int IsTraceOne(double complex **choi){
 	// Check if the trace of a complex 4x4 matrix is 1.
 	int i;
-	const double atol = 1E-8;
+	const double atol = 1E-12;
 	double complex trace = 0 + 0 * I;
 	for (i = 0; i < 4; i ++)
 		trace = trace + choi[i][i];

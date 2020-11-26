@@ -305,6 +305,22 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (strncmp(file, "utils", 4) == 0){
+		// Test the functions in the rand.c file.
+		printf("Testing functions to perform simple arethematic operations.\n");
+		if (strncmp(func, "Divide", 6) == 0){
+			double numerator, denominator, naive, ours, scale_num = 1E-14, scale_den = 1E-14;
+			int t, trials = 10;
+			for (t = 0; t < trials; t ++){
+				numerator = genrand_real3() * scale_num;
+				denominator = genrand_real3() * scale_den;
+				naive = numerator/denominator;
+				ours = Divide(numerator, denominator);
+				printf("%d). A = %.15f, B = %.15f\nNaive A/B = %.15f and our A/B = %.15f. Difference: %.15f.\n", t + 1, numerator, denominator, naive, ours, fabs(naive - ours));
+			}
+		}
+	}
+
 	if (strncmp(file, "rand", 4) == 0){
 		// Test the functions in the rand.c file.
 		printf("Testing functions to generate random patterns.\n");
@@ -342,7 +358,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 2;
+			int nlevels = 3;
 			
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -451,7 +467,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1000;
+			stats[0] = 100;
 			// ===
 
 			// ===
@@ -472,7 +488,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.1;
+			double infidelity = 0.03;
 			//
 
 			// Calling the Benchmark function

@@ -474,16 +474,17 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 		// printf("Population done.\n");
 		// Normalization
 		// ApplyNormalization(synd, qecc, sim);
+		// printf("Exact G[0, 0] = %.15f, P(s) * 2^(n-k) = %.15f\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
 		for (l = 0; l < qecc->nlogs; l ++){
 			for (lp = 0; lp < qecc->nlogs; lp ++){
 				// (sim->effprocess)[synd][l][lp] /= pow(2, qecc->N - qecc->K);
-				printf("Exact G[%d,%d] = %.15f, P(s) * 2^(n-k) = %.15f\n", l, lp, (sim->effprocess)[synd][l][lp], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-				(sim->effprocess)[synd][l][lp] = (sim->effprocess)[synd][l][lp] / (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-				// (sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				// printf("Exact G[%d,%d] = %.15f, P(s) * 2^(n-k) = %.15f\n", l, lp, (sim->effprocess)[synd][l][lp], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+				// (sim->effprocess)[synd][l][lp] = (sim->effprocess)[synd][l][lp] / (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 				// (sim->effprocess)[synd][l][lp] = round(ROUND_OFF * (sim->effprocess)[synd][l][lp])/round(ROUND_OFF * (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
 				// (sim->effprocess)[synd][l][lp] = (double)(((long double)(sim->effprocess)[synd][l][lp]) / (long double)(pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
 			}
-			printf("----\n");
+			// printf("----\n");
 		}
 		// Consistency checks.
 		// 1. Check G[0,0] = 1
@@ -493,6 +494,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 			// printf("G[%d][0] = %.15f\n", l, (sim->effprocess)[synd][l][0]);
 		// }
 		// 3. Check if the channel is valid
+		// printf("Function: EffChanSynd(%d,...), P(%d) = %.15f\n", synd, synd, (sim->syndprobs)[synd]);
 		if (IsChannel((sim->effprocess)[synd], consts) == 0){
 			printf("Function: EffChanSynd(%d,...), P(%d) = %.15f\n", synd, synd, (sim->syndprobs)[synd]);
 			printf("Invalid channel\n");

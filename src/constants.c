@@ -5,7 +5,7 @@
 
 void InitConstants(struct constants_t *consts){
 	// Initialize and fill values into the constants used in the simulation.
-	consts->atol = 1E-10;
+	consts->atol = 1E-8;
 	// Assign Pauli matrices.
 	consts->pauli = malloc(sizeof(double complex**) * 4);
 	int p, r;
@@ -98,27 +98,27 @@ void InitConstants(struct constants_t *consts){
 	(consts->algebra)[1][22][0] = 1; (consts->algebra)[1][22][1] = -1; (consts->algebra)[1][22][2] = 1; (consts->algebra)[1][22][3] = 1;
 	(consts->algebra)[1][23][0] = 1; (consts->algebra)[1][23][1] = -1; (consts->algebra)[1][23][2] = -1; (consts->algebra)[1][23][3] = -1;
 
-	
+
 	consts->choitochi = malloc(sizeof(double complex *) * 16);
 	for (p = 0; p < 16; p ++){
 		(consts->choitochi)[p] = malloc(sizeof(double complex) * 16);
 		for (r = 0; r < 16; r ++)
 			(consts->choitochi)[p][r] = 0;
 	}
-	(consts->choitochi)[1][1] = 0.25; (consts->choitochi)[1][4] = 0.25; (consts->choitochi)[1][11] = 0.25 * I; 
-	(consts->choitochi)[2][2] = 0.25; (consts->choitochi)[2][8] = 0.25; (consts->choitochi)[2][13] = 0.25 * I; 
-	(consts->choitochi)[3][3] = 0.25; (consts->choitochi)[3][6] = 0.25 * I; (consts->choitochi)[3][12] = 0.25; 
-	(consts->choitochi)[4][1] = 0.25; (consts->choitochi)[4][4] = 0.25; (consts->choitochi)[4][14] = 0.25 * I; 
-	(consts->choitochi)[5][0] = 0.25; (consts->choitochi)[5][5] = 0.25; 
-	(consts->choitochi)[6][6] = 0.25; (consts->choitochi)[6][9] = 0.25; (consts->choitochi)[6][12] = 0.25 * I; 
-	(consts->choitochi)[7][2] = 0.25 * I; (consts->choitochi)[7][7] = 0.25; (consts->choitochi)[7][13] = 0.25; 
-	(consts->choitochi)[8][2] = 0.25; (consts->choitochi)[8][7] = 0.25 * I; (consts->choitochi)[8][8] = 0.25; 
-	(consts->choitochi)[9][3] = 0.25 * I; (consts->choitochi)[9][6] = 0.25; (consts->choitochi)[9][9] = 0.25; 
-	(consts->choitochi)[10][0] = 0.25; (consts->choitochi)[10][10] = 0.25; 
-	(consts->choitochi)[11][4] = 0.25 * I; (consts->choitochi)[11][11] = 0.25; (consts->choitochi)[11][14] = 0.25; 
-	(consts->choitochi)[12][3] = 0.25; (consts->choitochi)[12][9] = 0.25 * I; (consts->choitochi)[12][12] = 0.25; 
-	(consts->choitochi)[13][7] = 0.25; (consts->choitochi)[13][8] = 0.25 * I; (consts->choitochi)[13][13] = 0.25; 
-	(consts->choitochi)[14][1] = 0.25 * I; (consts->choitochi)[14][11] = 0.25; (consts->choitochi)[14][14] = 0.25; 
+	(consts->choitochi)[1][1] = 0.25; (consts->choitochi)[1][4] = 0.25; (consts->choitochi)[1][11] = 0.25 * I;
+	(consts->choitochi)[2][2] = 0.25; (consts->choitochi)[2][8] = 0.25; (consts->choitochi)[2][13] = 0.25 * I;
+	(consts->choitochi)[3][3] = 0.25; (consts->choitochi)[3][6] = 0.25 * I; (consts->choitochi)[3][12] = 0.25;
+	(consts->choitochi)[4][1] = 0.25; (consts->choitochi)[4][4] = 0.25; (consts->choitochi)[4][14] = 0.25 * I;
+	(consts->choitochi)[5][0] = 0.25; (consts->choitochi)[5][5] = 0.25;
+	(consts->choitochi)[6][6] = 0.25; (consts->choitochi)[6][9] = 0.25; (consts->choitochi)[6][12] = 0.25 * I;
+	(consts->choitochi)[7][2] = 0.25 * I; (consts->choitochi)[7][7] = 0.25; (consts->choitochi)[7][13] = 0.25;
+	(consts->choitochi)[8][2] = 0.25; (consts->choitochi)[8][7] = 0.25 * I; (consts->choitochi)[8][8] = 0.25;
+	(consts->choitochi)[9][3] = 0.25 * I; (consts->choitochi)[9][6] = 0.25; (consts->choitochi)[9][9] = 0.25;
+	(consts->choitochi)[10][0] = 0.25; (consts->choitochi)[10][10] = 0.25;
+	(consts->choitochi)[11][4] = 0.25 * I; (consts->choitochi)[11][11] = 0.25; (consts->choitochi)[11][14] = 0.25;
+	(consts->choitochi)[12][3] = 0.25; (consts->choitochi)[12][9] = 0.25 * I; (consts->choitochi)[12][12] = 0.25;
+	(consts->choitochi)[13][7] = 0.25; (consts->choitochi)[13][8] = 0.25 * I; (consts->choitochi)[13][13] = 0.25;
+	(consts->choitochi)[14][1] = 0.25 * I; (consts->choitochi)[14][11] = 0.25; (consts->choitochi)[14][14] = 0.25;
 	(consts->choitochi)[15][0] = 0.25; (consts->choitochi)[15][15] = 0.25;
 }
 

@@ -2,13 +2,13 @@
 #define DECODE_H
 
 // Compute the probabilities of logical classes, given the probabilities of all Pauli errors.
-extern void ComputeCosetProbsLevelOne(double *pauli_probs, int nlogs, int nstabs, double **cosetprobs);
+extern void ComputeCosetProbsLevelOne(long double *pauli_probs, int nlogs, int nstabs, long double **cosetprobs);
 
 // Compute the probabilities of logical classes, given the probabilities of logical I, X, Y and Z of the previous level.
-extern void ComputeCosetProbs(int synd, double **pauli_probs, int ****LST, int nphys, int nlogs, int nstabs, double *cosetprobs);
+extern void ComputeCosetProbs(int synd, long double **pauli_probs, int ****LST, int nphys, int nlogs, int nstabs, long double *cosetprobs);
 
 // Compute the logical whose coset probability is the highest.
-extern int ArgMax(double *cosetprobs, int nlogs);
+extern int ArgMax(long double *cosetprobs, int nlogs);
 
 /*
 	Rotate a probability of Pauli operators by a Pauli.
@@ -18,6 +18,6 @@ extern int ArgMax(double *cosetprobs, int nlogs);
 	Y: [2, 3, 0, 1]
 	Z: [3, 2, 1, 0]
 */
-extern void RotatePauli(double *arr, int size, int pauli);
+extern void RotatePauli(long double *arr, int size, int pauli);
 
 #endif /* DECODE_H */

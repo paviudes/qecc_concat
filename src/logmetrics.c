@@ -42,7 +42,7 @@ double Entropy(double **ptm, struct constants_t *consts){
 	AllocateDoubleComplexArray2D(choi, 4, 4);
 	ProcessToChoi(ptm, choi, 4, consts->pauli);
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(choi, 4, eigvals, 0, NULL);
+	DiagonalizeD(choi, 4, eigvals, 0, NULL);
 	int i;
 	double entropy = 0;
 	for (i = 0; i < 4; i ++)
@@ -73,7 +73,7 @@ double TraceDistance(double **ptm, struct constants_t *consts){
 	chandiff[3][0] -= 0.5; chandiff[3][3] -= 0.5;
 	// Compute the sigular values of E - id.
 	double complex *singvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(chandiff, 4, singvals, 0, NULL);
+	DiagonalizeD(chandiff, 4, singvals, 0, NULL);
 	double trn = 0;
 	for (i = 0; i < 4; i ++)
 		trn += cabs(singvals[i]);
@@ -164,7 +164,9 @@ double NonPauliness(double complex **choi, struct constants_t *consts){
 }
 */
 
-void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts){
+
+
+void _ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts){
 	// Compute all the metrics for a given channel, in the Choi matrix form.
 	// printf("Metrics for channel %s.\n", chname);
 	int m;
@@ -190,4 +192,19 @@ void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, doub
 			metvals[m] = 0;
 		}
 	}
+}
+
+
+void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, long double **ptm, char *chname, struct constants_t *consts){
+	double **ptmd = malloc(sizeof(double *)*4);
+	int i,j;
+	for (i=0; i<4 ; i++){
+		ptmd[i] = malloc(sizeof(double)*4);
+		for (j=0; j<4 ; j++)
+			ptmd[i][j] = (double) ptm[i][j];
+	}
+	_ComputeMetrics(metvals, nmetrics, metricsToCompute, ptmd, chname, consts);
+	for (i=0; i<4 ; i++)
+		free(ptmd[i]);
+	free(ptmd);
 }

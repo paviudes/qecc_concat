@@ -136,14 +136,15 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 	free(avg);
 	// printf("Updated metrics.\n");
 }
-
+/*
 void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct constants_t *consts){
 	// Compute the level-0 (physical) metrics.
-	double **ptm, *chanmets;
+	long double **ptm;
+	double *chanmets;
 	int i, j, q;
 
 	// printf("nlogs = %d, nqubits = %d\n", nlogs, nqubits);
- 
+
 	if (sim->iscorr == 0){
 		// ProcessToChoi((sim->logical)[0], nlogs, choi, consts->pauli);
 		ComputeMetrics((sim->metricValues)[0], sim->nmetrics, sim->metricsToCompute, (sim->logical)[0], sim->chname, consts);
@@ -160,16 +161,16 @@ void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct
 				(sim->metricValues)[0][i] = 1;
 
 		// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics", sim->nmetrics);
-		ptm = malloc(sizeof(double *) * nlogs);
+		ptm = malloc(sizeof(long double *) * nlogs);
 		for (i = 0; i < nlogs; i++)
-			ptm[i] = malloc(sizeof(double) * nlogs);
+			ptm[i] = malloc(sizeof(long double) * nlogs);
 
 		chanmets = malloc(sizeof(double) * nqubits);
 		for (q = 0; q < nqubits; q ++){
 			// Extract the physical channel for the qubit q.
 			for (i = 0; i < nlogs; i ++){
 				for (j = 0; j < nlogs; j ++){
-					ptm[i][j] = (sim->physical)[q * nlogs * nlogs + i * nlogs + j];
+					ptm[i][j] = (long double) ((sim->physical)[q * nlogs * nlogs + i * nlogs + j]);
 				}
 			}
 			// PrintDoubleArray2D(ptm, "Pauli transfer matrix", nlogs, nlogs);
@@ -203,7 +204,7 @@ void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct
 	else{};
 	// PrintDoubleArray1D((sim->metricValues)[0], "Level-0 metrics", sim->nmetrics);
 }
-
+*/
 void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct constants_t *consts, int decoder, int copy_lookup) {
 	// Compute the effective channels and syndrome probabilities for all level-1
 	// syndromes. The pre-computation is to avoid re-computing level-1 syndromes
@@ -223,9 +224,9 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 			for (i = 0; i < qcode->nlogs; i++){
 				for (j = 0; j < qcode->nlogs; j++){
 					if (sim->iscorr == 0)
-						(sim->virtchan)[q][i][j] = (sim->physical)[i * qcode->nlogs + j];
+						(sim->virtchan)[q][i][j] = (long double) ((sim->physical)[i * qcode->nlogs + j]);
 					else
-						(sim->virtchan)[q][i][j] = (sim->physical)[q * qcode->nlogs * qcode->nlogs + i * qcode->nlogs + j];
+						(sim->virtchan)[q][i][j] = (long double) ((sim->physical)[q * qcode->nlogs * qcode->nlogs + i * qcode->nlogs + j]);
 				}
 			}
 			if (isPauli > 0)
@@ -301,7 +302,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	FreeSimParamsQECC(sim, qcode->N, qcode->K);
 }
 
-void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct constants_t *consts, double *****channels) {
+void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct constants_t *consts, long double *****channels) {
 	// Compute a logical channel for the required concatenation level.
 	// The logical channel at a concatenated level l depends on N channels from
 	// the previous concatenation level, and so on... until 7^l physical channels.
@@ -322,9 +323,9 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 	int s, b, i, j, q, randsynd = 0;
 	double bias = 1, history = 1, expo;
 	double *searchin = malloc(sizeof(double) * 2);
-	double *impdist = malloc(sizeof(double) * qcode[0]->nstabs);
-	double *impcumul = malloc(sizeof(double) * qcode[0]->nstabs);
-	double ****inputchannels = malloc(sizeof(double ***));
+	long double *impdist = malloc(sizeof(long double) * qcode[0]->nstabs);
+	long double *impcumul = malloc(sizeof(long double) * qcode[0]->nstabs);
+	long double ****inputchannels = malloc(sizeof(long double ***));
 	int *isPauli = malloc(sizeof(int) * (int)(1 + (int)(sims[0]->decoders[0] == 2)));
 
 	// printf("Computing logical channels for %d levels.\n", sims[0]->nlevels);
@@ -335,11 +336,11 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 			AllocSimParamsQECC(sims[s], qcode[l]->N, qcode[l]->K);
 
 		// Allocate memory for inputchannels
-		inputchannels = (double ****)realloc(inputchannels, sizeof(double ***) * qcode[l]->N);
+		inputchannels = (long double ****)realloc(inputchannels, sizeof(long double ***) * qcode[l]->N);
 		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[0], 0);
 
 		// Perform coarsegraining of logical channels
-		Coarsegrain(l - 1, sims, channels, chans[l], qcode[l]->nlogs);
+		// Coarsegrain(l - 1, sims, channels, chans[l], qcode[l]->nlogs);
 
 		for (b = 0; b < chans[l]; b++) {
 			// printf("level %d, batch = %d of %d\n", l, b, chans[l]);
@@ -350,7 +351,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				history = 1;
 				isPauli[s] = 1;
 				for (q = 0; q < qcode[l]->N; q++) {
-					// printf("Simulation channel number %d, qubit %d:\n",s, q);
+					printf("Simulation channel number %d, qubit %d:\n",s, q);
 					for (i = 0; i < qcode[l]->nlogs; i++){
 						for (j = 0; j < qcode[l]->nlogs; j++)
 							(sims[s]->virtchan)[q][i][j] = channels[l - 1][qcode[l]->N * b + q][s][i][j];
@@ -360,10 +361,10 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					if (isPauli[s] > 0)
 						isPauli[s] = isPauli[s] * IsDiagonal((sims[s]->virtchan)[q], qcode[l]->nlogs);
 
-					// PrintDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
+					PrintLongDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
 					// PrintDoubleArray1D((sims[s]->pauli_probs)[q], "coset probabilities of chosen channel", qcode[l]->nlogs);
-					bias *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0];
-					history *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1];
+					bias *= (double) (channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
+					history *= (double) (channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1]);
 					// printf("Syndrome probability: %g, bias = %g.\n", channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1], channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
 					// printf("======\n");
 				}
@@ -408,7 +409,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 						ConstructImportanceDistribution(sims[0]->syndprobs, impdist, qcode[l]->nstabs, expo);
 						ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
 						randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
-						bias = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
+						bias = (double) ((sims[0]->syndprobs)[randsynd] / impdist[randsynd]);
 					}
 					else{
 						randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
@@ -419,8 +420,8 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 						for (i = 0; i < qcode[l]->nlogs; i++)
 							for (j = 0; j < qcode[l]->nlogs; j++)
 								channels[l][b][s][i][j] = (sims[s]->effprocess)[randsynd][i][j];
-						channels[l][b][s][qcode[l]->nlogs][0] = bias;
-						channels[l][b][s][qcode[l]->nlogs][1] = history * (sims[s]->syndprobs)[randsynd];
+						channels[l][b][s][qcode[l]->nlogs][0] = (long double) bias;
+						channels[l][b][s][qcode[l]->nlogs][1] = (long double) (history) * (sims[s]->syndprobs)[randsynd];
 						channels[l][b][s][qcode[l]->nlogs][2] = (sims[s]->syndprobs)[randsynd];
 					}
 				}
@@ -440,7 +441,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 						ConstructCumulative(impdist, impcumul, qcode[l]->nstabs);
 						randsynd = SampleCumulative(impcumul, qcode[l]->nstabs);
 						// printf("Random syndrome: %d, from exponent: %g.\n", randsynd, expo);
-						bias = (sims[0]->syndprobs)[randsynd] / impdist[randsynd];
+						bias = (double) ((sims[0]->syndprobs)[randsynd] / impdist[randsynd]);
 					}
 					else{};
 					// printf("Random syndrome: %d, from exponent: %g and bias = %g. (sims[0]->syndprobs)[randsynd] = %g, impdist[randsynd] = %g.\n", randsynd, expo, bias, (sims[0]->syndprobs)[randsynd], impdist[randsynd]);
@@ -449,8 +450,8 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 							channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
 						channels[l][b][0][1 + qcode[0]->nlogs][i] = (sims[0]->cosetprobs)[randsynd][i];
 					}
-					channels[l][b][0][qcode[l]->nlogs][0] = bias;
-					channels[l][b][0][qcode[l]->nlogs][1] = history * (sims[0]->syndprobs)[randsynd];
+					channels[l][b][0][qcode[l]->nlogs][0] = (long double) bias;
+					channels[l][b][0][qcode[l]->nlogs][1] = (long double) history * (sims[0]->syndprobs)[randsynd];
 					channels[l][b][0][qcode[l]->nlogs][2] = (sims[0]->syndprobs)[randsynd];
 				}
 			}
@@ -494,10 +495,10 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 		nencs[l] = qcode[l]->K;
 	}
 	// printf("Allocate memory to channels.\n");
-	double *****channels = malloc(sizeof(double ****) * (sims[0]->nlevels));
+	long double *****channels = malloc(sizeof(long double ****) * (sims[0]->nlevels));
 	int nchans = MemManageChannels(channels, nphys, nencs, sims[0]->nlevels, (sims[0]->decoders)[0], 0);
 	// Compute level-0 metrics.
-	ComputeLevelZeroMetrics(sims[0], qcode[0]->N, qcode[0]->nlogs, consts);
+	// ComputeLevelZeroMetrics(sims[0], qcode[0]->N, qcode[0]->nlogs, consts);
 	// Compute level-1 effective channels and syndromes.
 	// PrintIntArray1D((sims[0]->decoders), "Performance: Decoders", sims[0]->nlevels);
 	int s, decoder_to_use;

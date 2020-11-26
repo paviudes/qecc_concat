@@ -73,7 +73,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			   3. Number of distinct (bins) channels at each intermediate
 	level: int *ndecoderbins
 	*/
-	
+
 	/*
 		iscorr
 		physical
@@ -139,7 +139,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 					for (q = 0; q < qcode[l]->N; q ++)
 						(qcode[l]->LST)[log][s][t][q] = operators_LST[lst_count + log * qcode[l]->nstabs * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->nstabs * qcode[l]->N + t * qcode[l]->N + q];
 		lst_count += (int) pow(4, qcode[l]->N) * qcode[l]->N;
-		
+
 		// PrintIntArray2D((qcode[l]->TLS)[0][0], "T_0 L_0 S", qcode[l]->nstabs, qcode[l]->N);
 
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
@@ -242,7 +242,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			if (sims[s]->iscorr == 0)
 				(sims[s]->logical)[0][i / (qcode[0]->nlogs)][i % (qcode[0]->nlogs)] = (sims[s]->physical)[i];
 		}
-		
+
 		// printf("Loading %d metrics to be computed.\n", nmetrics);
 
 		for (m = 0; m < nmetrics; m++)
@@ -264,7 +264,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		else
 			sims[s]->infidelity = infidelity;
 
-		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
+		printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 
 		// printf("Allocations complete for s = %d.\n", s);
 

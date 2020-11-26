@@ -4,10 +4,10 @@
 #include <complex.h>
 
 // Check is a matrix is a diagonal matrix or not.
-extern int IsDiagonal(double **matrix, int size);
+extern int IsDiagonal(long double **matrix, int size);
 
 // Check if a given list of numbers is a normalized PDF.
-extern int IsPDF(double *dist, int size);
+extern int IsPDF(long double *dist, int size);
 
 // Check if an input complex 4x4 matrix is completely positive.
 extern int IsPositive(double complex **choi);
@@ -22,6 +22,6 @@ int IsHermitian(double complex **choi);
 extern int IsState(double complex **choi);
 
 // Check is a 4 x 4 Pauli transfer matrix is a valid channel.
-extern int IsChannel(double **ptm, struct constants_t *consts);
+extern int IsChannel(long double **ptm, struct constants_t *consts);
 
 #endif /* CHECKS_H */

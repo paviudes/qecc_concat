@@ -62,6 +62,15 @@ int SumInt(int *arr, int size){
 	return sum;
 }
 
+long double SumLongDouble(long double *arr, int size){
+	// Compute the sum of numbers in an array.
+	int i;
+	long double sum = 0;
+	for (i = 0; i < size; i ++)
+		sum += arr[i];
+	return sum;
+}
+
 double SumDouble(double *arr, int size){
 	// Compute the sum of numbers in an array.
 	int i;
@@ -71,14 +80,14 @@ double SumDouble(double *arr, int size){
 	return sum;
 }
 
-void Normalize(double *arr, int size){
+void Normalize(long double *arr, int size){
 	// Normalize the array.
 	// https://stackoverflow.com/questions/18069269/normalizing-a-list-of-very-small-double-numbers-likelihoods
 	int i;
-	double *logarr = malloc(sizeof(double) * size);
-	double maxlog = log10(arr[0]);
+	long double *logarr = malloc(sizeof(long double) * size);
+	long double maxlog = log10l(arr[0]);
 	for (i = 0; i < size; i ++){
-		logarr[i] = log10(arr[i]);
+		logarr[i] = log10l(arr[i]);
 		if (maxlog <= logarr[i])
 			maxlog = logarr[i];
 	}
@@ -87,10 +96,10 @@ void Normalize(double *arr, int size){
 	for (i = 0; i < size; i ++)
 		arr[i] = pow(10, logarr[i]);
 
-	double sum = SumDouble(arr, size);
+	long double sum = SumLongDouble(arr, size);
 	for (i = 0; i < size; i ++)
 		arr[i] = arr[i]/sum;
-	
+
 	free(logarr);
 }
 
@@ -111,7 +120,7 @@ int BitParity(int num){
 	return parity;
 }
 
-double Divide(double num, double den){
+long double Divide(long double num, long double den){
 	/*
 		Divide small numbers.
 		To avoid precision issues, we will perform this division in three steps.
@@ -120,13 +129,13 @@ double Divide(double num, double den){
 		3. Do the log division otherwise.
 	*/
 	const int digits = 13;
-	double sign = (double) (Sign(num) * Sign(den));
-	if (fabs(num) <= pow(10, -1 * (digits + 1)))
+	long double sign = (long double) (Sign(num) * Sign(den));
+	if (fabsl(num) <= powl(10, -1 * (digits + 1)))
 		return 0;
-	else if (fabs(fabs(num) - fabs(den)) <= pow(10, -1 * digits))
+	else if (fabsl(fabsl(num) - fabsl(den)) <= powl(10, -1 * digits))
 		return sign;
 	else{};
-	return (sign * pow(10, log10(fabs(num)) - log10(fabs(den))));
+	return (sign * powl(10, log10l(fabsl(num)) - log10l(fabsl(den))));
 }
 
 int BinaryDot(int a, int b){

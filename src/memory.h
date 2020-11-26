@@ -8,22 +8,21 @@ struct simul_t{
 	char *restrict chname;
 	int iscorr;
 	double *restrict physical;
-	double *restrict mpinfo;
-	double ***restrict virtchan;
-	double **restrict pauli_probs;
+	long double *restrict mpinfo;
+	long double ***restrict virtchan;
+	long double **restrict pauli_probs;
 	// Quantum error correction and logical noise
-	double **restrict tpnorms;
 	double ***restrict logical;
-	double ****restrict process;
-	double *restrict syndprobs;
-	double *restrict cumulative;
-	double *restrict levelOneSynds;
-	double *restrict levelOneCumul;
+	long double ****restrict process;
+	long double *restrict syndprobs;
+	long double *restrict cumulative;
+	long double *restrict levelOneSynds;
+	long double *restrict levelOneCumul;
 	int *restrict corrections;
-	double ***restrict effprocess;
-	double **restrict cosetprobs;
-	double ***restrict levelOneChannels;
-	double **restrict levelOneCosets;
+	long double ***restrict effprocess;
+	long double **restrict cosetprobs;
+	long double ***restrict levelOneChannels;
+	long double **restrict levelOneCosets;
 	int *restrict frames;
 	// Metrics.
 	int nmetrics;
@@ -34,8 +33,8 @@ struct simul_t{
 	int nlevels;
 	int maxbin;
 	int importance;
-	double *restrict levelOneImpDist;
-	double *restrict levelOneImpCumul;
+	long double *restrict levelOneImpDist;
+	long double *restrict levelOneImpCumul;
 	double infidelity;
 	double *restrict outlierprobs;
 	double **restrict sampling;
@@ -85,11 +84,11 @@ extern int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels);
 
 // Allocate and Free memory for the tree of lower-level channels which determine
 // a logical channel.
-extern int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree);
+extern int MemManageChannels(long double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree);
 
 // Allocate and free memory for the input channels structure in
 // ComputeLogicalChannels(...).
-extern void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int decoder, int tofree);
+extern void MemManageInputChannels(long double ****inputchannels, int nphys, int nlogs, int decoder, int tofree);
 
 // Allocate memory for the bins according to which logical (effective) channels
 // must be averaged at intermediate decoding levels.

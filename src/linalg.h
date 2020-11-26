@@ -110,6 +110,7 @@ extern void ZDot(double complex **matA, double complex **matB, double complex **
 		int iseigvecs: binary value which is 0 when eigenvectors need not be stored and 1 otherwise.
 		double complex **eigvecs: complex matrix of shape (nrows x nrows). The i-th column of this matrix contains the i-th eigen vector associated to the eigenvalue in "eigvals[i]".
 */
-extern void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs);
+extern void DiagonalizeLD(long double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs);
+extern void DiagonalizeD(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs);
 
 #endif /* LINALG_H */

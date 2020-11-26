@@ -9,11 +9,11 @@
 	1. Remove coset_sum from ComputeCosetProbs and ComputeCosetProbsLevelOne functions.
 */
 
-void ComputeCosetProbs(int synd, double **pauli_probs, int ****LST, int nphys, int nlogs, int nstabs, double *cosetprobs){
+void ComputeCosetProbs(int synd, long double **pauli_probs, int ****LST, int nphys, int nlogs, int nstabs, long double *cosetprobs){
 	// Compute the probabilty of the 4^k logical classes for each syndrome.
 	// PrintDoubleArray2D(pauli_probs, "Pauli probs to the coset probs computation.", nphys, nlogs);
 	int q, s, l;
-	double prob;
+	long double prob;
 	// double cosetprobs_sum = 0;
 	for (l = 0; l < nlogs; l ++){
 		cosetprobs[l] = 0;
@@ -30,7 +30,7 @@ void ComputeCosetProbs(int synd, double **pauli_probs, int ****LST, int nphys, i
 	// PrintDoubleArray1D(cosetprobs, "Coset probabilities", nlogs);
 }
 
-void ComputeCosetProbsLevelOne(double *pauli_probs, int nlogs, int nstabs, double **cosetprobs){
+void ComputeCosetProbsLevelOne(long double *pauli_probs, int nlogs, int nstabs, long double **cosetprobs){
 	// Compute the probabilty of the 4^k logical classes for each syndrome, for level 1.
 	// PrintDoubleArray1D(pauli_probs, "Pauli probs for the level 1 coset probs computation.", nlogs * nstabs * nstabs);
 	int synd, s, l;
@@ -63,7 +63,7 @@ int ArgMax(double *arr, int size){
 }
 */
 
-int ArgMax(double *arr, int size){
+int ArgMax(long double *arr, int size){
 	// Compute the coset with maximum probability, for each syndrome.
 	int i, amax = 0;
 	for (i = 1; i < size; i ++)
@@ -72,14 +72,14 @@ int ArgMax(double *arr, int size){
 	return amax;
 }
 
-void RotatePauli(double *arr, int size, int pauli){
+void RotatePauli(long double *arr, int size, int pauli){
 	// Rotate a probability of Pauli operators by a Pauli.
 	// Letting I --> 0, X --> 1, Y --> 2 and Z --> 3
 	// I: [0, 1, 2, 3]
 	// X: [1, 0, 3, 2]
 	// Y: [2, 3, 0, 1]
 	// Z: [3, 2, 1, 0]
-	double *old = malloc(sizeof(double) * size);
+	long double *old = malloc(sizeof(long double) * size);
 	int i;
 	for (i = 0; i < size; i ++)
 		old[i] = arr[i];

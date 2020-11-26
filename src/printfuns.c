@@ -16,6 +16,19 @@ void PrintComplexArray1D(complex double *array, char *name, int nrows){
 	fflush(stdout);
 }
 
+void PrintLongComplexArray1D(long complex double *array, char *name, int nrows){
+	// Print a complex 2D array.
+	int r;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++)
+		printf("    %.15Lf + i %.15Lf", creall(array[r]), cimagl(array[r]));
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
+
+
 void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncols){
 	// Print a complex 2D array.
 	int r, c;
@@ -29,6 +42,21 @@ void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncol
 	printf("-----\n");
 	fflush(stdout);
 }
+
+void PrintLongComplexArray2D(long complex double **array, char *name, int nrows, int ncols){
+	// Print a complex 2D array.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++)
+			printf("    %.15Lf + i %.15Lf", creall(array[r][c]), cimagl(array[r][c]));
+		printf("\n");
+	}
+	printf("-----\n");
+	fflush(stdout);
+}
+
 
 void PrintDoubleColumn(double **array, char *name, int nrows, int col){
 	// Print a column of a double 2D array.
@@ -83,6 +111,21 @@ void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	fflush(stdout);
 }
 
+void PrintLongDoubleArray2D(long double **array, char *name, int nrows, int ncols){
+	// Print a double 2D array.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++)
+			printf("    %.16Lf", (array[r][c]));
+		printf("\n");
+	}
+	printf("-----\n");
+	fflush(stdout);
+}
+
+
 void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols){
 	// Copy the elements of one array into another.
 	int r, c;
@@ -107,6 +150,19 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	fflush(stdout);
 }
+
+void PrintLongDoubleArray1D(long double *array, char *name, int nrows){
+	// Print a double 1D array.
+	int r;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++)
+		printf("    %.15Lf", (array[r]));
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
+
 
 void PrintIntArray2D(int **array, char *name, int nrows, int ncols){
 	// Print a int 2D array.

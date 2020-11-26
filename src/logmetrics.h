@@ -15,6 +15,6 @@
 		char *chname = name of the channel.
 		struct constants_t *consts = Pointer to the constants structure, to access Pauli matrices.
 */
-extern void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts);
+extern void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, long double **ptm, char *chname, struct constants_t *consts);
 
 #endif /* LOGMETRICS_H */

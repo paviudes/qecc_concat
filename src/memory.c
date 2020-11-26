@@ -61,14 +61,14 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	// effective, levelZeroChannels
 	int q, i, nstabs = (int)pow(2, ((double)(nphys - nenc))), nlogs = (int)pow(4, (double)nenc);
 	// printf("Function: AllocSimParamsQECC, nstabs = %d, nlogs = %d.\n", nstabs, nlogs);
-	simul->virtchan = malloc(nphys * sizeof(double **));
-	simul->pauli_probs = malloc(nphys * sizeof(double *));
+	simul->virtchan = malloc(nphys * sizeof(long double **));
+	simul->pauli_probs = malloc(nphys * sizeof(long double *));
 	for (q = 0; q < nphys; q++)
 	{
-		(simul->virtchan)[q] = malloc(nlogs * sizeof(double *));
-		(simul->pauli_probs)[q] = malloc(nlogs * sizeof(double));
+		(simul->virtchan)[q] = malloc(nlogs * sizeof(long double *));
+		(simul->pauli_probs)[q] = malloc(nlogs * sizeof(long double));
 		for (i = 0; i < nlogs; i++)
-			(simul->virtchan)[q][i] = malloc(nlogs * sizeof(double));
+			(simul->virtchan)[q][i] = malloc(nlogs * sizeof(long double));
 	}
 	// printf("_/ virtchan\n");
 	// simul->rcpauli = malloc((nstabs) * sizeof(int));
@@ -77,8 +77,8 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	// for (i = 0; i < nstabs; i ++)
 	//  	(simul->rcpauli)[i] = BinaryDot(i, pure);
 	// Syndrome sampling
-	(simul->syndprobs) = malloc(nstabs * sizeof(double));
-	(simul->cumulative) = malloc(nstabs * sizeof(double));
+	(simul->syndprobs) = malloc(nstabs * sizeof(long double));
+	(simul->cumulative) = malloc(nstabs * sizeof(long double));
 	int s;
 	for (s = 0; s < nstabs; s++){
 		(simul->syndprobs)[s] = 0.0;
@@ -86,39 +86,34 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	}
 	// printf("_/ syndprobs, cumulative\n");
 	// Quantum error correction
-	simul->process = malloc(nlogs * sizeof(double ***));
+	simul->process = malloc(nlogs * sizeof(long double ***));
 	int j;
 	for (i = 0; i < nlogs; i++)
 	{
-		(simul->process)[i] = malloc(nlogs * sizeof(double **));
+		(simul->process)[i] = malloc(nlogs * sizeof(long double **));
 		for (j = 0; j < nlogs; j++)
 		{
-			(simul->process)[i][j] = malloc(nstabs * sizeof(double *));
+			(simul->process)[i][j] = malloc(nstabs * sizeof(long double *));
 			for (s = 0; s < nstabs; s++)
-				(simul->process)[i][j][s] = malloc(nstabs * sizeof(double));
+				(simul->process)[i][j][s] = malloc(nstabs * sizeof(long double));
 		}
 	}
 	// printf("_/ process\n");
 	(simul->corrections) = malloc(nstabs * sizeof(int));
 	// printf("_/ corrections\n");
-	(simul->effprocess) = malloc(nstabs * sizeof(double **));
-	(simul->cosetprobs) = malloc(nstabs * sizeof(double *));
+	(simul->effprocess) = malloc(nstabs * sizeof(long double **));
+	(simul->cosetprobs) = malloc(nstabs * sizeof(long double *));
 	for (s = 0; s < nstabs; s++)
 	{
-		(simul->effprocess)[s] = malloc(nlogs * sizeof(double *));
-		(simul->cosetprobs)[s] = malloc(nlogs * sizeof(double));
+		(simul->effprocess)[s] = malloc(nlogs * sizeof(long double *));
+		(simul->cosetprobs)[s] = malloc(nlogs * sizeof(long double));
 		for (i = 0; i < nlogs; i++)
 		{
 			(simul->cosetprobs)[s][i] = 0;
-			(simul->effprocess)[s][i] = malloc(nlogs * sizeof(double));
+			(simul->effprocess)[s][i] = malloc(nlogs * sizeof(long double));
 		}
 	}
 	// printf("_/ effective, effprocess\n");
-	// Normaization constants to ensure that the conditional logical channels are trace preserving.
-	simul->tpnorms = malloc(nstabs * sizeof(double *));
-	for (s = 0; s < nstabs; s++)
-		(simul->tpnorms)[s] = malloc(nlogs * sizeof(double));
-
 }
 
 void AllocDecoderBins(struct simul_t *simul, int *nphys)
@@ -168,7 +163,7 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 		simul->physical[i] = 0;
 
 	// Initial guess for the message passing decoder.
-	simul->mpinfo = malloc(sizeof(double) * (int) pow(4, nphys));
+	simul->mpinfo = malloc(sizeof(long double) * (int) pow(4, nphys));
 
 	// Metrics to be computed at every level.
 	int m, l;
@@ -203,10 +198,10 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	// Syndrome sampling.
 	simul->outlierprobs = malloc(2 * sizeof(double));
 
-	simul->levelOneSynds = malloc(nstabs * sizeof(double));
-	simul->levelOneImpDist = malloc(nstabs * sizeof(double));
-	simul->levelOneCumul = malloc(nstabs * sizeof(double));
-	simul->levelOneImpCumul = malloc(nstabs * sizeof(double));
+	simul->levelOneSynds = malloc(nstabs * sizeof(long double));
+	simul->levelOneImpDist = malloc(nstabs * sizeof(long double));
+	simul->levelOneCumul = malloc(nstabs * sizeof(long double));
+	simul->levelOneImpCumul = malloc(nstabs * sizeof(long double));
 	simul->statsperlevel = malloc((simul->nlevels + 1) * sizeof(long));
 	for (l = 0; l < simul->nlevels + 1; l++)
 		(simul->statsperlevel)[l] = 0;
@@ -257,15 +252,15 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 	}
 
 	// Quantum error correction.
-	simul->levelOneChannels = malloc(nstabs * sizeof(double **));
-	simul->levelOneCosets = malloc(nstabs * sizeof(double *));
+	simul->levelOneChannels = malloc(nstabs * sizeof(long double **));
+	simul->levelOneCosets = malloc(nstabs * sizeof(long double *));
 	int s;
 	for (s = 0; s < nstabs; s++)
 	{
-		(simul->levelOneChannels)[s] = malloc(nlogs * sizeof(double *));
-		(simul->levelOneCosets)[s] = malloc(nlogs * sizeof(double));
+		(simul->levelOneChannels)[s] = malloc(nlogs * sizeof(long double *));
+		(simul->levelOneCosets)[s] = malloc(nlogs * sizeof(long double));
 		for (i = 0; i < nlogs; i++)
-			(simul->levelOneChannels)[s][i] = malloc(nlogs * sizeof(double));
+			(simul->levelOneChannels)[s][i] = malloc(nlogs * sizeof(long double));
 	}
 	simul->frames = malloc(simul->nlevels * sizeof(int));
 	// printf("_/ levelOneChannels, frames.\n");
@@ -329,10 +324,6 @@ void FreeSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	free(simul->cumulative);
 	// printf("_/ syndprobs, cumulative\n");
 	// printf("Done\n")
-	// Normaization constants to ensure that the conditional logical channels are trace preserving.
-	for (s = 0; s < nstabs; s++)
-		free((simul->tpnorms)[s]);
-	free(simul->tpnorms);
 }
 
 void FreeSimParams(struct simul_t *simul, int nphys, int nenc)
@@ -430,7 +421,7 @@ int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels)
 	return chans[0];
 }
 
-int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree)
+int MemManageChannels(long double *****channels, int *nphys, int *nencs, int nlevels, int decoder, int tofree)
 {
 	// Allocate and Free memory for the tree of lower-level channels which
 	// determine a logical channel. printf("Function: MemManageChannels, tofree =
@@ -445,18 +436,18 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 		// Allocate memory.
 		for (l = 0; l < nlevels; l++)
 		{
-			channels[l] = malloc(sizeof(double ***) * chans[l]);
+			channels[l] = malloc(sizeof(long double ***) * chans[l]);
 			nlogs = (int)pow(4, (double)nencs[l]);
 			for (c = 0; c < chans[l]; c++)
 			{
-				channels[l][c] = malloc(sizeof(double **) * (1 + (int)(decoder == 2)));
+				channels[l][c] = malloc(sizeof(long double **) * (1 + (int)(decoder == 2)));
 				for (s = 0; s < 1 + (int)(decoder == 2); s++)
 				{
-					channels[l][c][s] = malloc(sizeof(double *) * (2 + nlogs));
+					channels[l][c][s] = malloc(sizeof(long double *) * (2 + nlogs));
 					for (j = 0; j < nlogs; j++)
-						channels[l][c][s][j] = malloc(sizeof(double) * nlogs);
-					channels[l][c][s][nlogs] = malloc(sizeof(double) * 3);
-					channels[l][c][s][nlogs + 1] = malloc(sizeof(double) * nlogs);
+						channels[l][c][s][j] = malloc(sizeof(long double) * nlogs);
+					channels[l][c][s][nlogs] = malloc(sizeof(long double) * 3);
+					channels[l][c][s][nlogs + 1] = malloc(sizeof(long double) * nlogs);
 				}
 			}
 		}
@@ -484,7 +475,7 @@ int MemManageChannels(double *****channels, int *nphys, int *nencs, int nlevels,
 	return nchans;
 }
 
-void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int decoder, int tofree)
+void MemManageInputChannels(long double ****inputchannels, int nphys, int nlogs, int decoder, int tofree)
 {
 	// Allocate and free memory for the input channels structure in
 	// ComputeLogicalChannels(...). printf("Function: MemManageInputChannels,
@@ -495,13 +486,13 @@ void MemManageInputChannels(double ****inputchannels, int nphys, int nlogs, int 
 		// Initialize the space required for the input channels.
 		for (q = 0; q < nphys; q++)
 		{
-			inputchannels[q] = malloc(sizeof(double **) * (1 + (int)(decoder == 2)));
+			inputchannels[q] = malloc(sizeof(long double **) * (1 + (int)(decoder == 2)));
 			for (s = 0; s < 1 + (int)(decoder == 2); s++)
 			{
-				inputchannels[q][s] = malloc(sizeof(double *) * (nlogs + 1));
+				inputchannels[q][s] = malloc(sizeof(long double *) * (nlogs + 1));
 				for (i = 0; i < nlogs; i++)
-					inputchannels[q][s][i] = malloc(sizeof(double) * nlogs);
-				inputchannels[q][s][nlogs] = malloc(sizeof(double) * 2);
+					inputchannels[q][s][i] = malloc(sizeof(long double) * nlogs);
+				inputchannels[q][s][nlogs] = malloc(sizeof(long double) * 2);
 			}
 		}
 	}

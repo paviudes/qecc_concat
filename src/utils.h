@@ -22,13 +22,14 @@ extern double Min(double a, double b);
 extern int SumInt(int *arr, int size);
 
 // Divide small numbers.
-extern double Divide(double num, double den);
+extern long double Divide(long double num, long double den);
 
 // Compute the sum of numbers in an array.
 extern double SumDouble(double *arr, int size);
+extern long double SumLongDouble(long double *arr, int size);
 
 // Normalize the array.
-extern void Normalize(double *arr, int size);
+extern void Normalize(long double *arr, int size);
 
 // Compute the parity of the integer's binary representation.
 extern int BitParity(int num);

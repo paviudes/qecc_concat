@@ -14,7 +14,7 @@ extern double SetExponent(double phy_infid, int dist, int nphys, int level);
 	We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2
 	For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
 	Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
-	We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.		
+	We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
 */
 extern void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs);
 
@@ -23,12 +23,12 @@ extern void SetOutlierProbs(double phy_infid, int dist, int level, double *outli
 	Q(s) = P(s)^k/(sum_s P(s)^k), i.e, a normalized power-law scaled version of P(s).
 	If k = 0 (i.e, less than 10E-5) then simply set the probability distribution to be flat.
 */
-extern void ConstructImportanceDistribution(double* truedist, double *impdist, int nelems, double expo);
+extern void ConstructImportanceDistribution(long double* truedist, long double *impdist, int nelems, double expo);
 
 /*
 	Given a probability distribution, construct its cumulative distribution.
 */
-extern void ConstructCumulative(double* dist, double *cumul, int nelems);
+extern void ConstructCumulative(long double* dist, long double *cumul, int nelems);
 
 /*
 	Sample a discrete probability distribution given its cumulative distribution.
@@ -36,7 +36,7 @@ extern void ConstructCumulative(double* dist, double *cumul, int nelems);
 	http://ieeexplore.ieee.org/document/92917/
 	Additions: if frozen = -1, continue with the sampling as described above.
 */
-extern int SampleCumulative(double *cumulative, int size);
+extern int SampleCumulative(long double *cumulative, int size);
 
 /*
 	Determine is a number is within, below or above a window.
@@ -53,6 +53,6 @@ extern int WhereInWindow(double number, double *window);
 		3. Probability of isincluded errors is above the window -- in this case, we return the value of the function on a new searchin wondow, given by: [k, searchin[1]]. [Recursion]
 	The weight-1 errors are X_i, Z_i, Y_i for i = 1 to 7 and their syndromes are: 56, 24, 40, 8, 48, 16, 32, 7, 3, 5, 1, 6, 2, 4, 63, 54, 45, 36, 27, 18, 9, respectively.
 */
-extern double PowerSearch(double *dist, int size, double window[2], double searchin[2]);
+extern double PowerSearch(long double *dist, int size, double window[2], double searchin[2]);
 
 #endif /* SAMPLING_H */

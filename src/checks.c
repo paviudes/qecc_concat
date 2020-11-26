@@ -17,14 +17,14 @@
 #include "linalg.h"
 #include "checks.h"
 
-int IsDiagonal(double **matrix, int size){
+int IsDiagonal(long double **matrix, int size){
 	// Check if the input matrix is diagonal or not.
-	const double atol = 10E-15;
+	const long double atol = 10E-15;
 	int i, j;
 	for (i = 0; i < size; i ++)
 		for (j = 0; j < size; j ++)
 			if (i != j)
-				if (fabs(matrix[i][j]) > atol)
+				if (fabsl(matrix[i][j]) > atol)
 					return 0;
 	return 1;
 }
@@ -33,8 +33,8 @@ int IsPositive(double complex **choi){
 	// Test if an input complex 4x4 matrix is completely positive.
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(choi, 4, eigvals, 0, NULL);
-	const double atol = 1E-8;
+	DiagonalizeD(choi, 4, eigvals, 0, NULL);
+	const long double atol = 1E-12;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
 		if (cimag(eigvals[i]) > atol)
@@ -56,7 +56,7 @@ int IsHermitian(double complex **choi){
 	// Check is a complex 4x4 matrix is Hermitian.
 	// For a Hermitian matrix A, we have: A[i][j] = (A[j][i])^*.
 	int i, j;
-	const double atol = 10E-12;
+	const double atol = 1E-12;
 	for (i = 0; i < 4; i ++){
 		for (j = 0; j < 4; j ++){
 			if (cabs(choi[i][j] - conj(choi[j][i])) > atol){
@@ -75,11 +75,11 @@ int IsTraceOne(double complex **choi){
 	for (i = 0; i < 4; i ++)
 		trace = trace + choi[i][i];
 	// printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
-	if (fabsl(cimagl(trace)) > atol){
+	if (fabs(cimag(trace)) > atol){
 		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
 		return 0;
 	}
-	if (fabsl(creall(trace)  -  1.0) > atol){
+	if (fabs(creal(trace)  -  1.0) > atol){
 		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
 		return 0;
 	}
@@ -104,7 +104,7 @@ int IsState(double complex **choi){
 	return isstate;
 }
 
-int IsChannel(double **ptm, struct constants_t *consts){
+int _IsChannel(double **ptm, struct constants_t *consts){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// We will convert it to a Choi matrix and test if the result is a density matrix.
 	double complex **choi = NULL;
@@ -117,7 +117,7 @@ int IsChannel(double **ptm, struct constants_t *consts){
 		}
 	}
 	ProcessToChoi(ptm, choi, nlogs, consts->pauli);
-	// PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
+	// PrintLongDoubleArray2D(ptm, "PTM", nlogs, nlogs);
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
 	int ischan = IsState(choi);
 	if (ischan == 0)
@@ -128,19 +128,34 @@ int IsChannel(double **ptm, struct constants_t *consts){
 	return ischan;
 }
 
+int IsChannel(long double **ptm, struct constants_t *consts){
+	double **ptmd = malloc(sizeof(double *)*4);
+	int i,j;
+	for (i=0; i<4 ; i++){
+		ptmd[i] = malloc(sizeof(double)*4);
+		for (j=0; j<4 ; j++)
+			ptmd[i][j] = (double) ptm[i][j];
+	}
+	int ischan = _IsChannel(ptmd,consts);
+	for (i=0; i<4 ; i++)
+		free(ptmd[i]);
+	free(ptmd);
+	return ischan;
+}
 
-int IsPDF(double *dist, int size){
+
+int IsPDF(long double *dist, int size){
 	// Check if a given list of numbers is a normalized PDF.
-	const double atol = 10E-8;
+	const long double atol = 10E-8;
 	int i;
-	double norm = 0;
+	long double norm = 0;
 	for (i = 0; i < size; i ++){
 		norm = norm + dist[i];
 		if (dist[i] < 0){
 			return 0;
 		}
 	}
-	if (fabs(norm) - 1 > atol){
+	if (fabsl(norm) - 1 > atol){
 		return 0;
 	}
 	return 1;

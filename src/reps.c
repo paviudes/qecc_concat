@@ -37,7 +37,7 @@ void ProcessToChoi(double **process, double complex **choi, int nlogs, double co
 		q = (v / nlogs) % nlogs;
 		j = (v / (nlogs * nlogs)) % nlogs;
 		i = (v / (nlogs * nlogs * nlogs)) % nlogs;
-		choi[i][j] += (double complex)(0.25 * process[p][q]) * pauli[q][i / 2][j / 2] * pauli[p][j % 2][i % 2];
+		choi[i][j] += (double complex)(0.25 * process[p][q]) * (double complex) (pauli[q][i / 2][j / 2]) * (double complex) (pauli[p][j % 2][i % 2]);
 	}
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
 }

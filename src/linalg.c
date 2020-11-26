@@ -142,7 +142,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 
 		for (i = 0; i < sizeB; i ++)
 			B[i] = vecB[i];
-		
+
 		alpha = 1;
 		beta = 0;
 		// Call the BLAS function.
@@ -184,7 +184,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 
 		for (i = 0; i < rowsB * colsB; i ++)
 			B[i] = matB[i/colsB][i % colsB];
-		
+
 		alpha = 1;
 		beta = 0;
 		// Call the BLAS function.
@@ -237,61 +237,61 @@ void ZMul(double complex **matA, double complex c, double complex **mul, int row
 }
 
 
-void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **mat, int dim){
-	/*
-		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
-		Given x_i and |v_i>, we want to compute the matrix: sum_i [ x_i |v_i><v_i| ].
-	*/
-	double complex **outer = malloc(sizeof(double complex *) * dim);
-	int i, j;
-	for (i = 0; i < dim; i ++){
-		outer[i] = malloc(sizeof(double complex) * dim);
-		for (j = 0; j < dim; j ++)
-			mat[i][j] = 0 + 0 * I;
-	}
-	// ====
-	int d;
-	for (d = 0; d < dim; d ++){
-		for (i = 0; i < dim; i ++)
-			for (j = 0; j < dim; j ++)
-				outer[i][j] = 0 + 0 * I;
-		ZOuter(eigvecs[i], eigvecs[i], outer, dim, dim);
-		ZMul(outer, eigvals[i], outer, dim, dim);
-		ZAdd(mat, outer, mat, dim, dim);
-	}
-	// ====
-	for (i = 0; i < dim; i ++)
-		free(outer[i]);
-	free(outer);
-}
+// void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **mat, int dim){
+// 	/*
+// 		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
+// 		Given x_i and |v_i>, we want to compute the matrix: sum_i [ x_i |v_i><v_i| ].
+// 	*/
+// 	double complex **outer = malloc(sizeof(double complex *) * dim);
+// 	int i, j;
+// 	for (i = 0; i < dim; i ++){
+// 		outer[i] = malloc(sizeof(double complex) * dim);
+// 		for (j = 0; j < dim; j ++)
+// 			mat[i][j] = 0 + 0 * I;
+// 	}
+// 	// ====
+// 	int d;
+// 	for (d = 0; d < dim; d ++){
+// 		for (i = 0; i < dim; i ++)
+// 			for (j = 0; j < dim; j ++)
+// 				outer[i][j] = 0 + 0 * I;
+// 		ZOuter(eigvecs[i], eigvecs[i], outer, dim, dim);
+// 		ZMul(outer, eigvals[i], outer, dim, dim);
+// 		ZAdd(mat, outer, mat, dim, dim);
+// 	}
+// 	// ====
+// 	for (i = 0; i < dim; i ++)
+// 		free(outer[i]);
+// 	free(outer);
+// }
 
 
-void FixPositivity(complex double **mat, complex double **cpmat, int dim){
-	/*
-		Map a non positive semi-definite matrix to a positive semidefinite matrix.
-		If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
-		1. Compute the eigenvalues and eigenvectors of M
-		2. Compute the absolute value of all the eigenvalues.
-		3. Use reconstruct to define a matrix whose spectrum is given by (2).
-	*/
-	double complex *eigvals, **eigvecs;
-	int d;
-	eigvals = malloc(sizeof(double complex) * dim);
-	eigvecs = malloc(sizeof(double complex *) * dim);
-	for (d = 0; d < dim; d ++)
-		eigvecs[d] = malloc(sizeof(double complex) * dim);
-
-	Diagonalize(mat, dim, eigvals, 1, eigvecs);
-	for (d = 0; d < dim; d ++)
-		eigvals[d] = cabs(eigvals[d]) + 0 * I;
-	ZReconstruct(eigvals, eigvecs, cpmat, dim);
-
-	// ====
-	for (d = 0; d < dim; d ++)
-		free(eigvecs[d]);
-	free(eigvecs);
-	free(eigvals);
-}
+// void FixPositivity(complex double **mat, complex double **cpmat, int dim){
+// 	/*
+// 		Map a non positive semi-definite matrix to a positive semidefinite matrix.
+// 		If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
+// 		1. Compute the eigenvalues and eigenvectors of M
+// 		2. Compute the absolute value of all the eigenvalues.
+// 		3. Use reconstruct to define a matrix whose spectrum is given by (2).
+// 	*/
+// 	double complex *eigvals, **eigvecs;
+// 	int d;
+// 	eigvals = malloc(sizeof(double complex) * dim);
+// 	eigvecs = malloc(sizeof(double complex *) * dim);
+// 	for (d = 0; d < dim; d ++)
+// 		eigvecs[d] = malloc(sizeof(double complex) * dim);
+//
+// 	Diagonalize(mat, dim, eigvals, 1, eigvecs);
+// 	for (d = 0; d < dim; d ++)
+// 		eigvals[d] = cabs(eigvals[d]) + 0 * I;
+// 	ZReconstruct(eigvals, eigvecs, cpmat, dim);
+//
+// 	// ====
+// 	for (d = 0; d < dim; d ++)
+// 		free(eigvecs[d]);
+// 	free(eigvecs);
+// 	free(eigvals);
+// }
 
 
 void ZDot(double complex **matA, double complex **matB, double complex **prod, int rowsA, int colsA, int rowsB, int colsB){
@@ -345,8 +345,22 @@ void ZDot(double complex **matA, double complex **matB, double complex **prod, i
 	}
 }
 
+void DiagonalizeLD(long double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+	complex double **matd = malloc(sizeof(complex double *)*4);
+	int i,j;
+	for (i=0; i<4 ; i++){
+		matd[i] = malloc(sizeof(complex double)*4);
+		for (j=0; j<4 ; j++)
+			matd[i][j] = (complex double) mat[i][j];
+	}
+	DiagonalizeD(matd, nrows, eigvals, iseigvecs, eigvecs);
+	for (i=0; i<4 ; i++)
+		free(matd[i]);
+	free(matd);
+}
 
-void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+
+void DiagonalizeD(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs){
 	/*
 		Compute the eigenvalues and the right-eigenvectors of a complex square matrix.
 		We will use the LAPACK routine zgeev to compute the eigenvalues. The LAPACK function is defined as follows.
@@ -364,7 +378,7 @@ void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int i
 						  int* lwork, // Size of the array: work. If it is -1, then running the algorithm doesn't compute the eigenvalues but assigns the optimal size of the work array to lwork.
 						  double* rwork, // double precision array of size 2 * n
 						  int* info); // result. 0 if successful, -i if i-th argument has illegal value and +i if 1 to i eigen values of w have not converged.
-		
+
 		There is a C wrapper to the LAPACK routine:
 		https://software.intel.com/sites/products/documentation/doclib/mkl_sa/11/mkl_lapack_examples/lapacke_zgeev_row.c.htm
 	*/
@@ -375,8 +389,8 @@ void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int i
 	int i, j;
 	for (i = 0; i < nrows; i ++){
 		for (j = 0; j < nrows; j ++){
-			a[i * nrows + j].real = creal(mat[i][j]);
-			a[i * nrows + j].imag = cimag(mat[i][j]);
+			a[i * nrows + j].real = (creal(mat[i][j]));
+			a[i * nrows + j].imag = (cimag(mat[i][j]));
 		}
 	}
 	info = LAPACKE_zgeev(LAPACK_ROW_MAJOR, 'V', 'V', n, a, lda, w, vl, lvdl, vr, lvdr);

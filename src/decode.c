@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "printfuns.h"
-#include "linalg.h"
-#include "decode.h"
 #include <math.h>
+#include "printfuns.h"
+#include "utils.h"
+#include "decode.h"
 
 /*
 	1. Remove coset_sum from ComputeCosetProbs and ComputeCosetProbsLevelOne functions.

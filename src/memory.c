@@ -80,8 +80,7 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	(simul->syndprobs) = malloc(nstabs * sizeof(double));
 	(simul->cumulative) = malloc(nstabs * sizeof(double));
 	int s;
-	for (s = 0; s < nstabs; s++)
-	{
+	for (s = 0; s < nstabs; s++){
 		(simul->syndprobs)[s] = 0.0;
 		(simul->cumulative)[s] = 0.0;
 	}
@@ -115,6 +114,11 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 		}
 	}
 	// printf("_/ effective, effprocess\n");
+	// Normaization constants to ensure that the conditional logical channels are trace preserving.
+	simul->tpnorms = malloc(nstabs * sizeof(double *));
+	for (s = 0; s < nstabs; s++)
+		(simul->tpnorms)[s] = malloc(nlogs * sizeof(double));
+
 }
 
 void AllocDecoderBins(struct simul_t *simul, int *nphys)
@@ -325,6 +329,10 @@ void FreeSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	free(simul->cumulative);
 	// printf("_/ syndprobs, cumulative\n");
 	// printf("Done\n")
+	// Normaization constants to ensure that the conditional logical channels are trace preserving.
+	for (s = 0; s < nstabs; s++)
+		free((simul->tpnorms)[s]);
+	free(simul->tpnorms);
 }
 
 void FreeSimParams(struct simul_t *simul, int nphys, int nenc)

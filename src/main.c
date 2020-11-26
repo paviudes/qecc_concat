@@ -7,6 +7,7 @@
 #include "mt19937/mt19937ar.h" // Random number generator
 #include "rand.h"
 #include "printfuns.h"
+#include "utils.h"
 #include "linalg.h"
 #include "constants.h"
 #include "memory.h"
@@ -389,7 +390,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 3;
+			int iscorr = 0;
 			// ===
 
 			// ===
@@ -450,7 +451,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10;
+			stats[0] = 1000;
 			// ===
 
 			// ===

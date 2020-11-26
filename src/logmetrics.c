@@ -3,11 +3,13 @@
 #include <math.h>
 #include <string.h>
 #include <complex.h>
+#include "reps.h"
 #include "linalg.h"
 #include "constants.h"
 #include "memory.h"
 #include "logmetrics.h"
 
+/*
 void ProcessToChoi(double **process, double complex **choi, int nlogs, double complex ***pauli){
 	// Convert from the process matrix to the Choi matrix.
 	// J = 1/K * sum_P (E(P) o P^T)
@@ -28,6 +30,7 @@ void ProcessToChoi(double **process, double complex **choi, int nlogs, double co
 	}
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
 }
+*/
 
 
 double Entropy(double **ptm, struct constants_t *consts){

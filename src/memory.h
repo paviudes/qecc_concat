@@ -13,6 +13,7 @@ struct simul_t
   double ***restrict virtchan;
   double **restrict pauli_probs;
   // Quantum error correction and logical noise
+  double **restrict tpnorms;
   double ***restrict logical;
   double ****restrict process;
   double *restrict syndprobs;

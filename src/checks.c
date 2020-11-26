@@ -10,6 +10,8 @@
 #include <string.h> // Only for testing purposes
 #include <math.h>
 #include <complex.h>
+#include "constants.h"
+#include "reps.h"
 #include "mt19937/mt19937ar.h" // Only for testing purposes
 #include "printfuns.h" // Only for testing purposes
 #include "linalg.h"
@@ -32,7 +34,7 @@ int IsPositive(double complex **choi){
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	Diagonalize(choi, 4, eigvals, 0, NULL);
-	const double atol = 10E-8;
+	const double atol = 1E-8;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
 		if (cimag(eigvals[i]) > atol)
@@ -41,9 +43,10 @@ int IsPositive(double complex **choi){
 			ispos = 0;
 	}
 	if (ispos == 0){
-		PrintComplexArray2D(choi, "Channel", 4, 4);
+		PrintComplexArray2D(choi, "Choi", 4, 4);
 		PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	}
+	// PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	// Free memory
 	free(eigvals);
 	return ispos;
@@ -67,15 +70,19 @@ int IsHermitian(double complex **choi){
 int IsTraceOne(double complex **choi){
 	// Check if the trace of a complex 4x4 matrix is 1.
 	int i;
-	const double atol = 10E-8;
+	const double atol = 1E-8;
 	double complex trace = 0 + 0 * I;
 	for (i = 0; i < 4; i ++)
 		trace = trace + choi[i][i];
 	// printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
-	if (fabsl(cimagl(trace)) > atol)
+	if (fabsl(cimagl(trace)) > atol){
+		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
 		return 0;
-	if (fabsl(creall(trace)  -  1.0) > atol)
+	}
+	if (fabsl(creall(trace)  -  1.0) > atol){
+		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
 		return 0;
+	}
 	return 1;
 }
 
@@ -90,11 +97,37 @@ int IsState(double complex **choi){
 	if (ispositive == 0)
 		printf("Not Positive.\n");
 	istrace1 = IsTraceOne(choi);
+	// istrace1 = 1;
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
 	isstate = ishermitian * istrace1 * ispositive;
 	return isstate;
 }
+
+int IsChannel(double **ptm, struct constants_t *consts){
+	// Check is a 4 x 4 matrix is a valid density matrix.
+	// We will convert it to a Choi matrix and test if the result is a density matrix.
+	double complex **choi = NULL;
+	int r, c, nlogs = 4;
+	choi = malloc(sizeof(double complex *) * nlogs);
+	for (r = 0; r < nlogs; r ++){
+		choi[r] = malloc(sizeof(double complex) * nlogs);
+		for (c = 0; c < nlogs; c ++){
+			choi[r][c] = 0 + 0 * I;
+		}
+	}
+	ProcessToChoi(ptm, choi, nlogs, consts->pauli);
+	// PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
+	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
+	int ischan = IsState(choi);
+	if (ischan == 0)
+		PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
+	for (r = 0; r < nlogs; r ++)
+		free(choi[r]);
+	free(choi);
+	return ischan;
+}
+
 
 int IsPDF(double *dist, int size){
 	// Check if a given list of numbers is a normalized PDF.

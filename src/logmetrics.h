@@ -5,16 +5,6 @@
 #include "constants.h"
 
 /*
-	Convert from the process matrix to the Choi matrix.
-	J = 1/K * sum_P (E(P) o P^T)
-	where K is the dimension of the Hilbert space, P runs over Pauli operators
-	and E is the error channel. E(P) = 1/K * sum_Q G_(P,Q) Q where G(P, Q) =
-	Tr(E(P).Q) is the process matrix and Q runs over Pauli operators. hence we
-	have: J = 1/K sum_(P, Q) G_(P,Q) Q o P^T
-*/
-extern void ProcessToChoi(double **process, double complex **choi, int nlogs, double complex ***pauli);
-
-/*
 	Compute all the metrics for a given channel in the Choi matrix form.
 	Inputs:
 		double *metvals = double array of shape (nmetrics), which will contain the metric values after function execution.

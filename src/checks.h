@@ -18,7 +18,10 @@ extern int IsTraceOne(double complex **choi);
 // Check is a complex 4x4 matrix is Hermitian.
 int IsHermitian(double complex **choi);
 
-// Check is a 4 x 4 matrix is a valid density matrix.
+// Check is a 4 x 4 Choi matrix is a valid density matrix.
 extern int IsState(double complex **choi);
+
+// Check is a 4 x 4 Pauli transfer matrix is a valid channel.
+extern int IsChannel(double **ptm, struct constants_t *consts);
 
 #endif /* CHECKS_H */

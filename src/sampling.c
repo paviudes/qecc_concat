@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "mt19937/mt19937ar.h"
-#include "printfuns.h" // only for testing
-#include "linalg.h"
+// #include "printfuns.h" // only for testing
+#include "utils.h"
 #include "sampling.h"
 
 void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs){

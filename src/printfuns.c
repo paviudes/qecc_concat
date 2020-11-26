@@ -23,7 +23,7 @@ void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncol
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++){
 		for (c = 0; c < ncols; c ++)
-			printf("    %.8f + i %.8f", creal(array[r][c]), cimag(array[r][c]));
+			printf("    %.15f + i %.15f", creal(array[r][c]), cimag(array[r][c]));
 		printf("\n");
 	}
 	printf("-----\n");

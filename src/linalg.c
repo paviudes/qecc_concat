@@ -17,105 +17,6 @@
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
 
-long Comb(int n, int k){
-	// Compute the combinatorial factor: n choose k.
-	// C(n, k) = [n * (n-1) * .... * (n-k+1)] / [k * (k-1) * .... * 1]
-	if (k > n - k){
-		k = n - k;
-	}
-	double fact = 1;
-	int i;
-	for (i = 0; i < k; ++i){
-		fact *= ((double) (n - i))/((double) (k - i));
-	}
-	return (long) fact;
-}
-
-double Max(double a, double b){
-	// Compute the maximum of two numbers.
-	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
-	return (a > b) ? a:b;
-}
-
-double Min(double a, double b){
-	// Compute the minimum of two numbers.
-	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
-	return (a < b) ? a:b;
-}
-
-int SumInt(int *arr, int size){
-	// Compute the sum of numbers in an array.
-	int i, sum = 0;
-	for (i = 0; i < size; i ++)
-		sum += arr[i];
-	return sum;
-}
-
-double SumDouble(double *arr, int size){
-	// Compute the sum of numbers in an array.
-	int i;
-	double sum = 0;
-	for (i = 0; i < size; i ++)
-		sum += arr[i];
-	return sum;
-}
-
-void Normalize(double *arr, int size){
-	// Normalize the array.
-	// https://stackoverflow.com/questions/18069269/normalizing-a-list-of-very-small-double-numbers-likelihoods
-	int i;
-	double *logarr = malloc(sizeof(double) * size);
-	double maxlog = log10(arr[0]);
-	for (i = 0; i < size; i ++){
-		logarr[i] = log10(arr[i]);
-		if (maxlog <= logarr[i])
-			maxlog = logarr[i];
-	}
-	for (i = 0; i < size; i ++)
-		logarr[i] = logarr[i] - maxlog;
-	for (i = 0; i < size; i ++)
-		arr[i] = pow(10, logarr[i]);
-
-	double sum = SumDouble(arr, size);
-	for (i = 0; i < size; i ++)
-		arr[i] = arr[i]/sum;
-	
-	free(logarr);
-}
-
-int BitParity(int num){
-	// Compute the parity of the integer's binary representation.
-	int parity = 0;
-	if (num > 0){
-		int i, nbits = (int)(1 + (log(num)/log(2)));
-		// printf("log(%d) = %g, nbits = %d.\n", num, log(num), nbits);
-		int *seq = malloc(sizeof(int) * nbits);
-		for (i = nbits - 1; i >= 0; i --){
-			seq[i] = (int)(num/pow(2, i));
-			num = num % (int)(pow(2, i));
-		}
-		parity = SumInt(seq, nbits) % 2;
-		free(seq);
-	}
-	return parity;
-}
-
-double Divide(double num, double den){
-	// Divide small numbers.
-	const int SHIFT = 15;
-	double mag_num = SHIFT + ceil(-log10(fabs(num)));
-	double mag_den = SHIFT + ceil(-log10(fabs(den)));
-	// printf("mag_num = %g, mag_den = %g\n", mag_num, mag_den);
-	return round(num * pow(10, mag_num))/round(den * pow(10, mag_den)) * pow(10, mag_den - mag_num);
-}
-
-int BinaryDot(int a, int b){
-	// Compute dot product modulo 2, between two integer's binary representations.
-	// https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2
-	return BitParity(a & b);
-}
-
-
 double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
 	// This is a wrapper for SumDot where the vector has integers.
 	double *dvecB = malloc(sizeof(double) * rowsB);
@@ -293,6 +194,105 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 			prod[i/colsB][i % colsB] = C[i];
 	}
 }
+
+
+void ZOuter(double complex *vecA, double complex *vecB, double complex **prod, int lenA, int lenB){
+	/*
+		Perform an outer product of two vectors.
+		Given column vectors x and y, we want to perform: x.y^T.
+	*/
+	double complex **matA, **matB;
+	int i;
+	matA = malloc(lenA * sizeof(double complex *));
+	for (i = 0; i < lenA; i ++){
+		matA[i] = malloc(sizeof(double complex));
+		matA[i][0] = vecA[i];
+	}
+	matB = malloc(sizeof(double complex *));
+	matB[0] = malloc(lenB * sizeof(double complex));
+	for (i = 0; i < lenB; i ++)
+		matB[0][i] = vecB[i];
+	ZDot(matA, matB, prod, lenA, 1, 1, lenB);
+}
+
+
+void ZAdd(double complex **matA, double complex **matB, double complex **sum, int rows, int cols){
+	/*
+		Add two matrices of equal dimensions.
+	*/
+	int i, j;
+	for (i = 0; i < rows; i ++)
+		for (j = 0; j < cols; j ++)
+			sum[i][j] = matA[i][j] + matB[i][j];
+}
+
+void ZMul(double complex **matA, double complex c, double complex **mul, int rows, int cols){
+	/*
+		Multiply every element of a complex matrix by a scalar.
+	*/
+	int i, j;
+	for (i = 0; i < rows; i ++)
+		for (j = 0; j < cols; j ++)
+			mul[i][j] = matA[i][j] * c;
+}
+
+
+void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **mat, int dim){
+	/*
+		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
+		Given x_i and |v_i>, we want to compute the matrix: sum_i [ x_i |v_i><v_i| ].
+	*/
+	double complex **outer = malloc(sizeof(double complex *) * dim);
+	int i, j;
+	for (i = 0; i < dim; i ++){
+		outer[i] = malloc(sizeof(double complex) * dim);
+		for (j = 0; j < dim; j ++)
+			mat[i][j] = 0 + 0 * I;
+	}
+	// ====
+	int d;
+	for (d = 0; d < dim; d ++){
+		for (i = 0; i < dim; i ++)
+			for (j = 0; j < dim; j ++)
+				outer[i][j] = 0 + 0 * I;
+		ZOuter(eigvecs[i], eigvecs[i], outer, dim, dim);
+		ZMul(outer, eigvals[i], outer, dim, dim);
+		ZAdd(mat, outer, mat, dim, dim);
+	}
+	// ====
+	for (i = 0; i < dim; i ++)
+		free(outer[i]);
+	free(outer);
+}
+
+
+void FixPositivity(complex double **mat, complex double **cpmat, int dim){
+	/*
+		Map a non positive semi-definite matrix to a positive semidefinite matrix.
+		If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
+		1. Compute the eigenvalues and eigenvectors of M
+		2. Compute the absolute value of all the eigenvalues.
+		3. Use reconstruct to define a matrix whose spectrum is given by (2).
+	*/
+	double complex *eigvals, **eigvecs;
+	int d;
+	eigvals = malloc(sizeof(double complex) * dim);
+	eigvecs = malloc(sizeof(double complex *) * dim);
+	for (d = 0; d < dim; d ++)
+		eigvecs[d] = malloc(sizeof(double complex) * dim);
+
+	Diagonalize(mat, dim, eigvals, 1, eigvecs);
+	for (d = 0; d < dim; d ++)
+		eigvals[d] = cabs(eigvals[d]) + 0 * I;
+	ZReconstruct(eigvals, eigvecs, cpmat, dim);
+
+	// ====
+	for (d = 0; d < dim; d ++)
+		free(eigvecs[d]);
+	free(eigvecs);
+	free(eigvals);
+}
+
 
 void ZDot(double complex **matA, double complex **matB, double complex **prod, int rowsA, int colsA, int rowsB, int colsB){
 	/*

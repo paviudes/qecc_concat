@@ -119,7 +119,7 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 	// columns in the logical classes. printf("Function: GetFullProcessMatrix for
 	// isPauli = %d.\n", isPauli);
 	int i, j, k, l, q;
-	long double prod = 0, prod_val = 0;
+	long double prod_val = 0;
 	long double prod = 1;
 	int prod_phase = 1;
 	if (isPauli == 0)
@@ -132,19 +132,19 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 				{
 					for (l = 0; l < qecc->nstabs; l++)
 					{
-						// prod_val = 0;
-						// prod_phase = 1;
-						prod = 1;
+						prod_val = 0;
+						prod_phase = 1;
+						// prod = 1;
 						for (q = 0; q < qecc->N; q++){
-							// prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]);
-							// if (prod_phase != 0)
-								// prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]));
-							prod *= (sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]];
+							prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]);
+							if (prod_phase != 0)
+								prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]));
+							// prod *= (sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]];
 						}
-						// if (prod_phase == 0)
-						// 	prod = 0;
-						// else
-						// 	prod = (long double) prod_phase * powl(10, prod_val);
+						if (prod_phase == 0)
+							prod = 0;
+						else
+							prod = (long double) prod_phase * powl(10, prod_val);
 						// printf("prod_val = %lf\n", prod_val);
 						(sim->process)[i][j][k][l] = (long double) creal((qecc->phases)[i][k] * (qecc->phases)[j][l]) * prod;
 					}
@@ -160,47 +160,30 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 		{
 			for (j = 0; j < qecc->nstabs; j++)
 			{
-				prod_val = 0;
-				prod_phase = 1;
+				// prod_val = 0;
+				// prod_phase = 1;
+				prod = 1;
 				for (q = 0; q < qecc->N; q++){
-					prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]);
-					if (prod_phase == 0)
-						break;
-					prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]));
+					// prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]);
+					// if (prod_phase != 0)
+					// 	prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]));
+					prod *= (sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]];
 				}
 				// printf("prod_val = %lf\n", prod_val);
-				if (prod_phase == 0)
-					prod = 0;
-				else
-					prod = (long double) prod_phase * powl(10, prod_val);
+				// if (prod_phase == 0)
+				// 	prod = 0;
+				// else
+				// 	prod = (long double) prod_phase * powl(10, prod_val);
 				(sim->process)[i][i][j][j] = (long double) creal((qecc->phases)[i][j] * (qecc->phases)[i][j]) * prod;
 			}
 		}
 		// PrintDoubleArrayDiag((sim->process)[1][1], "process[1][1]", qecc->nstabs);
 	}
-	if (sim->rc == 1)
-	{
-		// PrintIntArray1D(sim->rcpauli, "rcpauli", qecc->nstabs);
-		for (i = 0; i < qecc->nlogs; i++)
-		{
-			for (j = 0; j < qecc->nlogs; j++)
-			{
-				for (k = 0; k < qecc->nstabs; k++)
-				{
-					for (l = 0; l < qecc->nstabs; l++)
-					{
-						(sim->process)[i][j][k][l] *= powl(-1, (sim->rcpauli)[k]);
-					}
-				}
-			}
-		}
-		// PrintDoubleArray2D((sim->process)[0][0], "process[0][0]", qecc->nstabs, qecc->nstabs);
-	}
 	// printf("Done computing full process matrix: process[0][0][0][0] = %g.\n", (sim->process)[0][0][0][0]);
 }
 
 
-void ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *sim, int isPauli)
+long double ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 {
 	// Compute the probability of all the syndromes in the qecc code, for the
 	// given error channel and input state. Sample a syndrome from the resulting
@@ -208,19 +191,27 @@ void ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *s
 	// denoted by P(s) is given by the following expression. P(s) = 1/2^(n-k) *
 	// sum_(i,j: P_i and P_j are stabilizers) CHI[i,j] * (-1)^sign(P_j).
 	// Initialize syndrome probabilities
+	
 	// if (isPauli == 0)
 	// 	(sim->syndprobs)[synd] = SumDotInt((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (long double)(qecc->nstabs);
 	// else
 	// 	(sim->syndprobs)[synd] = DiagGDotIntV((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (long double)(qecc->nstabs);
 
 	int s, sp;
-	for (s = 0; s < qecc->nstabs; s ++){
-		for (sp = 0; sp < qecc->nstabs; sp ++){
-			(sim->syndprobs)[synd] += (long double) ((qecc->projector)[synd][sp]) * (sim->process)[0][0][s][sp];
+	long double prob = 0;
+	if (isPauli == 0){
+		for (s = 0; s < qecc->nstabs; s ++){
+			for (sp = 0; sp < qecc->nstabs; sp ++){
+				prob += (long double) ((qecc->projector)[synd][sp]) * (sim->process)[0][0][s][sp];
+			}
 		}
 	}
-	(sim->syndprobs)[synd] /= (long double) (qecc->nstabs);
-
+	else{
+		for (s = 0; s < qecc->nstabs; s ++)
+			prob += (long double) ((qecc->projector)[synd][s]) * (sim->process)[0][0][s][s];
+	}
+	prob /= (long double) (qecc->nstabs);
+	return prob;
 }
 
 void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int isPauli, struct constants_t *consts)
@@ -232,11 +223,11 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 	// sum_(i,j: P_i and P_j are stabilizers) CHI[i,j] * (-1)^sign(P_j).
 	int s;
 	// Initialize syndrome probabilities
-	for (s = 0; s < qecc->nstabs; s++)
-		ComputeSyndromeProbability(s, qecc, sim, isPauli);
-	// for (s = 0; s < qecc->nstabs; s++)
-	// 	if (fabsl((sim->syndprobs)[s]) < consts->atol)
-	// 		(sim->syndprobs)[s] = 0;
+	for (s = 0; s < qecc->nstabs; s++){
+		(sim->syndprobs)[s] = ComputeSyndromeProbability(s, qecc, sim, isPauli);
+		if (fabsl((sim->syndprobs)[s]) < consts->atol)
+			(sim->syndprobs)[s] = 0;
+	}
 	// Construct the cumulative distribution
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
@@ -250,8 +241,8 @@ void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int i
 			exit(0);
 		}
 	}
-	PrintLongDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
-	PrintLongDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+	// PrintLongDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+	// PrintLongDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
 }
 
 
@@ -408,7 +399,8 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// where L* is the correction applied by the decoder.
 	// printf("Function: EffChanSynd(%d,...), P(%d) = %.8lf\n", synd, synd, (sim->syndprobs)[synd]);
 	int l, lp, s, sp;
-	int f1, f2, f3;
+	long double f1, f2;
+	int f3;
 	// const double ROUND_OFF = 1E12;
 	// Initialization
 	for (l = 0; l < qecc->nlogs; l ++){
@@ -421,58 +413,68 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 		if (isPauli == 0){
 			for (l = 0; l < qecc->nlogs; l ++){
 				for (lp = 0; lp < qecc->nlogs; lp ++){
+					(sim->effprocess)[synd][l][lp] = 0;
 					for (s = 0; s < qecc->nstabs; s ++){
 						for (sp = 0; sp < qecc->nstabs; sp ++){
-							f1 = (qecc->projector)[synd][sp];
-							f2 = (consts->algebra)[1][(sim->corrections)[synd]][lp];
-							f3 = (consts->algebra)[0][(sim->corrections)[synd]][lp];
+							f1 = (long double) ((qecc->projector)[synd][sp]);
+							f2 = (long double) ((consts->algebra)[1][(sim->corrections)[synd]][lp]);
+							f3 = ((consts->algebra)[0][(sim->corrections)[synd]][lp]);
 							(sim->effprocess)[synd][l][lp] += f1 * f2 * (sim->process)[l][f3][s][sp];
 						}
 					}
 				}
 			}
+			// printf("Population done.\n");
+			// Normalization
+			// ApplyNormalization(synd, qecc, sim);
+			// printf("Exact G[0, 0] = %.15f, P(s) * 2^(n-k) = %.15f\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+			for (l = 0; l < qecc->nlogs; l ++){
+				for (lp = 0; lp < qecc->nlogs; lp ++){
+					// (sim->effprocess)[synd][l][lp] /= pow(2, qecc->N - qecc->K);
+					printf("Exact G[%d,%d] = %.15Lf, P(s) * 2^(n-k) = %.15Lf\n", l, lp, (sim->effprocess)[synd][l][lp], (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+					// (sim->effprocess)[synd][l][lp] = (sim->effprocess)[synd][l][lp] / (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+					(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				}
+				printf("----\n");
+			}
 		}
 		else{
 			for (l = 0; l < qecc->nlogs; l ++){
+				(sim->effprocess)[synd][l][l] = 0;
 				for (s = 0; s < qecc->nstabs; s ++){
 					// printf("l = %d, s = %d\n",l,s);
-					f1 = (qecc->projector)[synd][s];
-					f2 = (consts->algebra)[1][(sim->corrections)[synd]][l];
+					f1 = (long double) ((qecc->projector)[synd][s]);
+					f2 = (long double) ((consts->algebra)[1][(sim->corrections)[synd]][l]);
 					(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
 				}
 			}
-		}
-		// printf("Population done.\n");
-		// Normalization
-		// ApplyNormalization(synd, qecc, sim);
-		// printf("Exact G[0, 0] = %.15f, P(s) * 2^(n-k) = %.15f\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (lp = 0; lp < qecc->nlogs; lp ++){
-				// (sim->effprocess)[synd][l][lp] /= pow(2, qecc->N - qecc->K);
-				printf("Exact G[%d,%d] = %.15Lf, P(s) * 2^(n-k) = %.15Lf\n", l, lp, (sim->effprocess)[synd][l][lp], (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-				(sim->effprocess)[synd][l][lp] = (sim->effprocess)[synd][l][lp] / (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-				// (sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-				// (sim->effprocess)[synd][l][lp] = round(ROUND_OFF * (sim->effprocess)[synd][l][lp])/round(ROUND_OFF * (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-				// (sim->effprocess)[synd][l][lp] = (double)(((long double)(sim->effprocess)[synd][l][lp]) / (long double)(pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+			// printf("Population done.\n");
+			// Normalization
+			// ApplyNormalization(synd, qecc, sim);
+			// printf("Exact G[0, 0] = %.15f, P(s) * 2^(n-k) = %.15f\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+			for (l = 0; l < qecc->nlogs; l ++){
+				// printf("Exact G[%d,%d] = %.15Lf, P(s) * 2^(n-k) = %.15Lf\n", l, l, (sim->effprocess)[synd][l][l], (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
+				// (sim->effprocess)[synd][l][l] = (sim->effprocess)[synd][l][l] / (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+				(sim->effprocess)[synd][l][l] = Divide((sim->effprocess)[synd][l][l], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 			}
-			printf("----\n");
 		}
 		// Consistency checks.
 		// 1. Check G[0,0] = 1
-		// printf("s = %d, P(s) = %.15f\nG[0][0] = %.15f\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
+		// printf("s = %d, P(s) = %.15Lf\nG[0][0] = %.15Lf\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
 		// 2. First column of G should be all zeros
 		// for (l = 1; l < qecc->nlogs; l ++){
 			// printf("G[%d][0] = %.15f\n", l, (sim->effprocess)[synd][l][0]);
 		// }
 		// 3. Check if the channel is valid
-		printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-		PrintLongDoubleArray2D((sim->effprocess)[synd],"PTM",4,4);
+		// printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
+		// PrintLongDoubleArray2D((sim->effprocess)[synd], "PTM", 4, 4);
 		if (IsChannel((sim->effprocess)[synd], consts) == 0){
 			printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
 			printf("Invalid channel\n");
 			printf("***********\n");
 			exit(0);
 		}
+		// printf("***********\n");
 	}
 	else{
 		for (l = 0; l < qecc->nlogs; l ++){
@@ -526,8 +528,8 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 			for (s1 = 0; s1 < nstabs; s1 ++)
 				(sim->process)[l1][l1][s1][s1] = process[l1 * nstabs + s1];
 	// printf("Full process matrix set for isPauli = %d.\n", isPauli);
-	// PrintDoubleColumn((sim->process)[0][0], "process[0,0]", qecc->nstabs, 0);
-	// PrintDoubleRow((sim->process)[0][0], "process[0,0]", qecc->nstabs, 0);
+	// PrintLongDoubleArray2D((sim->process)[0][0], "FULL PTM", qecc->nstabs, qecc->nstabs);
+	// PrintLongDoubleArrayDiag((sim->process)[3][3], "Diagonal elements of FULL PTM LS x LS", qecc->nstabs);
 }
 
 void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed)

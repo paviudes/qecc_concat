@@ -81,21 +81,22 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	(simul->cumulative) = malloc(nstabs * sizeof(long double));
 	int s;
 	for (s = 0; s < nstabs; s++){
-		(simul->syndprobs)[s] = 0.0;
-		(simul->cumulative)[s] = 0.0;
+		(simul->syndprobs)[s] = 0;
+		(simul->cumulative)[s] = 0;
 	}
 	// printf("_/ syndprobs, cumulative\n");
 	// Quantum error correction
 	simul->process = malloc(nlogs * sizeof(long double ***));
-	int j;
-	for (i = 0; i < nlogs; i++)
-	{
+	int j, g;
+	for (i = 0; i < nlogs; i++){
 		(simul->process)[i] = malloc(nlogs * sizeof(long double **));
-		for (j = 0; j < nlogs; j++)
-		{
+		for (j = 0; j < nlogs; j++){
 			(simul->process)[i][j] = malloc(nstabs * sizeof(long double *));
-			for (s = 0; s < nstabs; s++)
+			for (s = 0; s < nstabs; s++){
 				(simul->process)[i][j][s] = malloc(nstabs * sizeof(long double));
+				for (g = 0; g < nstabs; g++)
+					(simul->process)[i][j][s][g] = 0;
+			}
 		}
 	}
 	// printf("_/ process\n");
@@ -103,12 +104,10 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	// printf("_/ corrections\n");
 	(simul->effprocess) = malloc(nstabs * sizeof(long double **));
 	(simul->cosetprobs) = malloc(nstabs * sizeof(long double *));
-	for (s = 0; s < nstabs; s++)
-	{
+	for (s = 0; s < nstabs; s++){
 		(simul->effprocess)[s] = malloc(nlogs * sizeof(long double *));
 		(simul->cosetprobs)[s] = malloc(nlogs * sizeof(long double));
-		for (i = 0; i < nlogs; i++)
-		{
+		for (i = 0; i < nlogs; i++){
 			(simul->cosetprobs)[s][i] = 0;
 			(simul->effprocess)[s][i] = malloc(nlogs * sizeof(long double));
 		}

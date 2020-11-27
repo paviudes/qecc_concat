@@ -128,7 +128,7 @@ long double Divide(long double num, long double den){
 		2. If the numerator and the denominator are alike up to first N digits, return 1.
 		3. Do the log division otherwise.
 	*/
-	const int digits = 13;
+	const int digits = 15;
 	long double sign = (long double) (Sign(num) * Sign(den));
 	if (fabsl(num) <= powl(10, -1 * (digits + 1)))
 		return 0;

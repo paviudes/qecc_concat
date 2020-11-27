@@ -31,7 +31,7 @@ double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
 double SumDot(double **matA, double *vecB, int rowsA, int colsA, int rowsB){
 	// Given a matrix A and a vector v, compute the sum of entries in (A.v).
 	// The number of columns in A must be equal to the number of rows in B.
-	const double atol = 10E-12;
+	const double atol = 1E-16;
 	int i;
 	// Allocate memory for the product matrix
 	double *prod = malloc(sizeof(double *) * rowsA);

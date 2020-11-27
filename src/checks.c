@@ -34,7 +34,7 @@ int IsPositive(double complex **choi){
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	DiagonalizeD(choi, 4, eigvals, 0, NULL);
-	const long double atol = 1E-12;
+	const long double atol = 1E-4;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
 		if (cimag(eigvals[i]) > atol)
@@ -129,6 +129,8 @@ int _IsChannel(double **ptm, struct constants_t *consts){
 }
 
 int IsChannel(long double **ptm, struct constants_t *consts){
+	// Check is a 4 x 4 matrix is a valid density matrix.
+	// We will convert it to a Choi matrix and test if the result is a density matrix.
 	double **ptmd = malloc(sizeof(double *)*4);
 	int i,j;
 	for (i=0; i<4 ; i++){

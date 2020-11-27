@@ -49,6 +49,8 @@ extern void LoadIntArray1D(int *array, char *fname, int size);
 
 // Print the diagonal of a double 2D array.
 extern void PrintDoubleArrayDiag(double **array, char *name, int nrows);
+// Print the diagonal of a long double 2D array.
+extern void PrintLongDoubleArrayDiag(long double **array, char *name, int nrows);
 
 // Copy the elements of one array into another.
 extern void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols);

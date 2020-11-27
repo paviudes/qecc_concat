@@ -11,13 +11,13 @@ endif
 $(info MODE is ${MODE})
 
 ifeq ($(MODE), DEBUG)
-	CC = gcc
+	CC = gcc-8
 	OPTS = -O0
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
-endif
-ifneq ($(MODE), DEBUG)
+	LIBS_MATH = -lm
+else
 	CC = icc
 	OPTS = -O3 -xavx
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -31,19 +31,24 @@ endif
 #endif
 
 CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS) # $(REPORT)
-LIBS = -lm
 RM = rm
 SRC_DIR = src
-OStype = NotWin
-ifeq ($(OSTYPE), Windows_NT)
-	OStype = windows
-else ifeq ($(OSTYPE), Darwin)
-	OStype = mac
+
+# Detecting the OS type.
+OS := $(shell uname -s)
+$(info OS type is ${OS})
+
+ifeq ($(OS), Darwin)
+	# Only works on Linux and Mac
+	CFLAGS_MKL = -I${MKLROOT}/include
+	LIBS = -lm
+	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
+else ifeq ($(OS), Linux)
+	MKL_DIR = /home/pavi/intel/compilers_and_libraries_2020.4.304/linux/mkl
+	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
+	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
+	# -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_scalapack_ilp64 -lmkl_cdft_core -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_ilp64 -liomp5 -lpthread -lm -ldl
 else
-	OStype = linux
-endif
-$(info OS type is ${OStype})
-ifeq ($(OStype), windows)
 	# Only works for windows
 	# MKL_DIR = "c:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win"
 	#Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win
@@ -54,15 +59,6 @@ ifeq ($(OStype), windows)
 	LIBS_MKL = -L${LIBS_DIR}/mkl_rt.lib
 	# ${LIBS_DIR}/libiomp5md.lib
 	#${MKL_DIR}/lib/intel64_win/mkl_lapack95_ilp64.lib
-else ifeq ($(OStype), linux)
-	MKL_DIR = /home/pavi/intel/compilers_and_libraries_2020.4.304/linux/mkl
-	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
-	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
-	# -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_scalapack_ilp64 -lmkl_cdft_core -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_ilp64 -liomp5 -lpthread -lm -ldl
-else
-	# Only works on Linux and Mac
-	CFLAGS_MKL = -I${MKLROOT}/include
-	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
 endif
 
 $(shell mkdir -p obj/)
@@ -71,55 +67,55 @@ $(TARGET):obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/consta
 	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
 
 obj/main.o: $(SRC_DIR)/main.c Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/main.c -o obj/main.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o obj/main.o $(LIBS_MATH)
 
 obj/mt19937ar.o: $(SRC_DIR)/mt19937/mt19937ar.c $(SRC_DIR)/mt19937/mt19937ar.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/mt19937/mt19937ar.c -o obj/mt19937ar.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/mt19937/mt19937ar.c -o obj/mt19937ar.o $(LIBS_MATH)
 
 obj/rand.o: $(SRC_DIR)/rand.c $(SRC_DIR)/rand.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/rand.c -o obj/rand.o
+	$(CC) $(CFLAGS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/rand.c -o obj/rand.o $(LIBS_MATH)
 
 obj/linalg.o: $(SRC_DIR)/linalg.c $(SRC_DIR)/linalg.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/linalg.c -o obj/linalg.o
+	$(CC) $(CFLAGS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/linalg.c -o obj/linalg.o $(LIBS_MATH)
 
 obj/benchmark.o: $(SRC_DIR)/benchmark.c $(SRC_DIR)/benchmark.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/benchmark.c -o obj/benchmark.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/benchmark.c -o obj/benchmark.o $(LIBS_MATH)
 
 obj/hybrid.o: $(SRC_DIR)/hybrid.c $(SRC_DIR)/hybrid.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/hybrid.c -o obj/hybrid.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/hybrid.c -o obj/hybrid.o $(LIBS_MATH)
 
 obj/effective.o: $(SRC_DIR)/effective.c $(SRC_DIR)/effective.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/effective.c -o obj/effective.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/effective.c -o obj/effective.o $(LIBS_MATH)
 
 obj/memory.o: $(SRC_DIR)/memory.c $(SRC_DIR)/memory.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/memory.c -o obj/memory.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/memory.c -o obj/memory.o $(LIBS_MATH)
 
 obj/qecc.o: $(SRC_DIR)/qecc.c $(SRC_DIR)/qecc.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/qecc.c -o obj/qecc.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/qecc.c -o obj/qecc.o $(LIBS_MATH)
 
 obj/decode.o: $(SRC_DIR)/decode.c $(SRC_DIR)/decode.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/decode.c -o obj/decode.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/decode.c -o obj/decode.o $(LIBS_MATH)
 
 obj/logmetrics.o: $(SRC_DIR)/logmetrics.c $(SRC_DIR)/logmetrics.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/logmetrics.c -o obj/logmetrics.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/logmetrics.c -o obj/logmetrics.o $(LIBS_MATH)
 
 obj/checks.o: $(SRC_DIR)/checks.c $(SRC_DIR)/checks.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/checks.c -o obj/checks.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/checks.c -o obj/checks.o $(LIBS_MATH)
 
 obj/printfuns.o: $(SRC_DIR)/printfuns.c $(SRC_DIR)/printfuns.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/printfuns.c -o obj/printfuns.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/printfuns.c -o obj/printfuns.o $(LIBS_MATH)
 
 obj/constants.o: $(SRC_DIR)/constants.c $(SRC_DIR)/constants.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/constants.c -o obj/constants.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/constants.c -o obj/constants.o $(LIBS_MATH)
 
 obj/utils.o: $(SRC_DIR)/utils.c $(SRC_DIR)/utils.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/utils.c -o obj/utils.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/utils.c -o obj/utils.o $(LIBS_MATH)
 
 obj/reps.o: $(SRC_DIR)/reps.c $(SRC_DIR)/reps.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/reps.c -o obj/reps.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/reps.c -o obj/reps.o $(LIBS_MATH)
 
 obj/sampling.o: $(SRC_DIR)/sampling.c $(SRC_DIR)/sampling.h Makefile
-	$(CC) $(CFLAGS) $(LIBS) -c $(SRC_DIR)/sampling.c -o obj/sampling.o
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/sampling.c -o obj/sampling.o $(LIBS_MATH)
 
 clean:
-	$(RM) bmark.so bmark obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
+	$(RM) $(TARGET) obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o

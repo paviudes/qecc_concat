@@ -410,7 +410,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 0;
+			int iscorr = 1;
 			// ===
 
 			// ===
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1;
+			stats[0] = 10;
 			// ===
 
 			// ===

@@ -65,7 +65,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 	// of the metrics. Metric values.
 	// printf("Updating metrics.\n");
 	double *metvals = malloc(sim->nmetrics * sizeof(double));
-	double *avg = malloc((sim->nmetrics + qcode->nlogs * qcode->nlogs) * sizeof(double));
+	long double *avg = malloc((sim->nmetrics + qcode->nlogs * qcode->nlogs) * sizeof(long double));
 	int m;
 	for (m = 0; m < sim->nmetrics + qcode->nlogs * qcode->nlogs; m++)
 		avg[m] = 0;
@@ -79,7 +79,7 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 				// printf("s = %d\n", s);
 				// PrintDoubleArray1D(metvals, "metric values for s", sim->nmetrics);
 				for (m = 0; m < sim->nmetrics; m++)
-					avg[m] += metvals[m] * (sim->syndprobs)[s];
+					avg[m] += (long double) metvals[m] * (sim->syndprobs)[s];
 				// Compute average channel.
 				for (i = 0; i < qcode->nlogs; i++)
 					for (j = 0; j < qcode->nlogs; j++)
@@ -98,8 +98,8 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 		// printf("Populating average logical channel.\n");
 		for (i = 0; i < qcode->nlogs; i++) {
 			for (j = 0; j < qcode->nlogs; j++) {
-				(sim->logical)[level + 1][i][j] += bias * avg[sim->nmetrics + i * qcode->nlogs + j];
-				(sim->sumsq)[level + 1][sim->nmetrics + i * qcode->nlogs + j] += pow(bias * avg[sim->nmetrics + i * qcode->nlogs + j], 2);
+				(sim->logical)[level + 1][i][j] += bias * (double) avg[sim->nmetrics + i * qcode->nlogs + j];
+				(sim->sumsq)[level + 1][sim->nmetrics + i * qcode->nlogs + j] += (double) powl(bias * avg[sim->nmetrics + i * qcode->nlogs + j], 2);
 			}
 		}
 		// printf("The trace-preserving part of the logical channel at level %d is: %g and the bias is: %g.\n", level + 1, avg[sim->nmetrics], bias);
@@ -421,7 +421,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 							for (j = 0; j < qcode[l]->nlogs; j++)
 								channels[l][b][s][i][j] = (sims[s]->effprocess)[randsynd][i][j];
 						channels[l][b][s][qcode[l]->nlogs][0] = (long double) bias;
-						channels[l][b][s][qcode[l]->nlogs][1] = (long double) (history) * (sims[s]->syndprobs)[randsynd];
+						channels[l][b][s][qcode[l]->nlogs][1] = (long double) history * (sims[s]->syndprobs)[randsynd];
 						channels[l][b][s][qcode[l]->nlogs][2] = (sims[s]->syndprobs)[randsynd];
 					}
 				}

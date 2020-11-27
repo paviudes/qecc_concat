@@ -38,7 +38,7 @@ double SetExponent(double phy_infid, int dist, int nphys, int level){
 	// 1. Compute an upperbound to 1 - F, for the given level and physical infidelity.
 	// 2. The exponent is give by: k = log(\lambda)/log(1 - F).
 	double p = 1 - pow(1 - phy_infid, 1/(double) nphys);
-	const double threshold = 0.01;
+	const double threshold = 0.5;
 	double infidelity = UpperBoundInfidelity(p, dist, nphys, level);
 	double expo = log(threshold)/log(infidelity);
 	printf("L = %d, 1 - F = %.8f, exponent = %.3f\n", level, infidelity, expo);
@@ -50,7 +50,7 @@ void ConstructImportanceDistribution(long double *truedist, long double *impdist
 	// Q(s) = P(s)^k/(sum_s P(s)^k), i.e, a normalized power-law scaled version of P(s).
 	// If k = 0 (i.e, less than 10E-5) then simply set the probability distribution to be flat.
 	int s;
-	double atol = 10E-8;
+	double atol = 1E-8;
 	if (expo > atol)
 		for (s = 0; s < nelems; s ++)
 			impdist[s] = powl(truedist[s], (long double) expo);

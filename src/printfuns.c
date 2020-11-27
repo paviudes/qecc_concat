@@ -96,6 +96,18 @@ void PrintDoubleArrayDiag(double **array, char *name, int nrows){
 	printf("-----\n");
 	fflush(stdout);
 }
+void PrintLongDoubleArrayDiag(long double **array, char *name, int nrows){
+	// Print the diagonal of a long double 2D array.
+	int r;
+	printf("-----\n");
+	printf("Diagonal array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		printf("    %.12Lf", (array[r][r]));
+	}
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
 
 void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 	// Print a double 2D array.
@@ -145,7 +157,7 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++)
-		printf("    %.15f", (array[r]));
+		printf("    %.15e", (array[r]));
 	printf("\n");
 	printf("-----\n");
 	fflush(stdout);

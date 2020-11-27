@@ -29,12 +29,11 @@ int IsDiagonal(long double **matrix, int size){
 	return 1;
 }
 
-int IsPositive(double complex **choi){
+int IsPositive(double complex **choi, double atol){
 	// Test if an input complex 4x4 matrix is completely positive.
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
 	DiagonalizeD(choi, 4, eigvals, 0, NULL);
-	const long double atol = 1E-4;
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
 		if (cimag(eigvals[i]) > atol)
@@ -52,11 +51,10 @@ int IsPositive(double complex **choi){
 	return ispos;
 }
 
-int IsHermitian(double complex **choi){
+int IsHermitian(double complex **choi, double atol){
 	// Check is a complex 4x4 matrix is Hermitian.
 	// For a Hermitian matrix A, we have: A[i][j] = (A[j][i])^*.
 	int i, j;
-	const double atol = 1E-12;
 	for (i = 0; i < 4; i ++){
 		for (j = 0; j < 4; j ++){
 			if (cabs(choi[i][j] - conj(choi[j][i])) > atol){
@@ -67,10 +65,9 @@ int IsHermitian(double complex **choi){
 	return 1;
 }
 
-int IsTraceOne(double complex **choi){
+int IsTraceOne(double complex **choi, double atol){
 	// Check if the trace of a complex 4x4 matrix is 1.
 	int i;
-	const double atol = 1E-12;
 	double complex trace = 0 + 0 * I;
 	for (i = 0; i < 4; i ++)
 		trace = trace + choi[i][i];
@@ -86,17 +83,17 @@ int IsTraceOne(double complex **choi){
 	return 1;
 }
 
-int IsState(double complex **choi){
+int IsState(double complex **choi, double atol){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// It must be Hermitian, have trace 1 and completely positive.
 	int isstate = 0, ishermitian = 0, ispositive = 0, istrace1 = 0;
-	ishermitian = IsHermitian(choi);
+	ishermitian = IsHermitian(choi, atol);
 	if (ishermitian == 0)
 		printf("Not Hermitian.\n");
-	ispositive = IsPositive(choi);
+	ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
 		printf("Not Positive.\n");
-	istrace1 = IsTraceOne(choi);
+	istrace1 = IsTraceOne(choi, atol);
 	// istrace1 = 1;
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
@@ -104,7 +101,7 @@ int IsState(double complex **choi){
 	return isstate;
 }
 
-int _IsChannel(double **ptm, struct constants_t *consts){
+int _IsChannel(double **ptm, struct constants_t *consts, double atol){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// We will convert it to a Choi matrix and test if the result is a density matrix.
 	double complex **choi = NULL;
@@ -119,7 +116,7 @@ int _IsChannel(double **ptm, struct constants_t *consts){
 	ProcessToChoi(ptm, choi, nlogs, consts->pauli);
 	// PrintLongDoubleArray2D(ptm, "PTM", nlogs, nlogs);
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
-	int ischan = IsState(choi);
+	int ischan = IsState(choi, atol);
 	if (ischan == 0)
 		PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
 	for (r = 0; r < nlogs; r ++)
@@ -128,7 +125,7 @@ int _IsChannel(double **ptm, struct constants_t *consts){
 	return ischan;
 }
 
-int IsChannel(long double **ptm, struct constants_t *consts){
+int IsChannel(long double **ptm, struct constants_t *consts, double atol){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// We will convert it to a Choi matrix and test if the result is a density matrix.
 	double **ptmd = malloc(sizeof(double *)*4);
@@ -138,7 +135,7 @@ int IsChannel(long double **ptm, struct constants_t *consts){
 		for (j=0; j<4 ; j++)
 			ptmd[i][j] = (double) ptm[i][j];
 	}
-	int ischan = _IsChannel(ptmd,consts);
+	int ischan = _IsChannel(ptmd, consts, atol);
 	for (i=0; i<4 ; i++)
 		free(ptmd[i]);
 	free(ptmd);

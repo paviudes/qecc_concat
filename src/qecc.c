@@ -160,20 +160,20 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 		{
 			for (j = 0; j < qecc->nstabs; j++)
 			{
-				// prod_val = 0;
-				// prod_phase = 1;
-				prod = 1;
+				prod_val = 0;
+				prod_phase = 1;
+				// prod = 1;
 				for (q = 0; q < qecc->N; q++){
-					// prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]);
-					// if (prod_phase != 0)
-					// 	prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]));
-					prod *= (sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]];
+					prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]);
+					if (prod_phase != 0)
+						prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]));
+					// prod *= (sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]];
 				}
 				// printf("prod_val = %lf\n", prod_val);
-				// if (prod_phase == 0)
-				// 	prod = 0;
-				// else
-				// 	prod = (long double) prod_phase * powl(10, prod_val);
+				if (prod_phase == 0)
+					prod = 0;
+				else
+					prod = (long double) prod_phase * powl(10, prod_val);
 				(sim->process)[i][i][j][j] = (long double) creal((qecc->phases)[i][j] * (qecc->phases)[i][j]) * prod;
 			}
 		}
@@ -468,7 +468,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 		// 3. Check if the channel is valid
 		// printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
 		// PrintLongDoubleArray2D((sim->effprocess)[synd], "PTM", 4, 4);
-		if (IsChannel((sim->effprocess)[synd], consts) == 0){
+		if (IsChannel((sim->effprocess)[synd], consts, 1E-12) == 0){
 			printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
 			printf("Invalid channel\n");
 			printf("***********\n");

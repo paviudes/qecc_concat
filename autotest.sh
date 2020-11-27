@@ -5,6 +5,7 @@ if [[ -s make_errors.txt ]]; then
 	echo "Build failed"
 	cat make_log.txt
 	cat make_errors.txt
-else
+else	
+	cat make_log.txt
 	./bmark benchmark Benchmark
 fi

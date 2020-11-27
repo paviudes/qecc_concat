@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsPositive", 10) == 0){
 			printf("Function: IsPositive.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int ispos = IsPositive(mat);
+			int ispos = IsPositive(mat, 1E-12);
 			if (ispos == 1)
 				printf("is positive.\n");
 			else{
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 					}
 				}
 				PrintComplexArray2D(matP, "M . M^\\dag", 4, 4);
-				ispos = IsPositive(matP);
+				ispos = IsPositive(matP, 1E-12);
 				if (ispos == 1)
 					printf("is positive.\n");
 				else
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsHermitian", 11) == 0){
 			printf("Function: IsHermitian.\n");
 			PrintComplexArray2D(mat, "Matrix M", 4, 4);
-			int isherm = IsHermitian(mat);
+			int isherm = IsHermitian(mat, 1E-12);
 			if (isherm == 1)
 				printf("is Hermitian.\n");
 			else{
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 						matH[i][j] = mat[i][j] + conj(mat[j][i]);
 				}
 				PrintComplexArray2D(matH, "M + M^\\dag", 4, 4);
-				isherm = IsHermitian(matH);
+				isherm = IsHermitian(matH, 1E-12);
 				if (isherm == 1)
 					printf("is Hermitian.\n");
 				else
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsTraceOne", 10) == 0){
 			printf("Function: IsTraceOne.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int istrone = IsTraceOne(mat);
+			int istrone = IsTraceOne(mat, 1E-12);
 			if (istrone == 1)
 				printf("has unit trace.\n");
 			else{
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 					matN[i][i] = creal(matN[i][i]);
 				}
 				PrintComplexArray2D(matN, "M/trace", 4, 4);
-				istrone = IsTraceOne(matN);
+				istrone = IsTraceOne(matN, 1E-12);
 				if (istrone == 1)
 					printf("has unit trace.\n");
 				else
@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsState", 7) == 0){
 			printf("Function: IsState.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int isstate = IsState(mat);
+			int isstate = IsState(mat, 1E-12);
 			if (isstate == 0)
 				printf("is not a state.\n");
 			else
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10;
+			stats[0] = 1;
 			// ===
 
 			// ===

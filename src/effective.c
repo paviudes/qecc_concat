@@ -362,13 +362,23 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 						isPauli[s] = isPauli[s] * IsDiagonal((sims[s]->virtchan)[q], qcode[l]->nlogs);
 
 					PrintLongDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
+					
+					// Check if the picked channel is valid.
+					if (IsChannel((sims[s]->virtchan)[q], consts, 1E-12) == 0){
+						printf("Invalid channel\n");
+						printf("***********\n");
+						exit(0);
+					}
+					else
+						printf("Valid input channel.\n");
+
 					// PrintDoubleArray1D((sims[s]->pauli_probs)[q], "coset probabilities of chosen channel", qcode[l]->nlogs);
 					bias *= (double) (channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
 					history *= (double) (channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1]);
 					// printf("Syndrome probability: %g, bias = %g.\n", channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1], channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
 					// printf("======\n");
 				}
-				// printf("Going to perform SingleShotErrorCorrection on s = %d, isPauli = %d and frame = %d.\n", s, isPauli[s], (sims[s]->frames)[l]);
+				printf("Going to perform SingleShotErrorCorrection with isPauli = %d and frame = %d.\n", isPauli[s], (sims[s]->frames)[l]);
 				// Pass minimum weight for main channel as decoding algo if partial ML decoding on
 				if (s == 0){
 					if ((sims[0]->decoders)[0] == 2)
@@ -444,7 +454,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 						bias = (double) ((sims[0]->syndprobs)[randsynd] / impdist[randsynd]);
 					}
 					else{};
-					// printf("Random syndrome: %d, from exponent: %g and bias = %g. (sims[0]->syndprobs)[randsynd] = %g, impdist[randsynd] = %g.\n", randsynd, expo, bias, (sims[0]->syndprobs)[randsynd], impdist[randsynd]);
+					// printf("Random syndrome: %d, from exponent: %g and bias = %g. (sims[0]->syndprobs)[randsynd] = %.15Lf, impdist[randsynd] = %.15Lf.\n", randsynd, expo, bias, (sims[0]->syndprobs)[randsynd], impdist[randsynd]);
 					for (i = 0; i < qcode[l]->nlogs; i++){
 						for (j = 0; j < qcode[l]->nlogs; j++)
 							channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];

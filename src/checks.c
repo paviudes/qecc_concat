@@ -93,8 +93,8 @@ int IsState(double complex **choi, double atol){
 	ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
 		printf("Not Positive.\n");
-	istrace1 = IsTraceOne(choi, atol);
-	// istrace1 = 1;
+	// istrace1 = IsTraceOne(choi, atol);
+	istrace1 = 1; // ONLY FOR DEBUGGING
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
 	isstate = ishermitian * istrace1 * ispositive;

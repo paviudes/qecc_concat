@@ -134,7 +134,14 @@ void UpdateMetrics(int level, double bias, double history, int isfinal, struct q
 	// Free memory.
 	free(metvals);
 	free(avg);
-	// printf("Updated metrics.\n");
+	printf("Updated metrics.\n");
+	if (_IsChannel((sim->logical)[level + 1], consts, 1E-10) == 0){
+		printf("Invalid logical channel\n");
+		printf("***********\n");
+		// exit(0);
+	}
+	else
+		printf("Valid logical channel.\n");
 }
 /*
 void ComputeLevelZeroMetrics(struct simul_t *sim, int nqubits, int nlogs, struct constants_t *consts){

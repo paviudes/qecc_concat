@@ -316,11 +316,11 @@ int main(int argc, char **argv)
 			long double numerator, denominator, naive, ours, scale_num = 1E-14, scale_den = 1E-14;
 			int t, trials = 10;
 			for (t = 0; t < trials; t ++){
-				numerator = (long double) genrand_real3() * scale_num;
-				denominator = (long double) genrand_real3() * scale_den;
+				numerator = powl(-1, (long double) RandomRangeInt(0, 2)) * (long double) genrand_real3() * scale_num;
+				denominator = powl(-1, (long double) RandomRangeInt(0, 2)) * (long double) genrand_real3() * scale_den;
 				naive = numerator/denominator;
 				ours = Divide(numerator, denominator);
-				printf("%d). A = %.15Lf, B = %.15Lf\nNaive A/B = %.15Lf and our A/B = %.15Lf. Difference: %.15Lf.\n", t + 1, numerator, denominator, naive, ours, fabsl(naive - ours));
+				printf("%d). A = %.15Le, B = %.15Le\nNaive A/B = %.15Le and our A/B = %.15Le. Difference: %.15Le.\n", t + 1, numerator, denominator, naive, ours, fabsl(naive - ours));
 			}
 		}
 	}
@@ -362,7 +362,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 3;
+			int nlevels = 1;
 
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -410,7 +410,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 3;
 			// ===
 
 			// ===

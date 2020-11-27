@@ -128,14 +128,30 @@ long double Divide(long double num, long double den){
 		2. If the numerator and the denominator are alike up to first N digits, return 1.
 		3. Do the log division otherwise.
 	*/
-	const int digits = 15;
+	// const int digits = 15;
+	long double result = 0;
+	long double *mantissas = malloc(sizeof(long double) * 2);
+	int *exps = malloc(sizeof(int) * 2);
 	long double sign = (long double) (Sign(num) * Sign(den));
+	/*
 	if (fabsl(num) <= powl(10, -1 * (digits + 1)))
-		return 0;
+		result = 0;
 	else if (fabsl(fabsl(num) - fabsl(den)) <= powl(10, -1 * digits))
-		return sign;
-	else{};
-	return (sign * powl(10, log10l(fabsl(num)) - log10l(fabsl(den))));
+		result = sign;
+	else{
+		mantissas[0] = frexpl(fabsl(num), &(exps[0]));
+		mantissas[1] = frexpl(fabsl(den), &(exps[1]));
+		// printf("A = %Lf x 2^%d and B = %Lf x 2^%d\n", mantissas[0], exps[0], mantissas[1], exps[1]);
+		result = sign * ldexpl(mantissas[0]/mantissas[1], exps[0] - exps[1]);
+	}
+	*/
+	mantissas[0] = frexpl(fabsl(num), &(exps[0]));
+	mantissas[1] = frexpl(fabsl(den), &(exps[1]));
+	// printf("A = %Lf x 2^%d and B = %Lf x 2^%d\n", mantissas[0], exps[0], mantissas[1], exps[1]);
+	result = sign * ldexpl(mantissas[0]/mantissas[1], exps[0] - exps[1]);
+	free(exps);
+	free(mantissas);
+	return result;
 }
 
 int BinaryDot(int a, int b){

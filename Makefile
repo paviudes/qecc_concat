@@ -11,7 +11,7 @@ endif
 $(info MODE is ${MODE})
 
 ifeq ($(MODE), DEBUG)
-	CC = gcc-8
+	CC = gcc
 	OPTS = -O0
 	REPORT = $()
 	TARGET = bmark

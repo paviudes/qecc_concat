@@ -22,6 +22,7 @@ extern int IsHermitian(double complex **choi, double atol);
 extern int IsState(double complex **choi, double atol);
 
 // Check is a 4 x 4 Pauli transfer matrix is a valid channel.
+extern int _IsChannel(double **ptm, struct constants_t *consts, double atol);
 extern int IsChannel(long double **ptm, struct constants_t *consts, double atol);
 
 #endif /* CHECKS_H */

@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsState", 7) == 0){
 			printf("Function: IsState.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int isstate = IsState(mat, 1E-12);
+			int isstate = IsState(mat, 1E-12, 1, 0);
 			if (isstate == 0)
 				printf("is not a state.\n");
 			else
@@ -313,14 +313,25 @@ int main(int argc, char **argv)
 		// Test the functions in the rand.c file.
 		printf("Testing functions to perform simple arethematic operations.\n");
 		if (strncmp(func, "Divide", 6) == 0){
-			long double numerator, denominator, naive, ours, scale_num = 1E-14, scale_den = 1E-14;
+			long double numerator, denominator, naive, ours, scale = 30;
 			int t, trials = 10;
 			for (t = 0; t < trials; t ++){
-				numerator = powl(-1, (long double) RandomRangeInt(0, 2)) * (long double) genrand_real3() * scale_num;
-				denominator = powl(-1, (long double) RandomRangeInt(0, 2)) * (long double) genrand_real3() * scale_den;
+				numerator = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, scale));
+				denominator = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, scale));
+				printf("%d). A = %.15Le, B = %.15Le.\n", t + 1, numerator, denominator);
 				naive = numerator/denominator;
 				ours = Divide(numerator, denominator);
-				printf("%d). A = %.15Le, B = %.15Le\nNaive A/B = %.15Le and our A/B = %.15Le. Difference: %.15Le.\n", t + 1, numerator, denominator, naive, ours, fabsl(naive - ours));
+				printf("Naive A/B = %.15Le and our A/B = %.15Le. Difference: %.15Le.\n", naive, ours, fabsl(naive - ours));
+			}
+		}
+		if (strncmp(func, "Order", 5) == 0){
+			// Test the function to compute the order of magnitude of a number.
+			const int base = 10, max_expo = 50;
+			long double num;
+			int t, trials = 10;
+			for (t = 0; t < trials; t ++){
+				num = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, max_expo));
+				printf("%d). The order of magnitude of %.5Le is %d.\n", t + 1, num, OrderOfMagnitude(num, base));
 			}
 		}
 	}
@@ -355,6 +366,48 @@ int main(int argc, char **argv)
 			printf("Number of non-orthogonal numbers = %d\n", SumInt(parity, max));
 			free(parity);
 		}
+		if (strncmp(func, "FixPositivity", 13) == 0){
+			// Test the function that, when given M, computes M' such that M' has the positive eigenspectrum of M.
+			double complex **nonpsd_mat = malloc(sizeof(double complex *) * 4);
+			double complex **psd_mat = malloc(sizeof(double complex *) * 4);
+			double complex **herm_mat = malloc(sizeof(double complex *) * 4);
+			const int scale = 10;
+			double real_part, imag_part;
+			for (i = 0; i < 4; i ++){
+				nonpsd_mat[i] = malloc(sizeof(double complex) * 4);
+				psd_mat[i] = malloc(sizeof(double complex) * 4);
+				herm_mat[i] = malloc(sizeof(double complex) * 4);
+				for (j = 0; j < 4; j ++){
+					real_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+					imag_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+					nonpsd_mat[i][j] = real_part + I * imag_part;
+					psd_mat[i][j] = 0;
+					herm_mat[i][j] = 0;
+				}
+			}
+			// Force the complex non-psd matrix to be Hermitian.
+			// M -> M + M^\dag
+			for (i = 0; i < 4; i ++)
+				for (j = 0; j < 4; j ++)
+					herm_mat[i][j] = nonpsd_mat[i][j] + conj(nonpsd_mat[j][i]);
+
+			printf("Non-Positive matrix M\n");
+			PrintComplexArray2D(herm_mat, "M", 4, 4);
+			FixPositivity(herm_mat, psd_mat, 4);
+			printf("Positive semidefinite matrix M_+\n");
+			PrintComplexArray2D(psd_mat, "M_+", 4, 4);
+			printf("||M - M_+||_2 = %.5e.\n", ZFroNorm(herm_mat, psd_mat, 4, 4));
+
+			// Free memory
+			for (i = 0; i < 4; i ++){
+				free(nonpsd_mat[i]);
+				free(herm_mat[i]);
+				free(psd_mat[i]);
+			}
+			free(nonpsd_mat);
+			free(herm_mat);
+			free(psd_mat);
+		}
 	}
 
 	if (strncmp(file, "benchmark", 9) == 0){
@@ -362,7 +415,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 1;
+			int nlevels = 3;
 
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -471,7 +524,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1;
+			stats[0] = 100;
 			// ===
 
 			// ===
@@ -480,7 +533,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 0;
+			int importance = 1;
 			// ===
 
 			// ===
@@ -492,7 +545,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.03;
+			double infidelity = 0.020499323636302913;
 			//
 
 			// Calling the Benchmark function

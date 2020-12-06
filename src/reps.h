@@ -8,7 +8,7 @@
 	Convert from the Choi matrix to the process matrix, of a quantum channel.
 	CHI[a,b] = Trace( Choi * (Pb \otimes Pa^T) ).
 */
-extern void ChoiToProcess(double **process, double complex **choi, double complex ***pauli);
+extern void ChoiToProcess(double **process, double complex **choi, int nlogs, double complex ***pauli);
 
 /*
 	Convert from the process matrix to the Choi matrix.

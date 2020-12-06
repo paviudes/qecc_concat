@@ -14,6 +14,13 @@ extern double SumDot(double **matA, double *vecB, int rowsA, int colsA, int rows
 extern double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB);
 
 /*
+	Compute the Frobenious norm between two complex matrices.
+	||A||_2 = Tr( A^\dag A )
+			= \sum_(ij) |A_ij|^2
+*/
+extern double ZFroNorm(double complex **matA, double complex **matB, int nrows, int ncols);
+
+/*
 	Compute the trace of a matrix.
 	We will use a vectorized for loop.
 */
@@ -111,6 +118,15 @@ extern void ZDot(double complex **matA, double complex **matB, double complex **
 		double complex **eigvecs: complex matrix of shape (nrows x nrows). The i-th column of this matrix contains the i-th eigen vector associated to the eigenvalue in "eigvals[i]".
 */
 extern void DiagonalizeLD(long double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs);
-extern void DiagonalizeD(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs);
+extern void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int iseigvecs, double complex **eigvecs);
+
+/*
+	Map a non positive semi-definite matrix to a positive semidefinite matrix.
+	If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
+	1. Compute the eigenvalues and eigenvectors of M
+	2. Compute the absolute value of all the eigenvalues.
+	3. Use reconstruct to define a matrix whose spectrum is given by (2).
+*/
+extern void FixPositivity(complex double **mat, complex double **cpmat, int dim);
 
 #endif /* LINALG_H */

@@ -14,6 +14,29 @@
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
 
+int OrderOfMagnitude(long double x, int b){
+	// Compute the order of magnitude of a number to a base.
+	// Given x, compute y such as x = O(b^y).
+	// This should be called for x < 1.
+	const long double MIN = 1E-50;
+	int order_base2, order;
+	if (x <= MIN)
+		order = -50;
+	else{
+		frexpl(x, &order_base2);
+		order = (-1) * (int) ceil((double) ((-1) * order_base2 + 1) * log10(2)/log10((double) b));
+	}
+	// printf("OrderOfMagnitude(%.5Le) = %d.\n", x, order);
+	return order;
+}
+
+int IsAboveCutoff(long double x, int c){
+	// Check if a number x is above the cut-off 10^c.
+	if (OrderOfMagnitude(x, 10) >= c)
+		return 1;
+	return 0;
+}
+
 long Comb(int n, int k){
 	// Compute the combinatorial factor: n choose k.
 	// C(n, k) = [n * (n-1) * .... * (n-k+1)] / [k * (k-1) * .... * 1]
@@ -120,6 +143,11 @@ int BitParity(int num){
 	return parity;
 }
 
+long double Round(long double x, const int D){
+	// Round a number x to a fixed number, D, of digits.
+	return roundl(x * powl(10, D))/powl(10, D);
+}
+
 long double Divide(long double num, long double den){
 	/*
 		Divide small numbers.
@@ -128,16 +156,12 @@ long double Divide(long double num, long double den){
 		2. If the numerator and the denominator are alike up to first N digits, return 1.
 		3. Do the log division otherwise.
 	*/
-	// const int digits = 15;
+	const int digits = 50;
 	long double result = 0;
 	long double *mantissas = malloc(sizeof(long double) * 2);
 	int *exps = malloc(sizeof(int) * 2);
 	long double sign = (long double) (Sign(num) * Sign(den));
 	/*
-	if (fabsl(num) <= powl(10, -1 * (digits + 1)))
-		result = 0;
-	else if (fabsl(fabsl(num) - fabsl(den)) <= powl(10, -1 * digits))
-		result = sign;
 	else{
 		mantissas[0] = frexpl(fabsl(num), &(exps[0]));
 		mantissas[1] = frexpl(fabsl(den), &(exps[1]));
@@ -147,7 +171,15 @@ long double Divide(long double num, long double den){
 	*/
 	mantissas[0] = frexpl(fabsl(num), &(exps[0]));
 	mantissas[1] = frexpl(fabsl(den), &(exps[1]));
-	// printf("A = %Lf x 2^%d and B = %Lf x 2^%d\n", mantissas[0], exps[0], mantissas[1], exps[1]);
+	
+	// printf("Before rounding\n|A| = %.15Lf x 2^%d and |B| = %.15Lf x 2^%d\n", mantissas[0], exps[0], mantissas[1], exps[1]);
+	
+	// Round the mantissas individually to fit a total budget of M binary digits.
+	mantissas[0] = Round(mantissas[0], (int) (log10(2) * (digits + exps[0])));
+	mantissas[1] = Round(mantissas[1], (int) (log10(2) * (digits + exps[1])));
+
+	// printf("After rounding |A| to %d digits and |B| to %d digits:\n|A| = %.15Lf x 2^%d and |B| = %.15Lf x 2^%d\n", (int) (log10(2) * (digits + exps[0])), (int) (log10(2) * (digits + exps[1])), mantissas[0], exps[0], mantissas[1], exps[1]);
+
 	result = sign * ldexpl(mantissas[0]/mantissas[1], exps[0] - exps[1]);
 	free(exps);
 	free(mantissas);

@@ -87,11 +87,10 @@ double TraceDistance(double **ptm, struct constants_t *consts){
 }
 
 double Infidelity(double **ptm){
-	// Compute the Infidelity between the input Choi matrix and the Choi matrix corresponding to the identity state.
-	// Choi matrix for the identity is: 0.5 * [[1,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,1]].
-	// Returns 1-fidelity.
-	// double infidelity = 1 - 0.5 * (creal(choi[0][0] + choi[3][0] + choi[0][3] + choi[3][3]));
-	double infidelity = 1 - Trace(ptm, 4)/4;
+	// Compute the Infidelity between the input PTM the identity matrix.
+	// Infidelity is given by 1 - Tr(PTM)/dimension.
+	// Also works for PTM with trace less than 1, where "1" in the above expression needs to be replaced by PTM[0,0].
+	double infidelity = ptm[0][0] - Trace(ptm, 4)/4;
 	return infidelity;
 }
 

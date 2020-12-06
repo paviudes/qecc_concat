@@ -15,14 +15,14 @@ void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs
 	// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
 	double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
 	// double infidelity = phy_infid;
-	outlierprobs[1] = 0.99 * infidelity; // We are assuming that infidelity = alpha, here.
-	// outlierprobs[1] = 0.2 * (1 - Min(3 * infidelity, 1 - 1E-5));
+	// outlierprobs[1] = 0.5 * infidelity; // We are assuming that infidelity = alpha, here.
+	outlierprobs[1] = 0.1 * (1 - Min(3 * infidelity, 1 - 1E-5));
 	outlierprobs[0] = 0.80 * outlierprobs[1];
 }
 
 double UpperBoundInfidelity(double p, int d, int n, int level){
 	// Upper bound the infidelity by simply taking 1 - probabability of correctable errors.
-	double sum_corr;
+	double sum_corr = 0;
 	int i, l;
 	for (l = 0; l < level; ++l){
 		sum_corr = 0;
@@ -33,14 +33,17 @@ double UpperBoundInfidelity(double p, int d, int n, int level){
 	return 1 - sum_corr;
 }
 
-double SetExponent(double phy_infid, int dist, int nphys, int level){
+double SetExponent(double phy_infid, int dist, int nphys, int level, long double *probdist){
 	// Computing an exponent of the true distribution such that outlier events whose probability is of the order of the average infidelity, is increased to a threshold: \lambda..
 	// 1. Compute an upperbound to 1 - F, for the given level and physical infidelity.
 	// 2. The exponent is give by: k = log(\lambda)/log(1 - F).
+	const double threshold = 0.1;
+	double expo = 1;
+	if (1 - probdist[0] > threshold)
+		return expo;
 	double p = 1 - pow(1 - phy_infid, 1/(double) nphys);
-	const double threshold = 0.5;
 	double infidelity = UpperBoundInfidelity(p, dist, nphys, level);
-	double expo = log(threshold)/log(infidelity);
+	expo = log(threshold)/log(infidelity);
 	printf("L = %d, 1 - F = %.8f, exponent = %.3f\n", level, infidelity, expo);
 	return expo;
 }

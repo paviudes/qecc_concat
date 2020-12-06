@@ -77,6 +77,7 @@ void AllocSimParamsQECC(struct simul_t *simul, int nphys, int nenc)
 	// for (i = 0; i < nstabs; i ++)
 	//  	(simul->rcpauli)[i] = BinaryDot(i, pure);
 	// Syndrome sampling
+	simul->skipsyndromes = 0;
 	(simul->syndprobs) = malloc(nstabs * sizeof(long double));
 	(simul->cumulative) = malloc(nstabs * sizeof(long double));
 	int s;
@@ -145,6 +146,7 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 {
 	// Initialize the elements that pertain to the montecarlo simulation of
 	// channels. Physical channels.
+	// Set the minimum for syndrome probabilities in the numeric simulations.
 	int i, nstabs = (int)pow(2, ((double)(nphys - nenc))), nlogs = (int)pow(4, (double)nenc);
 	// printf("Function: AllocSimParams, nstabs = %d, nlogs = %d\n", nstabs, nlogs);
 	simul->chname = malloc(100 * sizeof(char));
@@ -477,8 +479,7 @@ int MemManageChannels(long double *****channels, int *nphys, int *nencs, int nle
 void MemManageInputChannels(long double ****inputchannels, int nphys, int nlogs, int decoder, int tofree)
 {
 	// Allocate and free memory for the input channels structure in
-	// ComputeLogicalChannels(...). printf("Function: MemManageInputChannels,
-	// tofree = %d, nlogs = %d.\n", tofree, nlogs);
+	// printf("Function: MemManageInputChannels, tofree = %d, nlogs = %d.\n", tofree, nlogs);
 	int i, q, s;
 	if (tofree == 0)
 	{

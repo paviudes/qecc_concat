@@ -8,18 +8,17 @@ MODE=RUN
 ifdef ip
 	MODE=DEBUG
 endif
-$(info MODE is ${MODE})
-
 ifeq ($(MODE), DEBUG)
-	CC = gcc
-	OPTS = -O0
+	CC = gcc-8
+	OPTS = -O3 -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = icc
-	OPTS = -O3 -xavx
+	CC = gcc-8
+	OPTS = -O3
+	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
 	TARGET = bmark.so
 	LDFLAGS = -shared
@@ -36,20 +35,16 @@ SRC_DIR = src
 
 # Detecting the OS type.
 OS := $(shell uname -s)
-$(info OS type is ${OS})
+$(info Make is being run in ${MODE} mode on the ${OS} OS.)
 
 ifeq ($(OS), Darwin)
-	# Only works on Linux and Mac
 	CFLAGS_MKL = -I${MKLROOT}/include
-	LIBS = -lm
 	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
 else ifeq ($(OS), Linux)
 	MKL_DIR = /home/pavi/intel/compilers_and_libraries_2020.4.304/linux/mkl
 	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
 	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
-	# -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_scalapack_ilp64 -lmkl_cdft_core -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -lmkl_blacs_intelmpi_ilp64 -liomp5 -lpthread -lm -ldl
 else
-	# Only works for windows
 	# MKL_DIR = "c:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win"
 	#Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win
 	MKL_DIR = "c:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020/windows"
@@ -64,7 +59,7 @@ endif
 $(shell mkdir -p obj/)
 
 $(TARGET):obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
-	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
 
 obj/main.o: $(SRC_DIR)/main.c Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o obj/main.o $(LIBS_MATH)

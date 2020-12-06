@@ -103,6 +103,7 @@ struct constants_t
 
 	// Numerical precision.
 	double atol;
+	double min_syndprob;
 
 	// Number of Cliford operators.
 	int nclifford;

@@ -264,7 +264,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		else
 			sims[s]->infidelity = infidelity;
 
-		printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
+		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 
 		// printf("Allocations complete for s = %d.\n", s);
 

@@ -14,6 +14,7 @@ struct simul_t{
 	// Quantum error correction and logical noise
 	double ***restrict logical;
 	long double ****restrict process;
+	int skipsyndromes;
 	long double *restrict syndprobs;
 	long double *restrict cumulative;
 	long double *restrict levelOneSynds;

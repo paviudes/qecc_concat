@@ -3,6 +3,16 @@
 
 // #include <complex.h>
 
+/*
+	Compute the order of magnitude of a number to a base.
+	Given x, compute y such as x = O(b^y).
+	This should be called for x < 1.
+*/
+extern int OrderOfMagnitude(long double x, int b);
+
+// Check if a number x is above the cut-off 10^c.
+extern int IsAboveCutoff(long double x, int c);
+
 // Compute the sign of a number, i.e., k such that (-1)^k = x.
 extern int Sign(double x);
 

@@ -6,7 +6,7 @@
 	1. Compute an upperbound to 1 - F, for the given level and physical infidelity.
 	2. The exponent is give by: k = log(\lambda)/log(1 - F).
 */
-extern double SetExponent(double phy_infid, int dist, int nphys, int level);
+extern double SetExponent(double phy_infid, int dist, int nphys, int level, long double *probdist);
 
 /*
 	Setting outlier syndrome probabilities.

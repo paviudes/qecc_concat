@@ -83,7 +83,7 @@ int IsTraceOne(double complex **choi, double atol){
 	return 1;
 }
 
-int IsState(double complex **choi, double atol){
+int IsState(double complex **choi, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// It must be Hermitian, have trace 1 and completely positive.
 	int isstate = 0, ishermitian = 0, ispositive = 0, istrace1 = 0;
@@ -93,15 +93,20 @@ int IsState(double complex **choi, double atol){
 	ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
 		printf("Not Positive.\n");
-	// istrace1 = IsTraceOne(choi, atol);
-	istrace1 = 1; // ONLY FOR DEBUGGING
+	else
+		if (restore == 1)
+			FixPositivity(choi, choi, 4);
+	if (checktp == 1)
+		istrace1 = IsTraceOne(choi, atol);
+	else
+		istrace1 = 1;
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
 	isstate = ishermitian * istrace1 * ispositive;
 	return isstate;
 }
 
-int _IsChannel(double **ptm, struct constants_t *consts, double atol){
+int _IsChannel(double **ptm, struct constants_t *consts, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// We will convert it to a Choi matrix and test if the result is a density matrix.
 	double complex **choi = NULL;
@@ -116,7 +121,11 @@ int _IsChannel(double **ptm, struct constants_t *consts, double atol){
 	ProcessToChoi(ptm, choi, nlogs, consts->pauli);
 	// PrintLongDoubleArray2D(ptm, "PTM", nlogs, nlogs);
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
-	int ischan = IsState(choi, atol);
+	int ischan = IsState(choi, atol, checktp, restore);
+	// The Choi matrix will be reconstructed from its positive spectral decomposition, i.e., a spectral decomposition wherein each eigenvalue is equal to the absolute value of its counterpart for the input Choi matrix.
+	// So we should contruct the PTM from the Choi matrix to adopt the reconstructed value.
+	if (restore == 1)
+		ChoiToProcess(ptm, choi, nlogs, consts->pauli);
 	if (ischan == 0)
 		PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
 	for (r = 0; r < nlogs; r ++)
@@ -125,18 +134,27 @@ int _IsChannel(double **ptm, struct constants_t *consts, double atol){
 	return ischan;
 }
 
-int IsChannel(long double **ptm, struct constants_t *consts, double atol){
+int IsChannel(long double **ptm, struct constants_t *consts, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// We will convert it to a Choi matrix and test if the result is a density matrix.
-	double **ptmd = malloc(sizeof(double *)*4);
-	int i,j;
-	for (i=0; i<4 ; i++){
+	double **ptmd = malloc(sizeof(double *) * 4);
+	int i, j;
+	for (i = 0; i < 4; i ++){
 		ptmd[i] = malloc(sizeof(double)*4);
-		for (j=0; j<4 ; j++)
+		for (j = 0; j < 4 ; j ++)
 			ptmd[i][j] = (double) ptm[i][j];
 	}
-	int ischan = _IsChannel(ptmd, consts, atol);
-	for (i=0; i<4 ; i++)
+	int ischan = _IsChannel(ptmd, consts, atol, checktp, restore);
+	// If there is a reconstruction of the channel, we need to rewrite the input variable.
+	if (restore == 1){
+		for (i = 0; i < 4; i ++)
+			for (j = 0; j < 4; j ++)
+				ptm[i][j] = (long double) ptmd[i][j];
+		// PrintLongDoubleArray2D(ptm, "reconstructed", 4, 4);
+		// if (IsChannel(ptm, consts, atol, checktp, 0))
+		// 	printf("Restoration was successful.\n");
+	}
+	for (i = 0; i < 4 ; i ++)
 		free(ptmd[i]);
 	free(ptmd);
 	return ischan;
@@ -259,7 +277,7 @@ int main(int argc, char const *argv[])
 	if (strncmp(argv[1], "IsState", 7) == 0){
 		printf("Function: IsState.\n");
 		PrintComplexArray2D(mat, "Matrix", 4, 4);
-		int isstate = IsState(mat);
+		int isstate = IsState(mat, 1, 0);
 		if (isstate == 0)
 			printf("is not a state.\n");
 		else

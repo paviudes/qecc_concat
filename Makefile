@@ -9,14 +9,14 @@ ifdef ip
 	MODE=DEBUG
 endif
 ifeq ($(MODE), DEBUG)
-	CC = gcc-8
+	CC = gcc-10
 	OPTS = -O3 -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = gcc-8
+	CC = gcc-10
 	OPTS = -O3
 	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -41,7 +41,7 @@ ifeq ($(OS), Darwin)
 	CFLAGS_MKL = -I${MKLROOT}/include
 	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
 else ifeq ($(OS), Linux)
-	MKL_DIR = /home/pavi/intel/compilers_and_libraries_2020.4.304/linux/mkl
+	MKL_DIR = ${MKLROOT}
 	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
 	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
 else

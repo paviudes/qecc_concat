@@ -1,4 +1,0 @@
-src/checks.c: In function 'IsState':
-src/checks.c:86:66: warning: unused parameter 'restore' [-Wunused-parameter]
-   86 | int IsState(double complex **choi, double atol, int checktp, int restore){
-      |                                                              ~~~~^~~~~~~

@@ -87,21 +87,25 @@ int IsState(double complex **choi, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// It must be Hermitian, have trace 1 and completely positive.
 	int isstate = 0, ishermitian = 0, ispositive = 0, istrace1 = 0;
+	
 	ishermitian = IsHermitian(choi, atol);
 	if (ishermitian == 0)
 		printf("Not Hermitian.\n");
-	ispositive = IsPositive(choi, atol);
+	
+	if (restore == 1)
+		ispositive = FixPositivity(choi, choi, 4, atol);
+	else
+		ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
 		printf("Not Positive.\n");
-	else
-		if (restore == 1)
-			FixPositivity(choi, choi, 4);
+
 	if (checktp == 1)
 		istrace1 = IsTraceOne(choi, atol);
 	else
 		istrace1 = 1;
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
+	
 	isstate = ishermitian * istrace1 * ispositive;
 	return isstate;
 }

@@ -359,6 +359,7 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	}
 	if (OrderOfMagnitude((sim->syndprobs)[synd], 10) >= synd_threshold){
 		// printf("Initialization done.\n");
+		cp_threshold = synd_threshold - OrderOfMagnitude((double) (sim->syndprobs)[synd], 10);
 		if (isPauli == 0){
 			for (l = 0; l < qecc->nlogs; l ++){
 				for (lp = 0; lp < qecc->nlogs; lp ++){
@@ -401,11 +402,11 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 				for (lp = 0; lp < qecc->nlogs; lp ++)
 					(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 			// printf("After Division by P(s) = %.5Le.\n", (sim->syndprobs)[synd]);
-			cp_threshold = synd_threshold - OrderOfMagnitude((double) (sim->syndprobs)[synd], 10);
+			// cp_threshold = synd_threshold - OrderOfMagnitude((double) (sim->syndprobs)[synd], 10);
 			// printf("Testing CP to an accuracy of 1E%d.\n", cp_threshold);
 			if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
 				printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-				printf("Invalid channel up to 1E-%d.\n", cp_threshold);
+				printf("Invalid channel up to 1E%d.\n", cp_threshold);
 				printf("***********\n");
 				exit(0);
 			}
@@ -429,9 +430,9 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 				(sim->effprocess)[synd][l][l] = Divide((sim->effprocess)[synd][l][l], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 			}
 			// printf("Population done.\n");
-			if (IsChannel((sim->effprocess)[synd], consts, consts->atol, 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
+			if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
 				printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-				printf("Invalid channel\n");
+				printf("Invalid channel up to 1E%d.\n", cp_threshold);
 				printf("***********\n");
 				exit(0);
 			}

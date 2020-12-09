@@ -10,7 +10,7 @@ ifdef ip
 endif
 ifeq ($(MODE), DEBUG)
 	CC = gcc-10
-	OPTS = -O3 -g
+	OPTS = -O0 -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()

@@ -371,32 +371,44 @@ int main(int argc, char **argv)
 			double complex **nonpsd_mat = malloc(sizeof(double complex *) * 4);
 			double complex **psd_mat = malloc(sizeof(double complex *) * 4);
 			double complex **herm_mat = malloc(sizeof(double complex *) * 4);
-			const int scale = 10;
-			double real_part, imag_part;
 			for (i = 0; i < 4; i ++){
 				nonpsd_mat[i] = malloc(sizeof(double complex) * 4);
 				psd_mat[i] = malloc(sizeof(double complex) * 4);
 				herm_mat[i] = malloc(sizeof(double complex) * 4);
-				for (j = 0; j < 4; j ++){
-					real_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
-					imag_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
-					nonpsd_mat[i][j] = real_part + I * imag_part;
-					psd_mat[i][j] = 0;
-					herm_mat[i][j] = 0;
-				}
 			}
-			// Force the complex non-psd matrix to be Hermitian.
-			// M -> M + M^\dag
-			for (i = 0; i < 4; i ++)
-				for (j = 0; j < 4; j ++)
-					herm_mat[i][j] = nonpsd_mat[i][j] + conj(nonpsd_mat[j][i]);
+			const int trials = 1, scale = 20;
+			const double violation = 1E-3;
+			double real_part, imag_part;
+			int t, success;
+			for (t = 0; t < trials; t ++){
+				printf("%d).\n", t + 1);
+				for (i = 0; i < 4; i ++){
+					for (j = 0; j < 4; j ++){
+						real_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+						imag_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+						nonpsd_mat[i][j] = real_part + I * imag_part;
+						psd_mat[i][j] = 0;
+						herm_mat[i][j] = 0;
+					}
+				}
+				// Force the complex non-psd matrix to be Hermitian.
+				// M -> M + M^\dag
+				for (i = 0; i < 4; i ++)
+					for (j = 0; j < 4; j ++)
+						herm_mat[i][j] = nonpsd_mat[i][j] + conj(nonpsd_mat[j][i]);
 
-			printf("Non-Positive matrix M\n");
-			PrintComplexArray2D(herm_mat, "M", 4, 4);
-			FixPositivity(herm_mat, psd_mat, 4);
-			printf("Positive semidefinite matrix M_+\n");
-			PrintComplexArray2D(psd_mat, "M_+", 4, 4);
-			printf("||M - M_+||_2 = %.5e.\n", ZFroNorm(herm_mat, psd_mat, 4, 4));
+				printf("Non-Positive matrix M\n");
+				PrintComplexArray2D(herm_mat, "M", 4, 4);
+				success = FixPositivity(herm_mat, psd_mat, 4, violation);
+				if (success == 1){
+					printf("Positive semidefinite matrix M_+\n");
+					PrintComplexArray2D(psd_mat, "M_+", 4, 4);
+					printf("||M - M_+||_2 = %.5e.\n", ZFroNorm(herm_mat, psd_mat, 4, 4));
+				}
+				else
+					printf("Matrix is not even approximately CP, within a tolerance of %.2e.\n", violation);
+				printf("xxxxxxxxxx\n");
+			}
 
 			// Free memory
 			for (i = 0; i < 4; i ++){
@@ -459,11 +471,11 @@ int main(int argc, char **argv)
 
 			// ===
 			char *chname = malloc(100 * sizeof(char));
-			sprintf(chname, "ising");
+			sprintf(chname, "pcorr");
 			// ===
 
 			// ===
-			int iscorr = 3;
+			int iscorr = 1;
 			// ===
 
 			// ===
@@ -524,7 +536,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 100;
+			stats[0] = 1000;
 			// ===
 
 			// ===

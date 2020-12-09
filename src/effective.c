@@ -259,7 +259,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 			isPauli = 0;
 		// This runs for iscorr = 1 as well as iscorr = 3.
 		// Correlated channel -- the physical channel contains the full process matrix
-		// printf("Simulating a correlated channel: iscorr = %d, skipsyndromes = %d, synd_threshold = %d and decoder %d.\n", sim->iscorr, sim->skipsyndromes, synd_threshold, decoder);
+		printf("Simulating a correlated channel: level: 1, iscorr = %d, skipsyndromes = %d, synd_threshold = %d and decoder %d.\n", sim->iscorr, sim->skipsyndromes, synd_threshold, decoder);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
 		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts, 1, synd_threshold);

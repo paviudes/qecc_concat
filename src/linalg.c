@@ -229,6 +229,12 @@ void ZOuter(double complex *vecA, double complex *vecB, double complex **prod, i
 		matB[0][i] = conj(vecB[i]);
 	
 	ZDot(matA, matB, prod, lenA, 1, 1, lenB);
+	// Free memory for product.
+	for (i = 0; i < lenA; i ++)
+		free(matA[i]);
+	free(matA);
+	free(matB[0]);
+	free(matB);
 }
 
 void ZAdd(double complex **matA, double complex **matB, double complex **sum, int rows, int cols){
@@ -290,7 +296,19 @@ void ZNormalize(double complex *vec, int size){
 		vec[i] /= sum;
 }
 
-void FixPositivity(complex double **mat, complex double **cpmat, int dim){
+int ZPos(complex double *vec, int dim, const double atol){
+	// Check if an array of complex numbers is actually an array of non-negative numbers.
+	int d, success = 1;
+	for (d = 0; d < dim; d ++){
+		if (creal(vec[d]) <= (-1) * atol)
+			success = 0;
+		if (fabs(cimag(vec[d])) >= atol)
+			success = 0;
+	}
+	return success;
+}
+
+int FixPositivity(complex double **mat, complex double **cpmat, int dim, const double atol){
 	/*
 		Map a non positive semi-definite matrix to a positive semidefinite matrix.
 		If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
@@ -298,6 +316,7 @@ void FixPositivity(complex double **mat, complex double **cpmat, int dim){
 		2. Compute the absolute value of all the eigenvalues.
 		3. Use reconstruct to define a matrix whose spectrum is given by (2).
 	*/
+	int success = 0;
 	double complex *eigvals, **eigvecs;
 	int d;
 	eigvals = malloc(sizeof(double complex) * dim);
@@ -306,14 +325,17 @@ void FixPositivity(complex double **mat, complex double **cpmat, int dim){
 		eigvecs[d] = malloc(sizeof(double complex) * dim);
 
 	DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
-	
 	// PrintComplexArray1D(eigvals, "Eigenvalues", 4);
 	// PrintComplexArray2D(eigvecs, "Eigenvectors", 4, 4);
 
-	for (d = 0; d < dim; d ++)
-		eigvals[d] = cabs(eigvals[d]);
-	ZNormalize(eigvals, dim);
-	ZReconstruct(eigvals, eigvecs, cpmat, dim);
+	success = ZPos(eigvals, dim, atol);
+	
+	if (success == 1){
+		for (d = 0; d < dim; d ++)
+			eigvals[d] = cabs(eigvals[d]);
+		ZNormalize(eigvals, dim);
+		ZReconstruct(eigvals, eigvecs, cpmat, dim);
+	}
 
 	// printf("After reconstruction.\n");
 	// DiagonalizeD(cpmat, dim, eigvals, 1, eigvecs);
@@ -325,6 +347,7 @@ void FixPositivity(complex double **mat, complex double **cpmat, int dim){
 		free(eigvecs[d]);
 	free(eigvecs);
 	free(eigvals);
+	return success;
 }
 
 

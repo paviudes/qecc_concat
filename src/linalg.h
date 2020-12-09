@@ -127,6 +127,6 @@ extern void DiagonalizeD(double complex **mat, int dim, double complex *eigvals,
 	2. Compute the absolute value of all the eigenvalues.
 	3. Use reconstruct to define a matrix whose spectrum is given by (2).
 */
-extern void FixPositivity(complex double **mat, complex double **cpmat, int dim);
+extern int FixPositivity(complex double **mat, complex double **cpmat, int dim, const double atol);
 
 #endif /* LINALG_H */

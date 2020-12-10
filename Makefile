@@ -5,18 +5,18 @@
 # See https://gist.github.com/xuhdev/1873316.
 # See also for conditional statements in Makefile: https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html
 MODE=RUN
-ifdef ip
+ifdef db
 	MODE=DEBUG
 endif
 ifeq ($(MODE), DEBUG)
-	CC = gcc
-	OPTS = -O0 -g
+	CC = gcc-10
+	OPTS = -O${db} -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = gcc
+	CC = gcc-10
 	OPTS = -O3
 	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -40,9 +40,6 @@ $(info Make is being run in ${MODE} mode on the ${OS} OS.)
 ifeq ($(OS), Darwin)
 	CFLAGS_MKL = -I${MKLROOT}/include
 	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
-	ifeq ($(MODE), DEBUG)
-		TARGET=bmark.app
-	endif
 else ifeq ($(OS), Linux)
 	ifeq ($(MKLROOT),)
 		MKLROOT="/mnt/c/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/"
@@ -60,9 +57,6 @@ else
 	LIBS_MKL = -L${LIBS_DIR}/mkl_rt.lib
 	# ${LIBS_DIR}/libiomp5md.lib
 	#${MKL_DIR}/lib/intel64_win/mkl_lapack95_ilp64.lib
-	ifeq ($(MODE), DEBUG)
-		TARGET=bmark.exe
-	endif
 endif
 
 $(shell mkdir -p obj/)

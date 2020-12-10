@@ -9,14 +9,14 @@ ifdef ip
 	MODE=DEBUG
 endif
 ifeq ($(MODE), DEBUG)
-	CC = gcc-10
+	CC = gcc
 	OPTS = -O0 -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = gcc-10
+	CC = gcc
 	OPTS = -O3
 	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -40,7 +40,13 @@ $(info Make is being run in ${MODE} mode on the ${OS} OS.)
 ifeq ($(OS), Darwin)
 	CFLAGS_MKL = -I${MKLROOT}/include
 	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
+	ifeq ($(MODE), DEBUG)
+		TARGET=bmark.app
+	endif
 else ifeq ($(OS), Linux)
+	ifeq ($(MKLROOT),)
+		MKLROOT="/mnt/c/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/"
+	endif
 	MKL_DIR = ${MKLROOT}
 	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
 	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
@@ -54,6 +60,9 @@ else
 	LIBS_MKL = -L${LIBS_DIR}/mkl_rt.lib
 	# ${LIBS_DIR}/libiomp5md.lib
 	#${MKL_DIR}/lib/intel64_win/mkl_lapack95_ilp64.lib
+	ifeq ($(MODE), DEBUG)
+		TARGET=bmark.exe
+	endif
 endif
 
 $(shell mkdir -p obj/)

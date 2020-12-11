@@ -370,28 +370,26 @@ int FixPositivity(complex double **mat, complex double **cpmat, int dim, const d
 	for (d = 0; d < dim; d ++)
 		eigvecs[d] = malloc(sizeof(double complex) * dim);
 
-	printf("Before reconstruction.\n");
-	PrintPythonComplexArray2D(mat, "M", 4, 4);
+	// printf("Before reconstruction.\n");
+	// PrintPythonComplexArray2D(mat, "M", 4, 4);
 	
 	ZEigH(mat, dim, eigvals, 1, eigvecs);
 	
-	PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
-	PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
+	// PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+	// PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
 
 	success = ZPos(eigvals, dim, atol);
 	
 	if (success == 1){
-		// for (d = 0; d < dim; d ++)
-		// 	eigvals[d] = cabs(eigvals[d]);
-		// ZNormalize(eigvals, dim);
+		for (d = 0; d < dim; d ++)
+			eigvals[d] = cabs(eigvals[d]);
+		ZNormalize(eigvals, dim);
 		ZReconstruct(eigvals, eigvecs, cpmat, dim);
 	}
-
-	printf("After reconstruction.\n");
-	PrintPythonComplexArray2D(cpmat, "M_+", 4, 4);
+	// printf("After reconstruction.\n");
+	// PrintPythonComplexArray2D(cpmat, "M_+", 4, 4);
 	// DiagonalizeD(cpmat, dim, eigvals, 1, eigvecs);
 	// PrintSpectralDecomposition(eigvals, eigvecs, "After reconstruction", 4);
-
 	// ====
 	for (d = 0; d < dim; d ++)
 		free(eigvecs[d]);

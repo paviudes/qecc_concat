@@ -346,20 +346,20 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 	// The effective channel in the Pauli Liouville representation is given by:
 	// G_{L,L'} = \sum_S,S' G_{LS, L* L' L* S'}/P(s)
 	// where L* is the correction applied by the decoder.
-	printf("Function: isPauli = %d, EffChanSynd(%d,...), P(%d) = %.6Le\n", isPauli, synd, synd, (sim->syndprobs)[synd]);
+	// printf("Function: isPauli = %d, EffChanSynd(%d,...), P(%d) = %.6Le\n", isPauli, synd, synd, (sim->syndprobs)[synd]);
 	int l, lp, s, sp, f3;
 	long double f1, f2;
-	int cp_threshold;
-	// const double ROUND_OFF = 1E12;
+	int syndrome_order = OrderOfMagnitude((sim->syndprobs)[synd], 10);
+	int cp_threshold = synd_threshold - syndrome_order;
+	
 	// Initialization
 	for (l = 0; l < qecc->nlogs; l ++){
 		for (lp = 0; lp < qecc->nlogs; lp ++){
 			(sim->effprocess)[synd][l][lp] = 0;
 		}
 	}
-	if (OrderOfMagnitude((sim->syndprobs)[synd], 10) >= synd_threshold){
-		// printf("Initialization done.\n");
-		cp_threshold = synd_threshold - OrderOfMagnitude((double) (sim->syndprobs)[synd], 10);
+
+	if (syndrome_order >= synd_threshold){
 		if (isPauli == 0){
 			for (l = 0; l < qecc->nlogs; l ++){
 				for (lp = 0; lp < qecc->nlogs; lp ++){
@@ -374,91 +374,39 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 					}
 				}
 			}
-			// printf("Population done.\n");
-			// Normalization
-			// ApplyNormalization(synd, qecc, sim);
-			// printf("Exact G[0, 0] = %.15f, P(s) * 2^(n-k) = %.15f\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-			/*
-			for (l = 0; l < qecc->nlogs; l ++){
-				for (lp = 0; lp < qecc->nlogs; lp ++){
-					// (sim->effprocess)[synd][l][lp] /= pow(2, qecc->N - qecc->K);
-					printf("Exact G[%d,%d] = %.5Le, P(s) * 2^(n-k) = %.5Le\n", l, lp, (sim->effprocess)[synd][l][lp], (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-					// (sim->effprocess)[synd][l][lp] = (sim->effprocess)[synd][l][lp] / (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-					// (sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-				}
-				printf("----\n");
-			}
-			printf("Before Division by P(s) = %.5Le.\n", (sim->syndprobs)[synd]);
-			if (IsChannel((sim->effprocess)[synd], consts, 1E-12, 0, 0) == 0){
-				printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-				printf("Invalid channel\n");
-				printf("***********\n");
-				exit(0);
-			}
-			else
-				printf("Valid channel.\n");
-			*/
 			for (l = 0; l < qecc->nlogs; l ++)
 				for (lp = 0; lp < qecc->nlogs; lp ++)
 					(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-			// printf("After Division by P(s) = %.5Le.\n", (sim->syndprobs)[synd]);
-			// cp_threshold = synd_threshold - OrderOfMagnitude((double) (sim->syndprobs)[synd], 10);
-			// printf("Testing CP to an accuracy of 1E%d.\n", cp_threshold);
-			if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
-				printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-				printf("Invalid channel up to 1E%d.\n", cp_threshold);
-				printf("***********\n");
-				exit(0);
-			}
 		}
 		else{
 			for (l = 0; l < qecc->nlogs; l ++){
 				(sim->effprocess)[synd][l][l] = 0;
 				for (s = 0; s < qecc->nstabs; s ++){
-					// printf("l = %d, s = %d\n",l,s);
 					f1 = (long double) ((qecc->projector)[synd][s]);
 					f2 = (long double) ((consts->algebra)[1][(sim->corrections)[synd]][l]);
 					(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
 				}
 			}
+			
 			// Normalization
-			// ApplyNormalization(synd, qecc, sim);
-			// printf("Exact G[0, 0] = %.5Le, P(s) * 2^(n-k) = %.5Le\n", (sim->effprocess)[synd][0][0], (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-			for (l = 0; l < qecc->nlogs; l ++){
-				// printf("Exact G[%d,%d] = %.10Le, P(s) * 2^(n-k) = %.10Le\n", l, l, (sim->effprocess)[synd][l][l], (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]));
-				// (sim->effprocess)[synd][l][l] = (sim->effprocess)[synd][l][l] / (powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+			for (l = 0; l < qecc->nlogs; l ++)
 				(sim->effprocess)[synd][l][l] = Divide((sim->effprocess)[synd][l][l], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-			}
-			PrintLongDoubleArray2D((sim->effprocess)[synd], "E", 4, 4);
-			// printf("Population done.\n");
-			if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
-				printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-				printf("Invalid channel up to 1E%d.\n", cp_threshold);
-				printf("***********\n");
-				exit(0);
-			}
+			// Remove the following check after debugging.
 			if (IsDiagonal((sim->effprocess)[synd], 4) == 0){
 				PrintLongDoubleArray2D((sim->effprocess)[synd], "E", 4, 4);
 				printf("Non Pauli channel, s = %d.\n", synd);
 				exit(0);
 			}
 		}
-		// Consistency checks.
-		// 1. Check G[0,0] = 1
-		// printf("s = %d, P(s) = %.15Lf\nG[0][0] = %.15Lf\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
-		// 2. First column of G should be all zeros
-		// for (l = 1; l < qecc->nlogs; l ++){
-			// printf("G[%d][0] = %.15f\n", l, (sim->effprocess)[synd][l][0]);
-		// }
-		// 3. Check if the channel is valid
-		// printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-		// PrintLongDoubleArray2D((sim->effprocess)[synd], "PTM", 4, 4);
-		// if (IsChannel((sim->effprocess)[synd], consts, 1E-10, 1 - sim->skipsyndromes, 0) == 0){
-		// 	printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
-		// 	printf("Invalid channel\n");
-		// 	printf("***********\n");
-		// 	// exit(0);
-		// }
+		// Check if the channel is valid
+		if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
+			printf("!!!!!!!!!!\n");
+			printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
+			PrintLongDoubleArray2D((sim->effprocess)[synd], "PTM", 4, 4);
+			printf("Invalid channel up to 1E%d.\n", cp_threshold);
+			printf("!!!!!!!!!!\n");
+			exit(0);
+		}
 		// printf("\\/\\/\\/\\/\\/\\/\\/\\/\\/\n");
 	}
 	else{

@@ -91,10 +91,8 @@ int IsState(double complex **choi, double atol, int checktp, int restore){
 		cp_choi[i] = malloc(sizeof(complex double) * 4);
 	
 	ishermitian = IsHermitian(choi, atol);
-	if (ishermitian == 0){
+	if (ishermitian == 0)
 		printf("Not Hermitian.\n");
-		exit(0);
-	}
 	
 	if (restore == 1){
 		ispositive = FixPositivity(choi, cp_choi, 4, atol);

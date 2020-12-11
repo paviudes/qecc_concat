@@ -11,6 +11,7 @@
 #include <math.h>
 #include <complex.h>
 #include "constants.h"
+#include "utils.h"
 #include "reps.h"
 #include "mt19937/mt19937ar.h" // Only for testing purposes
 #include "printfuns.h" // Only for testing purposes
@@ -55,13 +56,10 @@ int IsHermitian(double complex **choi, double atol){
 	// Check is a complex 4x4 matrix is Hermitian.
 	// For a Hermitian matrix A, we have: A[i][j] = (A[j][i])^*.
 	int i, j;
-	for (i = 0; i < 4; i ++){
-		for (j = 0; j < 4; j ++){
-			if (cabs(choi[i][j] - conj(choi[j][i])) > atol){
+	for (i = 0; i < 4; i ++)
+		for (j = 0; j < i; j ++)
+			if (cabs(choi[i][j] - conj(choi[j][i])) > atol)
 				return 0;
-			}
-		}
-	}
 	return 1;
 }
 
@@ -87,13 +85,21 @@ int IsState(double complex **choi, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// It must be Hermitian, have trace 1 and completely positive.
 	int isstate = 0, ishermitian = 0, ispositive = 0, istrace1 = 0;
+	complex double **cp_choi = malloc(sizeof(complex double *) * 4);
+	int i;
+	for (i = 0; i < 4; i ++)
+		cp_choi[i] = malloc(sizeof(complex double) * 4);
 	
 	ishermitian = IsHermitian(choi, atol);
-	if (ishermitian == 0)
+	if (ishermitian == 0){
 		printf("Not Hermitian.\n");
+		exit(0);
+	}
 	
-	if (restore == 1)
-		ispositive = FixPositivity(choi, choi, 4, atol);
+	if (restore == 1){
+		ispositive = FixPositivity(choi, cp_choi, 4, atol);
+		ZOverwriteArray(choi, cp_choi, 4, 4);
+	}
 	else
 		ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
@@ -107,6 +113,10 @@ int IsState(double complex **choi, double atol, int checktp, int restore){
 		printf("Not Unit trace.\n");
 	
 	isstate = ishermitian * istrace1 * ispositive;
+	// Free memory
+	for (i = 0; i < 4; i ++)
+		free(cp_choi[i]);
+	free(cp_choi);
 	return isstate;
 }
 

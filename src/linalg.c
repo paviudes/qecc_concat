@@ -215,6 +215,11 @@ void ZOuter(double complex *vecA, double complex *vecB, double complex **prod, i
 		Perform an outer product of two vectors.
 		Given column vectors x and y, we want to perform: x.y^T.
 	*/
+	int i, j;
+	for (i = 0; i < lenA; i ++)
+		for (j = 0; j < lenB; j ++)
+			prod[i][j] = vecA[i] * conj(vecB[j]);
+	/*
 	double complex **matA, **matB;
 	int i;
 	matA = malloc(lenA * sizeof(double complex *));
@@ -235,6 +240,7 @@ void ZOuter(double complex *vecA, double complex *vecB, double complex **prod, i
 	free(matA);
 	free(matB[0]);
 	free(matB);
+	*/
 }
 
 void ZAdd(double complex **matA, double complex **matB, double complex **sum, int rows, int cols){
@@ -247,43 +253,51 @@ void ZAdd(double complex **matA, double complex **matB, double complex **sum, in
 			sum[i][j] = matA[i][j] + matB[i][j];
 }
 
-void ZMul(double complex **matA, double complex c, double complex **mul, int rows, int cols){
+void ZMul(double complex **matA, double complex c, double complex **prod, int rows, int cols){
 	/*
 		Multiply every element of a complex matrix by a scalar.
 	*/
 	int i, j;
 	for (i = 0; i < rows; i ++)
 		for (j = 0; j < cols; j ++)
-			mul[i][j] = matA[i][j] * c;
+			prod[i][j] = matA[i][j] * c;
 }
 
 
-void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **mat, int dim){
+void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **recon, int dim){
 	/*
 		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
-		Given x_i and |v_i>, we want to compute the matrix: sum_i [ x_i |v_i><v_i| ].
+		Given D, whose diagonal entires are the eigenvalues and U, a unitary matrix whose columns are the eigenvectors, we want to compute
+		U D U^\dag
 	*/
-	double complex **outer = malloc(sizeof(double complex *) * dim);
+	double complex **eigvecs_T = malloc(sizeof(double complex *) * dim);
+	double complex **eigvals_D = malloc(sizeof(double complex *) * dim);
 	int i, j;
 	for (i = 0; i < dim; i ++){
-		outer[i] = malloc(sizeof(double complex) * dim);
-		for (j = 0; j < dim; j ++)
-			mat[i][j] = 0 + 0 * I;
+		eigvecs_T[i] = malloc(sizeof(double complex) * dim);
+		eigvals_D[i] = malloc(sizeof(double complex) * dim);
+		for (j = 0; j < dim; j ++){
+			eigvecs_T[i][j] = conj(eigvecs[j][i]);
+			recon[i][j] = 0 + 0 * I;
+			eigvals_D[i][j] = 0 + 0 * I;
+		}
+		eigvals_D[i][i] = eigvals[i];
 	}
-	// ====
-	int d;
-	for (d = 0; d < dim; d ++){
-		for (i = 0; i < dim; i ++)
-			for (j = 0; j < dim; j ++)
-				outer[i][j] = 0 + 0 * I;
-		ZOuter(eigvecs[d], eigvecs[d], outer, dim, dim);
-		ZMul(outer, eigvals[d], outer, dim, dim);
-		ZAdd(mat, outer, mat, dim, dim);
+	PrintComplexArray2D(eigvecs, "U", 4, 4);
+	ZDot(eigvecs, eigvecs_T, recon, dim, dim, dim, dim);
+	PrintComplexArray2D(recon, "U U^dag", 4, 4);
+	// Compute the product P = U D U^\dag in two steps.
+	// 1. P <- D U^\dag
+	ZDot(eigvals_D, eigvecs_T, recon, dim, dim, dim, dim);
+	// 2. P <- U P
+	ZDot(eigvecs, recon, recon, dim, dim, dim, dim);
+	// Free memory
+	for (i = 0; i < dim; i ++){
+		free(eigvecs_T[i]);
+		free(eigvals_D[i]);
 	}
-	// ====
-	for (i = 0; i < dim; i ++)
-		free(outer[i]);
-	free(outer);
+	free(eigvecs_T);
+	free(eigvals_D);
 }
 
 void ZNormalize(double complex *vec, int size){
@@ -324,23 +338,27 @@ int FixPositivity(complex double **mat, complex double **cpmat, int dim, const d
 	for (d = 0; d < dim; d ++)
 		eigvecs[d] = malloc(sizeof(double complex) * dim);
 
+	// printf("Before reconstruction.\n");
+	// PrintPythonComplexArray2D(mat, "M", 4, 4);
+	
 	DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
-	// PrintComplexArray1D(eigvals, "Eigenvalues", 4);
-	// PrintComplexArray2D(eigvecs, "Eigenvectors", 4, 4);
+	
+	// PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+	// PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
 
 	success = ZPos(eigvals, dim, atol);
 	
 	if (success == 1){
-		for (d = 0; d < dim; d ++)
-			eigvals[d] = cabs(eigvals[d]);
-		ZNormalize(eigvals, dim);
+		// for (d = 0; d < dim; d ++)
+		// 	eigvals[d] = cabs(eigvals[d]);
+		// ZNormalize(eigvals, dim);
 		ZReconstruct(eigvals, eigvecs, cpmat, dim);
 	}
 
-	// printf("After reconstruction.\n");
+	printf("After reconstruction.\n");
+	PrintPythonComplexArray2D(cpmat, "M_+", 4, 4);
 	// DiagonalizeD(cpmat, dim, eigvals, 1, eigvecs);
-	// PrintComplexArray1D(eigvals, "Eigenvalues", 4);
-	// PrintComplexArray2D(eigvecs, "Eigenvectors", 4, 4);
+	// PrintSpectralDecomposition(eigvals, eigvecs, "After reconstruction", 4);
 
 	// ====
 	for (d = 0; d < dim; d ++)
@@ -450,7 +468,7 @@ void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int is
 			a[i * dim + j].imag = (cimag(mat[i][j]));
 		}
 	}
-	info = LAPACKE_zgeev(LAPACK_ROW_MAJOR, 'N', 'V', n, a, lda, w, vl, lvdl, vr, lvdr);
+	info = LAPACKE_zgeev(LAPACK_ROW_MAJOR, 'V', 'V', n, a, lda, w, vl, lvdl, vr, lvdr);
 	if (info > 0)
 		printf("Eigenvalues %d to %d did not converge properly.\n", info, dim);
 	else if (info < 0)
@@ -460,7 +478,7 @@ void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int is
 			eigvals[i] = w[i].real + w[i].imag * I;
 			if (iseigvecs == 1){
 				for (j = 0; j < dim; j ++)
-					eigvecs[i][j] = vr[j * dim + i].real + vr[j * dim + i].imag * I;
+					eigvecs[i][j] = vr[i * dim + j].real + vr[i * dim + j].imag * I;
 			}
 		}
 	}

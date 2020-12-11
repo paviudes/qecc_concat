@@ -77,8 +77,10 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 			if ((sim->syndprobs)[s] > consts->atol) {
 				// Compute metrics.
 				ComputeMetrics(metvals, sim->nmetrics, sim->metricsToCompute, (sim->effprocess)[s], sim->chname, consts);
-				// printf("s = %d\n", s);
-				// PrintLongDoubleArray2D((sim->effprocess)[s], "E_s", qcode->nlogs, qcode->nlogs);
+				if (IsDiagonal((sim->effprocess)[s], 4) == 0){
+					printf("s = %d\n", s);
+					PrintLongDoubleArray2D((sim->effprocess)[s], "E_s", qcode->nlogs, qcode->nlogs);
+				}
 				// PrintDoubleArray1D(metvals, "metric values for s", sim->nmetrics);
 				for (m = 0; m < sim->nmetrics; m++)
 					avg[m] += (long double) metvals[m] * (sim->syndprobs)[s];
@@ -88,8 +90,7 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 						avg[sim->nmetrics + i * qcode->nlogs + j] += (sim->effprocess)[s][i][j] * (sim->syndprobs)[s];
 			}
 		}
-
-		// PrintDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
+		PrintLongDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
 		// Average of metrics.
 		for (m = 0; m < sim->nmetrics; m++) {
 			(sim->metricValues)[level + 1][m] += bias * avg[m];
@@ -136,9 +137,11 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 			printf("***********\n");
 			// exit(0);
 		}
-		else
-			printf("Valid logical channel for level %d.\n", level + 1);
+		// else
+		// 	printf("Valid logical channel for level %d.\n", level + 1);
 	}
+	printf("Average channel for level %d.\n", level + 1);
+	PrintDoubleArray2D((sim->logical)[level + 1], "Logical channel", 4, 4);
 	// printf("Updated metrics.\n");
 	// Free memory.
 	free(metvals);
@@ -259,12 +262,12 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 			isPauli = 0;
 		// This runs for iscorr = 1 as well as iscorr = 3.
 		// Correlated channel -- the physical channel contains the full process matrix
-		// printf("Simulating a correlated channel: level: 1, iscorr = %d, skipsyndromes = %d, synd_threshold = %d and decoder %d.\n", sim->iscorr, sim->skipsyndromes, synd_threshold, decoder);
+		printf("Simulating a correlated channel: level: 1, isPauli = %d, iscorr = %d, skipsyndromes = %d, synd_threshold = %d and decoder %d.\n", isPauli, sim->iscorr, sim->skipsyndromes, synd_threshold, decoder);
 		SetFullProcessMatrix(qcode, sim, sim->physical, isPauli);
 		// printf("Running SingleShotErrorCorrection.\n");
 		SingleShotErrorCorrection(isPauli, sim->iscorr, decoder, (sim->frames)[0], qcode, sim, consts, 1, synd_threshold);
 	}
-	// printf("Completed SingleShotErrorCorrection.\n");
+	printf("Completed SingleShotErrorCorrection.\n");
 
 	UpdateMetrics(0, 1, 1, 0, qcode, sim, consts);
 	int s;
@@ -374,7 +377,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				history = 1;
 				isPauli[s] = 1;
 				for (q = 0; q < qcode[l]->N; q++) {
-					// printf("Simulation channel number %d, qubit %d:\n",s, q);
+					printf("Simulation channel number %d, qubit %d:\n",s, q);
 					for (i = 0; i < qcode[l]->nlogs; i++){
 						for (j = 0; j < qcode[l]->nlogs; j++)
 							(sims[s]->virtchan)[q][i][j] = channels[l - 1][qcode[l]->N * b + q][s][i][j];
@@ -384,7 +387,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					if (isPauli[s] > 0)
 						isPauli[s] = isPauli[s] * IsDiagonal((sims[s]->virtchan)[q], qcode[l]->nlogs);
 
-					// PrintLongDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
+					PrintLongDoubleArray2D((sims[s]->virtchan)[q], "virtual channel", qcode[l]->nlogs, qcode[l]->nlogs);
 					
 					// Check if the picked channel is valid.
 					/*
@@ -401,7 +404,11 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					bias *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0];
 					history *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1];
 					// printf("Syndrome probability: %g, bias = %g.\n", channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1], channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0]);
-					// printf("======\n");
+					printf("======\n");
+				}
+				if (isPauli[s] == 0){
+					printf("Non Pauli channel, isPauli = %d.\n", isPauli[s]);
+					exit(0);
 				}
 				// Compute the minimum syndrome probability that should be sampled.
 				history_order = OrderOfMagnitude(history, 10);

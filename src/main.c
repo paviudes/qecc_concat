@@ -117,7 +117,6 @@ int main(int argc, char **argv)
 
 	if (strncmp(file, "checks", 5) == 0){
 		// Testing functions in checks.c.
-		double complex **mat = malloc(sizeof(double complex) * 4);
 		for (i = 0; i < 4; i ++)
 			for (j = 0; j < 4; j ++)
 				mat[i][j] = genrand_real3() + genrand_real3() * I;
@@ -355,6 +354,29 @@ int main(int argc, char **argv)
 	}
 
 	if (strncmp(file, "linalg", 6) == 0){
+		if (strncmp(func, "Diagonalize", 11) == 0){
+			int dim = 4;
+			for (i = 0; i < 4; i ++)
+				for (j = 0; j < 4; j ++)
+					mat[i][j] = genrand_real3() + genrand_real3() * I;
+			double complex *eigvals = malloc(sizeof(double complex) * dim);
+			double complex **eigvecs = malloc(sizeof(double complex *) * dim);
+			for (i = 0; i < 4; i ++)
+				eigvecs[i] = malloc(sizeof(double complex) * dim);
+
+			PrintComplexArray2D(mat, "M", dim, dim);
+			DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
+			PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+
+			printf("Check with Python:\n");
+			PrintPythonComplexArray2D(mat, "M", dim, dim);
+			
+			// Free memory
+			free(eigvals);
+			for (i = 0; i < 4; i ++)
+				free(eigvecs[i]);
+			free(eigvecs);
+		}
 		if (strncmp(func, "BinaryDot", 9) == 0){
 			int max = 64;
 			int a = RandomRangeInt(0, max);
@@ -399,10 +421,12 @@ int main(int argc, char **argv)
 
 				printf("Non-Positive matrix M\n");
 				PrintComplexArray2D(herm_mat, "M", 4, 4);
+				PrintPythonComplexArray2D(herm_mat, "M", 4, 4);
 				success = FixPositivity(herm_mat, psd_mat, 4, violation);
 				if (success == 1){
 					printf("Positive semidefinite matrix M_+\n");
 					PrintComplexArray2D(psd_mat, "M_+", 4, 4);
+					PrintPythonComplexArray2D(psd_mat, "M_+", 4, 4);
 					printf("||M - M_+||_2 = %.5e.\n", ZFroNorm(herm_mat, psd_mat, 4, 4));
 				}
 				else
@@ -427,7 +451,7 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 3;
+			int nlevels = 2;
 
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
@@ -536,7 +560,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1000;
+			stats[0] = 1;
 			// ===
 
 			// ===

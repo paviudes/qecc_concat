@@ -3,7 +3,7 @@
 // #include <time.h> // Only for testing purposes
 // #include <string.h> // Only for testing purposes
 #include <math.h>
-// #include <complex.h>
+#include <complex.h>
 // #include "printfuns.h" // Only for testing purposes
 #include "utils.h"
 
@@ -13,6 +13,14 @@
 		source /opt/intel/compilers_and_libraries_2019/mac/bin/compilervars.sh intel64
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
+
+void ZOverwriteArray(complex double **new, complex double **old, int nrows, int ncols){
+	// Overwrite an array with contents of another.
+	int i, j;
+	for (i = 0; i < nrows; i ++)
+		for (j = 0; j < ncols; j ++)
+			new[i][j] = old[i][j];
+}
 
 int OrderOfMagnitude(long double x, int b){
 	// Compute the order of magnitude of a number to a base.

@@ -1,7 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-// #include <complex.h>
+#include <complex.h>
+
+// Overwrite an array with contents of another.
+extern void ZOverwriteArray(complex double **new, complex double **old, int nrows, int ncols);
 
 /*
 	Compute the order of magnitude of a number to a base.

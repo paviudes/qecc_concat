@@ -4,6 +4,21 @@
 #include <complex.h>
 #include "printfuns.h"
 
+void PrintSpectralDecomposition(complex double *eigvals, complex double **eigvecs, char *name, int dim){
+	// Print the eigenvalues and eigenvectors of a matrix.
+	int i, j;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (i = 0; i < dim; i ++){
+		printf("e_%d = %g + i %g\n", i + 1, creal(eigvals[i]), cimag(eigvals[i]));
+		printf("v_%d\n", i + 1);
+		for (j = 0; j < dim - 1; j ++)
+			printf("(%g + i %g), ", creal(eigvecs[i][j]), cimag(eigvecs[i][j]));
+		printf("(%g + i %g)\n", creal(eigvecs[i][dim - 1]), cimag(eigvecs[i][dim - 1]));
+	}
+	printf("-----\n");
+}
+
 void PrintComplexArray1D(complex double *array, char *name, int nrows){
 	// Print a complex 2D array.
 	int r;
@@ -28,6 +43,22 @@ void PrintLongComplexArray1D(long complex double *array, char *name, int nrows){
 	fflush(stdout);
 }
 
+void PrintPythonComplexArray2D(complex double **array, char *name, int nrows, int ncols){
+	// Print a complex 2D array in a format that can be loaded into a Python console.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	printf("[");
+	for (r = 0; r < nrows; r ++){
+		printf("[");
+		for (c = 0; c < ncols - 1; c ++)
+			printf("%.15f + 1j * %.15f, ", creal(array[r][c]), cimag(array[r][c]));
+		printf("%.15f + 1j * %.15f], ", creal(array[r][ncols - 1]), cimag(array[r][ncols - 1]));
+	}
+	printf("]");
+	printf("\n-----\n");
+	fflush(stdout);
+}
 
 void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncols){
 	// Print a complex 2D array.

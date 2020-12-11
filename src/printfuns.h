@@ -3,6 +3,12 @@
 
 #include <complex.h>
 
+// Print a complex 2D array in a format that can be loaded into a Python console.
+extern void PrintPythonComplexArray2D(complex double **array, char *name, int nrows, int ncols);
+
+// Print the eigenvalues and eigenvectors of a matrix.
+extern void PrintSpectralDecomposition(complex double *eigvals, complex double **eigvecs, char *name, int dim);
+
 // Print a complex 1D array.
 extern void PrintComplexArray1D(double complex *array, char *name, int nrows);
 // Print a long complex 1D array.

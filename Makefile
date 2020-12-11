@@ -116,4 +116,4 @@ obj/sampling.o: $(SRC_DIR)/sampling.c $(SRC_DIR)/sampling.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/sampling.c -o obj/sampling.o $(LIBS_MATH)
 
 clean:
-	$(RM) $(TARGET) obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
+	$(RM) bmark bmark.so obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o

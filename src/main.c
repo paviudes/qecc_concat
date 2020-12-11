@@ -365,7 +365,8 @@ int main(int argc, char **argv)
 				eigvecs[i] = malloc(sizeof(double complex) * dim);
 
 			PrintComplexArray2D(mat, "M", dim, dim);
-			DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
+			// DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
+			ZEigH(mat, dim, eigvals, 1, eigvecs);
 			PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
 
 			printf("Check with Python:\n");

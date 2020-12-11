@@ -268,36 +268,68 @@ void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex dou
 	/*
 		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
 		Given D, whose diagonal entires are the eigenvalues and U, a unitary matrix whose columns are the eigenvectors, we want to compute
-		U D U^\dag
+		M = U D U^\dag.
+		This can be simplified using explicit summation and the fact that D is a diagonal matrix.
+		M_(i,j) = \sum_l ( d_l  U_(i,l) (U_(j,l))^* )
+		where
+			d is the vector of eigenvalues,
+			U is the unitary matrix whose columns are eigenvectors of H
+			(.)^* is used to denote complex conjugate.
 	*/
-	double complex **eigvecs_T = malloc(sizeof(double complex *) * dim);
-	double complex **eigvals_D = malloc(sizeof(double complex *) * dim);
+	int i, j, k;
+	for (i = 0; i < dim; i ++){
+		for (j = 0; j < dim; j ++){
+			recon[i][j] = 0 + 0 * I;
+			for (k = 0; k < dim; k ++)
+				recon[i][j] += eigvals[k] * eigvecs[i][k] * conj(eigvecs[j][k]);
+		}
+	}
+	// PrintComplexArray1D(eigvals, "D", 4);
+	// PrintComplexArray2D(eigvecs, "U", 4, 4);
+}
+
+void ZEigH(double complex **mat, int dim, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+	/*
+		Compute the eigenvalues and the right-eigenvectors of a complex Hermitian matrix.
+		We will use the LAPACK routine zheev to compute the eigenvalues. The LAPACK function is defined as follows.
+		There is a C wrapper to the LAPACK routine:
+		https://software.intel.com/sites/products/documentation/doclib/mkl_sa/11/mkl_lapack_examples/lapacke_zheev_row.c.htm
+		The eigenvalues of a Hermitian matrix are real, however, we will store them in a complex array, for compatibility.
+		We need this function for Hermitian matrices because th generic eigensolver has issues.
+		See: http://icl.cs.utk.edu/lapack-forum/archives/lapack/msg01352.html.
+	*/
+
+	MKL_INT n = dim, lda = dim, info;
+	double w[dim];
+	MKL_Complex16 a[dim * dim];
 	int i, j;
 	for (i = 0; i < dim; i ++){
-		eigvecs_T[i] = malloc(sizeof(double complex) * dim);
-		eigvals_D[i] = malloc(sizeof(double complex) * dim);
 		for (j = 0; j < dim; j ++){
-			eigvecs_T[i][j] = conj(eigvecs[j][i]);
-			recon[i][j] = 0 + 0 * I;
-			eigvals_D[i][j] = 0 + 0 * I;
+			a[i * dim + j].real = (creal(mat[i][j]));
+			a[i * dim + j].imag = (cimag(mat[i][j]));
 		}
-		eigvals_D[i][i] = eigvals[i];
 	}
-	PrintComplexArray2D(eigvecs, "U", 4, 4);
-	ZDot(eigvecs, eigvecs_T, recon, dim, dim, dim, dim);
-	PrintComplexArray2D(recon, "U U^dag", 4, 4);
-	// Compute the product P = U D U^\dag in two steps.
-	// 1. P <- D U^\dag
-	ZDot(eigvals_D, eigvecs_T, recon, dim, dim, dim, dim);
-	// 2. P <- U P
-	ZDot(eigvecs, recon, recon, dim, dim, dim, dim);
-	// Free memory
 	for (i = 0; i < dim; i ++){
-		free(eigvecs_T[i]);
-		free(eigvals_D[i]);
+		for (j = i + 1; j < dim; j ++){
+			a[i * dim + j].real = 0;
+			a[i * dim + j].imag = 0;
+		}
 	}
-	free(eigvecs_T);
-	free(eigvals_D);
+
+	info = LAPACKE_zheev(LAPACK_ROW_MAJOR, 'V', 'L', n, a, lda, w);
+	if (info > 0)
+		printf("Eigenvalues %d to %d did not converge properly.\n", info, dim);
+	else if (info < 0)
+		printf("Error in the the %d-th input parameter.\n", -1 * info);
+	else{
+		for (i = 0; i < dim; i ++){
+			eigvals[i] = w[i] + 0 * I;
+			if (iseigvecs == 1){
+				for (j = 0; j < dim; j ++)
+					eigvecs[i][j] = a[i * dim + j].real + a[i * dim + j].imag * I;
+			}
+		}
+	}
 }
 
 void ZNormalize(double complex *vec, int size){
@@ -338,13 +370,13 @@ int FixPositivity(complex double **mat, complex double **cpmat, int dim, const d
 	for (d = 0; d < dim; d ++)
 		eigvecs[d] = malloc(sizeof(double complex) * dim);
 
-	// printf("Before reconstruction.\n");
-	// PrintPythonComplexArray2D(mat, "M", 4, 4);
+	printf("Before reconstruction.\n");
+	PrintPythonComplexArray2D(mat, "M", 4, 4);
 	
-	DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
+	ZEigH(mat, dim, eigvals, 1, eigvecs);
 	
-	// PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
-	// PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
+	PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+	PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
 
 	success = ZPos(eigvals, dim, atol);
 	

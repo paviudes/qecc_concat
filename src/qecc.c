@@ -392,11 +392,13 @@ void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct cons
 			for (l = 0; l < qecc->nlogs; l ++)
 				(sim->effprocess)[synd][l][l] = Divide((sim->effprocess)[synd][l][l], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 			// Remove the following check after debugging.
+			/*
 			if (IsDiagonal((sim->effprocess)[synd], 4) == 0){
 				PrintLongDoubleArray2D((sim->effprocess)[synd], "E", 4, 4);
 				printf("Non Pauli channel, s = %d.\n", synd);
 				exit(0);
 			}
+			*/
 		}
 		// Check if the channel is valid
 		if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){

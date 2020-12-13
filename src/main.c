@@ -500,7 +500,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 3;
 			// ===
 
 			// ===
@@ -561,7 +561,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 1000;
+			stats[0] = 10000;
 			// ===
 
 			// ===

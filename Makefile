@@ -16,7 +16,7 @@ ifeq ($(MODE), DEBUG)
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = gcc-10
+	CC = icc
 	OPTS = -O3
 	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -46,7 +46,7 @@ else ifeq ($(OS), Linux)
 	endif
 	MKL_DIR = ${MKLROOT}
 	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
-	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl
+	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -ldl
 else
 	# MKL_DIR = "c:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win"
 	#Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win

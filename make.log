@@ -1,19 +1,23 @@
 Make is being run in RUN mode on the Darwin OS.
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/main.c -o obj/main.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -I/opt/intel/oneapi/mkl/latest/include -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl -c src/rand.c -o obj/rand.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/reps.c -o obj/reps.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/utils.c -o obj/utils.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/sampling.c -o obj/sampling.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/constants.c -o obj/constants.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/printfuns.c -o obj/printfuns.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/mt19937/mt19937ar.c -o obj/mt19937ar.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/checks.c -o obj/checks.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/logmetrics.c -o obj/logmetrics.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/memory.c -o obj/memory.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/qecc.c -o obj/qecc.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/decode.c -o obj/decode.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/effective.c -o obj/effective.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/benchmark.c -o obj/benchmark.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -c src/hybrid.c -o obj/hybrid.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -I/opt/intel/oneapi/mkl/latest/include -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl -c src/linalg.c -o obj/linalg.o 
-gcc-10 -fPIC -Wall -Wextra -std=c11 -O3  -shared -o bmark.so obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl obj/linalg.o
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/main.c -o obj/main.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -I/opt/intel/oneapi/mkl/latest/include -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl -c src/rand.c -o obj/rand.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/reps.c -o obj/reps.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/utils.c -o obj/utils.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/sampling.c -o obj/sampling.o 
+remark #11074: Inlining inhibited by limit max-size 
+remark #11076: To get full report use -qopt-report=4 -qopt-report-phase ipo
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/constants.c -o obj/constants.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/printfuns.c -o obj/printfuns.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/mt19937/mt19937ar.c -o obj/mt19937ar.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/checks.c -o obj/checks.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/logmetrics.c -o obj/logmetrics.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/memory.c -o obj/memory.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/qecc.c -o obj/qecc.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/decode.c -o obj/decode.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/effective.c -o obj/effective.o 
+remark #11074: Inlining inhibited by limit max-size 
+remark #11076: To get full report use -qopt-report=4 -qopt-report-phase ipo
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/benchmark.c -o obj/benchmark.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -c src/hybrid.c -o obj/hybrid.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -I/opt/intel/oneapi/mkl/latest/include -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl -c src/linalg.c -o obj/linalg.o 
+icc -fPIC -Wall -Wextra -std=c11 -O3  -shared -o bmark.so obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o -L/opt/intel/oneapi/mkl/latest/lib -Wl,-rpath,/opt/intel/oneapi/mkl/latest/lib -lmkl_rt -lpthread  -ldl obj/linalg.o

@@ -3,7 +3,7 @@
 # In those cases, run the following command on the shell: sed -i -e 's/\r$//' automake.sh
 #
 #!/bin/bash
-make clean >/dev/null 2>&1
+# make clean >/dev/null 2>&1
 make db=0 > make.log 2>&1
 make_errors=$(cat make.log | grep -i "error")
 make_warns=$(cat make.log | grep -i "warning")

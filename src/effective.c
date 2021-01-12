@@ -65,6 +65,7 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 	// Compute metrics for all the effective channels and update the average value
 	// of the metrics. Metric values.
 	// printf("Updating metrics.\n");
+	double normalization = 0;
 	double *metvals = malloc(sim->nmetrics * sizeof(double));
 	long double *avg = malloc((sim->nmetrics + qcode->nlogs * qcode->nlogs) * sizeof(long double));
 	int m;
@@ -85,7 +86,12 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 						avg[sim->nmetrics + i * qcode->nlogs + j] += (sim->effprocess)[s][i][j] * (sim->syndprobs)[s];
 			}
 		}
-		// PrintLongDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
+		/*
+		if (level == 2){
+			printf("Level = %d, Bias = %.3Le\n", level, bias);
+			PrintLongDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
+		}
+		*/
 		// Average of metrics.
 		for (m = 0; m < sim->nmetrics; m++) {
 			(sim->metricValues)[level + 1][m] += bias * avg[m];
@@ -107,18 +113,35 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 		}
 		
 		// Update the number of statistics done for the level.
+		// printf("totalbias[%d] = %Lf\n", level + 1, (sim->totalbias)[level + 1]);
 		(sim->statsperlevel)[level + 1] ++;
+		// Force normalization of level - 3 simulations
+		// (sim->totalbias)[level + 1] += bias;
 	}
 	else{
 		// After all the simulations are done, the average metrics are to be computed by diving the metricValues by the total number of statistics done for that level.
+		// Note that sampling the level - 2 syndromes (and also for higher levels) does not have access to the full distribution (or, even approximately the full distribution, for low sample sizes).
+		// So we need to apply a self-normalized version of importance sampling wherein we normalize the estimator by the sum of all bias values.
+		/*
+		if (level < 2)
+			normalization = (double) ((sim->statsperlevel)[level + 1]);
+		else
+			normalization = (double) (sim->totalbias)[level + 1];
+		*/
+		normalization = (double) ((sim->statsperlevel)[level + 1]);
+
+		// printf("Level %d\nTotal infidelity = %.8e and normalization = %.4e.\n", level, normalization, (sim->metricValues)[level + 1][0]);
+
+		// Normalize metrics
 		for (m = 0; m < sim->nmetrics; m++) {
-			(sim->metricValues)[level + 1][m] /= ((double)((sim->statsperlevel)[level + 1]));
-			(sim->variance)[level + 1][m] = 1 / ((double)((sim->statsperlevel)[level + 1] * ((sim->statsperlevel)[level + 1] - 1))) * sim->sumsq[level + 1][m] - pow((sim->metricValues)[level + 1][m], 2);
+			(sim->metricValues)[level + 1][m] /= normalization;
+			(sim->variance)[level + 1][m] = 1 / (normalization * (normalization - 1)) * (sim->sumsq)[level + 1][m] - pow((sim->metricValues)[level + 1][m], 2);
 		}
+		// Normalize logical channel
 		for (i = 0; i < qcode->nlogs; i++) {
 			for (j = 0; j < qcode->nlogs; j++) {
-				(sim->logical)[level + 1][i][j] /= ((double)((sim->statsperlevel)[level + 1]));
-				(sim->variance)[level + 1][sim->nmetrics + i * qcode->nlogs + j] = 1 / ((double)((sim->statsperlevel)[level + 1] * ((sim->statsperlevel)[level + 1] - 1))) * sim->sumsq[level + 1][sim->nmetrics + i * qcode->nlogs + j] - pow((sim->logical)[level + 1][i][j], 2);
+				(sim->logical)[level + 1][i][j] /= normalization;
+				(sim->variance)[level + 1][sim->nmetrics + i * qcode->nlogs + j] = 1 / (normalization * (normalization - 1)) * sim->sumsq[level + 1][sim->nmetrics + i * qcode->nlogs + j] - pow((sim->logical)[level + 1][i][j], 2);
 			}
 		}
 		if (_IsChannel((sim->logical)[level + 1], consts, consts->atol, 1, 0) == 0){
@@ -298,7 +321,9 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				history_order = OrderOfMagnitude(history, 10);
 				synd_threshold = OrderOfMagnitude(consts->min_syndprob, 10) - history_order + OrderOfMagnitude(1/((long double) sims[0]->nstats), 10);
 				threshold = Min(Max((double) OrderOfMagnitude(consts->min_syndprob, 10), (double) synd_threshold), -5);
-				// printf("Going to perform SingleShotErrorCorrection with isPauli = %d, bias = %.5Le, skipsyndromes = %d, history ~ 10^%d, and synd_threshold = %d.\n", isPauli[s], bias, sims[s]->skipsyndromes, history_order, threshold);
+				
+				// printf("Going to perform SingleShotErrorCorrection with decoder = %d, isPauli = %d, bias = %.5Le, skipsyndromes = %d, history ~ 10^%d, and synd_threshold = %d.\n", (sims[0]->decoders)[0], isPauli[s], bias, sims[s]->skipsyndromes, history_order, threshold);
+				
 				// Pass minimum weight for main channel as decoding algo if partial ML decoding on
 				if (s == 0){
 					if ((sims[0]->decoders)[0] == 2)
@@ -312,6 +337,8 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					SingleShotErrorCorrection(isPauli[s], 0, 0, (sims[s]->frames)[l], qcode[l], sims[s], consts, 0, threshold);
 				else{};
 
+				// printf("Done SingleShotErrorCorrection with isPauli = %d, bias = %.5Le, skipsyndromes = %d, history ~ 10^%d, and synd_threshold = %d.\n", isPauli[s], bias, sims[s]->skipsyndromes, history_order, threshold);
+				
 				// If doing partial ML decoder for main channel, copy the lookup table for the next simulation.
 				if ((s == 1) && ((sims[0]->decoders)[0] == 2))
 					for (int synd = 0; synd < qcode[l]->nstabs; synd++)
@@ -319,13 +346,18 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				// Reference channel does ML while the original channel does lookup with the table generated by ML on the reference.
 			}
 
+			// PrintLongDoubleArray1D(sims[s]->syndprobs, "Syndrome probabilities", qcode[l]->nstabs);
+
 			UpdateMetrics(l, bias, history, 0, qcode[l], sims[0], consts);
 
 			if (l < (sims[0]->nlevels - 1)) {
 				if (sims[0]->importance == 0){
 					randsynd = SampleCumulative(sims[0]->cumulative, qcode[l]->nstabs);
 					bias *= 1;
-					history *= (sims[s]->syndprobs)[randsynd];
+					// impdist[randsynd] = (sims[0]->syndprobs)[randsynd];
+					// printf("Done Sampling cumulative with randsynd = %d\n", randsynd);
+					history *= (sims[0]->syndprobs)[randsynd];
+					// printf("Done sampling\n");
 				}
 				else if (sims[0]->importance == 1){
 					searchin[0] = 0;
@@ -343,7 +375,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 					history *= impdist[randsynd];
 				}
 				else{};
-				// printf("Random syndrome: %d, from exponent: %g and bias = %g. (sims[0]->syndprobs)[randsynd] = %.15Lf, impdist[randsynd] = %.15Lf.\n", randsynd, expo, bias, (sims[0]->syndprobs)[randsynd], impdist[randsynd]);
+				// printf("Random syndrome: %d, from exponent: %g and bias = %Lf. (sims[0]->syndprobs)[randsynd] = %.15Lf, impdist[randsynd] = %.15Lf.\n", randsynd, expo, bias, (sims[0]->syndprobs)[randsynd], impdist[randsynd]);
 				for (i = 0; i < qcode[l]->nlogs; i++){
 					for (j = 0; j < qcode[l]->nlogs; j++)
 						channels[l][b][0][i][j] = (sims[0]->effprocess)[randsynd][i][j];
@@ -353,6 +385,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				channels[l][b][0][qcode[l]->nlogs][1] = history;
 				channels[l][b][0][qcode[l]->nlogs][2] = (sims[0]->syndprobs)[randsynd];
 			}
+			// printf("Loaded channels for next run\n");
 		}
 		// Free memory for inputchannels
 		MemManageInputChannels(inputchannels, qcode[l]->N, qcode[l]->nlogs, (sims[0]->decoders)[0], 1);

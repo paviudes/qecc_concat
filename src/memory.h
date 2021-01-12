@@ -34,6 +34,7 @@ struct simul_t{
 	int nlevels;
 	int maxbin;
 	int importance;
+	// long double *restrict totalbias;
 	long double *restrict levelOneImpDist;
 	long double *restrict levelOneImpCumul;
 	double infidelity;

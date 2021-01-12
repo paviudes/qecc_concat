@@ -16,7 +16,7 @@ void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs
 	double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
 	// double infidelity = phy_infid;
 	// outlierprobs[1] = 0.5 * infidelity; // We are assuming that infidelity = alpha, here.
-	outlierprobs[1] = 0.8 * (1 - Min(3 * infidelity, 1 - 1E-5));
+	outlierprobs[1] = 0.25 * (1 - Min(3 * infidelity, 1 - 1E-5));
 	outlierprobs[0] = 0.80 * outlierprobs[1];
 }
 
@@ -44,7 +44,7 @@ double SetExponent(double phy_infid, int dist, int nphys, int level, long double
 	double p = 1 - pow(1 - phy_infid, 1/(double) nphys);
 	double infidelity = UpperBoundInfidelity(p, dist, nphys, level);
 	expo = log(threshold)/log(infidelity);
-	printf("L = %d, 1 - F = %.8f, exponent = %.3f\n", level, infidelity, expo);
+	// printf("L = %d, 1 - F = %.8f, exponent = %.3f\n", level, infidelity, expo);
 	return expo;
 }
 
@@ -83,6 +83,7 @@ int SampleCumulative(long double *cumulative, int size){
 	// Draw a uniform random number, u, in [0,1]. Determine the interval of the cumulative distribution in which u lies.
 	// http://ieeexplore.ieee.org/document/92917/
 	// Additions: if frozen = -1, continue with the sampling as described above.
+	// PrintLongDoubleArray1D(cumulative, "cumulative", size);
 	int i = 0;
 	double urand = genrand_real3();
 	for (i = 0; i < size; i ++)

@@ -82,6 +82,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		importance
 		infidelity
 	*/
+
+	printf("\033[35mbmark: source last compiled on %s at %s.\n\033[0m", __DATE__, __TIME__);
+
 	struct constants_t *consts = malloc(sizeof(struct constants_t));
 	InitConstants(consts);
 

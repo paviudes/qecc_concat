@@ -198,14 +198,16 @@ void AllocSimParams(struct simul_t *simul, int nphys, int nenc)
 
 	// Syndrome sampling.
 	simul->outlierprobs = malloc(2 * sizeof(double));
-
 	simul->levelOneSynds = malloc(nstabs * sizeof(long double));
 	simul->levelOneImpDist = malloc(nstabs * sizeof(long double));
 	simul->levelOneCumul = malloc(nstabs * sizeof(long double));
 	simul->levelOneImpCumul = malloc(nstabs * sizeof(long double));
 	simul->statsperlevel = malloc((simul->nlevels + 1) * sizeof(long));
-	for (l = 0; l < simul->nlevels + 1; l++)
+	// simul->totalbias = malloc((simul->nlevels + 1) * sizeof(long double));
+	for (l = 0; l < simul->nlevels + 1; l++){
 		(simul->statsperlevel)[l] = 0;
+		// (simul->totalbias)[l] = 0;
+	}
 
 	// Syndrome-metric bins.
 	simul->bins = malloc((simul->nlevels + 1) * sizeof(int ***));
@@ -359,6 +361,7 @@ void FreeSimParams(struct simul_t *simul, int nphys, int nenc)
 	// Syndrome sampling.
 	free(simul->outlierprobs);
 	free(simul->statsperlevel);
+	// free(simul->totalbias);
 	free(simul->levelOneSynds);
 	free(simul->levelOneCumul);
 	free(simul->levelOneImpDist);

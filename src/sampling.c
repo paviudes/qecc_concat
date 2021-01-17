@@ -16,7 +16,7 @@ void SetOutlierProbs(double phy_infid, int dist, int level, double *outlierprobs
 	double infidelity = pow(phy_infid, floor((pow(dist, level - 1) + 1)/2));
 	// double infidelity = phy_infid;
 	// outlierprobs[1] = 0.5 * infidelity; // We are assuming that infidelity = alpha, here.
-	outlierprobs[1] = 0.25 * (1 - Min(3 * infidelity, 1 - 1E-5));
+	outlierprobs[1] = 0.4 * (1 - Min(3 * infidelity, 1 - 1E-5));
 	outlierprobs[0] = 0.80 * outlierprobs[1];
 }
 

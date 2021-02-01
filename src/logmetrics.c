@@ -176,9 +176,12 @@ void _ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, dou
 		else if (strncmp(metricsToCompute[m], "infid", 5) == 0){
 			metvals[m] = Infidelity(ptm);
 		}
-		// else if (strncmp(metricsToCompute[m], "np1", 3) == 0){
-		// 	metvals[m] = NonPauliness(choi, consts);
-		// }
+		else if (strncmp(metricsToCompute[m], "dnorm", 3) == 0){
+			if (strncmp(chname, "rtz", 3) == 0)
+				metvals[m] = sqrt(Infidelity(ptm));
+			else
+				metvals[m] = 0;
+		}
 		else if (strncmp(metricsToCompute[m], "entropy", 7) == 0){
 			metvals[m] = Entropy(ptm, consts);
 		}

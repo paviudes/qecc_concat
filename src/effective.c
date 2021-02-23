@@ -453,7 +453,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	if (sims[0]->nlevels > 1) {
 		for (t = 0; t < sims[0]->nstats; t++) {
 			// Fill the lowest level of the channels array with "nchans" samples of level-1 channels.
-			// printf("Stat %ld, nchans = %d.\n", t, nchans);
+			printf("Stat %ld, nchans = %d.\n", t, nchans);
 			for (c = 0; c < nchans; c++) {
 				if ((sims[0]->decoders)[0] == 2){
 					if(sims[0]->importance == 1)
@@ -492,6 +492,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 						randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
 						bias = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
 					}
+					printf("Random syndrome: %d\n", randsynd);
 					for (i = 0; i < qcode[0]->nlogs; i++){
 						for (j = 0; j < qcode[0]->nlogs; j++)
 							channels[0][c][0][i][j] = (sims[0]->levelOneChannels)[randsynd][i][j];

@@ -420,8 +420,9 @@ int CountIndepLogicalChannels(int *chans, int *nphys, int nlevels)
 	// printf("Function: CountIndepLogicalChannels\n")
 	chans[nlevels-1] = 1;
 	int l;
+	// for (l = nlevels - 2; l >= 0; l--)
 	for (l = nlevels - 2; l >= 0; l--)
-		chans[l] = nphys[l] * chans[l + 1];
+		chans[l] = nphys[l + 1] * chans[l + 1];
 	return chans[0];
 }
 

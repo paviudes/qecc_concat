@@ -105,6 +105,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 				(qcode[l]->projector)[s][g] = SS[ss_count + s * qcode[l]->nstabs + g];
 		ss_count += qcode[l]->nstabs * qcode[l]->nstabs;
 
+		// PrintIntArray2D(qcode[l]->projector, "projector", qcode[l]->nstabs, qcode[l]->nstabs);
+
 		// printf("ss_count = %d\n", ss_count);
 
 		for (i = 0; i < qcode[l]->nlogs; i++)
@@ -124,6 +126,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			for (s = 0; s < qcode[l]->nstabs; s++)
 				(qcode[l]->phases)[i][s] = normphases_real[norm_phcount + i * qcode[l]->nstabs + s] + I * normphases_imag[norm_phcount + i * qcode[l]->nstabs + s];
 
+		// PrintComplexArray2D(qcode[l]->phases, "Phases", qcode[l]->nlogs, qcode[l]->nstabs);
 		// printf("norm_phcount = %d\n", norm_phcount);
 
 		if (decoders[l] == 1){

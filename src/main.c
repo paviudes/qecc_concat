@@ -459,37 +459,45 @@ int main(int argc, char **argv)
 			LoadIntArray1D(nkd, "./../chflow/input/debug_testing/nkd.txt", nlevels * 3);
 			PrintIntArray1D(nkd, "nkd", nlevels * 3);
 			// ===
-
+			// Compute the code parameters
+			int n, k, l, nstabs, nlogs, stabsize = 0, normsize = 0, normph_size = 0, dclookup_size = 0, lst_size = 0;
+			for (l = 0; l < nlevels; l ++){
+				n = nkd[3 * l + 0];
+				k = nkd[3 * l + 1];
+				nstabs = (int) pow(2, (n - k));
+				nlogs = (int) pow(4, k);
+				printf("l = %d, nstabs = %d, nlogs = %d.\n", l + 1, nstabs, nlogs);
+				stabsize += nstabs * nstabs;
+				normsize += nstabs * nlogs * n;
+				normph_size += nstabs * nlogs;
+				dclookup_size += nstabs;
+				lst_size += nstabs * nlogs * nstabs * n;
+			}
 			// ===
-			int n = nkd[0], k = nkd[1];
-			int nstabs = (int) pow(2, (n - k)), nlogs = (int) pow(4, k);
-			printf("nstabs = %d, nlogs = %d.\n", nstabs, nlogs);
+			
 			// ===
-
-			// ===
-			int *SS = malloc(nlevels * nstabs * nstabs * sizeof(int));
-			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", nlevels * nstabs * nstabs);
+			int *SS = malloc(stabsize * sizeof(int));
+			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", stabsize);
 			printf("_/ Loaded SS.\n");
 			// PrintIntArray1D(SS, "SS", nlevels * nstabs * nstabs);
 			// ===
 
-			// ===
-			int *normalizer = malloc(nlevels * nlogs * nstabs * n * sizeof(int));
-			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", nlevels * nlogs * nstabs * n);
+			int *normalizer = malloc(normsize * sizeof(int));
+			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", normsize);
 			printf("_/ Loaded normalizer.\n");
 			// PrintIntArray1D(normalizer, "normalizer", nlevels * nlogs * nstabs * n);
 			// ===
 
 			// ===
-			double *normphases_real = malloc(nlevels * nlogs * nstabs * sizeof(double));
-			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", nlevels * nlogs * nstabs);
+			double *normphases_real = malloc(normph_size * sizeof(double));
+			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", normph_size);
 			printf("_/ Loaded normphases_real.\n");
-			// PrintDoubleArray1D(normphases_real, "normphases_real", nlevels * nlogs * nstabs);
+			// PrintDoubleArray1D(normphases_real, "normphases_real", normph_size);
 			// ===
 
 			// ===
-			double *normphases_imag = malloc(nlevels * nlogs * nstabs * sizeof(double));
-			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", nlevels * nlogs * nstabs);
+			double *normphases_imag = malloc(normph_size * sizeof(double));
+			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", normph_size);
 			printf("_/ Loaded normphases_imag.\n");
 			// PrintDoubleArray1D(normphases_imag, "normphases_imag", nlevels * nlogs * nstabs);
 			// ===
@@ -536,10 +544,10 @@ int main(int argc, char **argv)
 			for (i = 0; i < nlevels; i ++)
 				decoders[i] = 1;
 			PrintIntArray1D(decoders, "Decoders", nlevels);
-			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
-			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
-			int *operators_LST = malloc(nlevels * nstabs * nlogs * nstabs * n * sizeof(int));
-			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", nlevels * nstabs * nlogs * nstabs * n);
+			int *dclookups = malloc(dclookup_size * sizeof(int));
+			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", dclookup_size);
+			int *operators_LST = malloc(lst_size * sizeof(int));
+			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", lst_size);
 			double *mpinfo = malloc((int)pow(4, n) * sizeof(double));
 			LoadDoubleArray1D(mpinfo, "./../chflow/input/debug_testing/mpinfo.txt", (int)pow(4, n));
 			// PrintDoubleArray1D(mpinfo, "Message passing initialize", (int)pow(4, n));
@@ -561,7 +569,7 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 10;
+			stats[0] = 1000;
 			printf("Stats = %ld\n", stats[0]);
 			// ===
 

@@ -304,6 +304,7 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 				bias = 1;
 				history = 1;
 				isPauli[s] = 1;
+				// printf("Simulating QECC for a code with N = %d, nstabs = %d\n", qcode[l]->N, qcode[l]->nstabs);
 				for (q = 0; q < qcode[l]->N; q++) {
 					for (i = 0; i < qcode[l]->nlogs; i++){
 						for (j = 0; j < qcode[l]->nlogs; j++)
@@ -316,6 +317,9 @@ void ComputeLogicalChannels(struct simul_t **sims, struct qecc_t **qcode, struct
 
 					bias *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][0];
 					history *= channels[l - 1][qcode[l]->N * b + q][s][qcode[l]->nlogs][1];
+					
+					// printf("Channel on Qubit %d\n", q);
+					// PrintLongDoubleArray2D((sims[s]->virtchan)[q], "Channel", qcode[l]->nlogs, qcode[l]->nlogs);
 				}
 				// Compute the minimum syndrome probability that should be sampled.
 				history_order = OrderOfMagnitude(history, 10);
@@ -453,7 +457,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 	if (sims[0]->nlevels > 1) {
 		for (t = 0; t < sims[0]->nstats; t++) {
 			// Fill the lowest level of the channels array with "nchans" samples of level-1 channels.
-			printf("Stat %ld, nchans = %d.\n", t, nchans);
+			// printf("Stat %ld, nchans = %d.\n", t, nchans);
 			for (c = 0; c < nchans; c++) {
 				if ((sims[0]->decoders)[0] == 2){
 					if(sims[0]->importance == 1)
@@ -492,7 +496,7 @@ void Performance(struct qecc_t **qcode, struct simul_t **sims, struct constants_
 						randsynd = SampleCumulative(sims[0]->levelOneImpCumul, qcode[0]->nstabs);
 						bias = (sims[0]->levelOneSynds)[randsynd] / (sims[0]->levelOneImpDist)[randsynd];
 					}
-					printf("Random syndrome: %d\n", randsynd);
+					// printf("Random syndrome: %d\n", randsynd);
 					for (i = 0; i < qcode[0]->nlogs; i++){
 						for (j = 0; j < qcode[0]->nlogs; j++)
 							channels[0][c][0][i][j] = (sims[0]->levelOneChannels)[randsynd][i][j];

@@ -96,8 +96,8 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 	// For each pair of logical operators, we only need the entries of the Chi
 	// matrix that correspond to Pauli operators from different logical classes.
 	// We construct the sections of the Chi matrices that correspond to rows and
-	// columns in the logical classes. printf("Function: GetFullProcessMatrix for
-	// isPauli = %d.\n", isPauli);
+	// columns in the logical classes.
+	// printf("Function: GetFullProcessMatrix for isPauli = %d.\n", isPauli);
 	int i, j, k, l, q;
 	long double prod_val = 0;
 	long double prod = 1;
@@ -156,10 +156,11 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 					prod = (long double) prod_phase * powl(10, prod_val);
 				(sim->process)[i][i][j][j] = (long double) creal((qecc->phases)[i][j] * (qecc->phases)[i][j]) * prod;
 			}
+			// printf("Process[%d][%d]\n", i, i);
+			// PrintLongDoubleArrayDiag((sim->process)[i][i], "process", qecc->nstabs);
 		}
-		// PrintDoubleArrayDiag((sim->process)[1][1], "process[1][1]", qecc->nstabs);
 	}
-	// printf("Done computing full process matrix: process[0][0][0][0] = %g.\n", (sim->process)[0][0][0][0]);
+	// printf("Done computing full process matrix: process[0][0][0][0] = %Lf.\n", (sim->process)[0][0][0][0]);
 }
 
 
@@ -470,7 +471,7 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed, int synd_threshold)
 {
 	// Compute the effective logical channel, when error correction is applied over a set of input physical channels.
-	// printf("Constructing the full process matrix\n");
+	// printf("SingleShotErrorCorrection with isPauli = %d, iscorr = %d, N = %d, nstabs = %d, nlogs = %d.\n", isPauli, iscorr, qecc->N, qecc->nstabs, qecc->nlogs);
 	if ((iscorr == 0) || (iscorr == 2))
 		GetFullProcessMatrix(qecc, sim, isPauli);
 	// Compute the probabilities of all the syndromes.

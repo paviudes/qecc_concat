@@ -1,4 +1,4 @@
-# Script to make and copy the shared object file to chflow.
+	# Script to make and copy the shared object file to chflow.
 # Sometimes the script may return an error message
 # In those cases, run the following command on the shell: sed -i -e 's/\r$//' automake.sh
 #

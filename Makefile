@@ -9,7 +9,7 @@ ifdef db
 	MODE=DEBUG
 endif
 ifeq ($(MODE), DEBUG)
-	CC = icc
+	CC = gcc-10
 	OPTS = -O${db} -g
 	REPORT = $()
 	TARGET = bmark

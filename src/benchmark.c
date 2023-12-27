@@ -95,6 +95,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	for (l = 0; l < nlevels; l++)
 	{
 		// printf("l = %d\n", l);
+		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, nkd[3*l], nkd[3*l+1], nkd[3*l+2]);
 		qcode[l] = malloc(sizeof(struct qecc_t));
 		qcode[l]->N = nkd[3 * l];
 		qcode[l]->K = nkd[3 * l + 1];
@@ -153,13 +154,15 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	// printf("QECC assigned.\n");
 
-	// if (iscorr == 0)
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
-	// else if (iscorr == 1)
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
-	// else
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs);
-
+	/*
+	if (iscorr == 0)
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
+	else if (iscorr == 1)
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
+	else
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs);
+	*/
+	
 	// Record the number of physical qubits -- this is for setting the sizes of the decoder bins.
 	int *nphys = malloc(sizeof(int) * nlevels);
 	for (l = 0; l < nlevels; l++)
@@ -298,17 +301,18 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		// free(physical_file);
 	}
 
-
-	// printf("**************************************\n");
-	// printf("INPUTS:\n");
-	// printf("iscorr = %d\n", iscorr);
-	// printf("nparams = %d\n", nparams);
-	// PrintDoubleArray1D(physical, "Physical channel", nparams);
-	// PrintIntArray1D(decoders, "Decoders", nlevels);
-	// PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
-	// printf("importance = %d\n", importance);
-	// printf("infidelity = %.14f\n", infidelity);
-	// printf("**************************************\n");
+	/*
+	printf("**************************************\n");
+	printf("INPUTS:\n");
+	printf("iscorr = %d\n", iscorr);
+	printf("nparams = %d\n", nparams);
+	PrintDoubleArray1D(physical, "Physical channel", nparams);
+	PrintIntArray1D(decoders, "Decoders", nlevels);
+	PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
+	printf("importance = %d\n", importance);
+	printf("infidelity = %.14f\n", infidelity);
+	printf("**************************************\n");
+	*/
 
 	// printf("Going to start Performance.\n");
 
@@ -338,8 +342,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	for (l = 0; l < nlevels + 1; l++)
 	{
-		printf("l = %d\n", l);
-		PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
+		// printf("l = %d\n", l);
+		// PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
 		for (i = 0; i < nlogs; i++)
 		{
 			for (j = 0; j < nlogs; j++)
@@ -364,7 +368,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(bout.running)[m * nbreaks + i] = (sims[0]->runavg)[m][i + 1];
 	}
-	PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
+	// PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
 	// PrintDoubleArray1D((bout.running), "Running average", nmetrics * nbreaks);
 
 	// ######################################

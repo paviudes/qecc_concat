@@ -9,14 +9,14 @@ ifdef db
 	MODE=DEBUG
 endif
 ifeq ($(MODE), DEBUG)
-	CC = gcc-10
-	OPTS = -O${db} -g
+	CC = gcc-12
+	OPTS = -O0 -g
 	REPORT = $()
 	TARGET = bmark
 	LDFLAGS = $()
 	LIBS_MATH = -lm
 else
-	CC = icc
+	CC = gcc-12
 	OPTS = -O3
 	# -xavx # only works on icc
 	REPORT = -qopt-report-phase=vec -qopt-report=5
@@ -29,9 +29,10 @@ endif
 #	OPTS = -O3
 #endif
 
-CFLAGS = -fPIC -Wall -Wextra -std=c11 $(OPTS) # $(REPORT)
 RM = rm
 SRC_DIR = src
+INCLUDE_DIR=include
+CFLAGS = -I${INCLUDE_DIR} -fPIC -Wall -Wextra -std=c17 $(OPTS) # $(REPORT)
 
 # Detecting the OS type.
 OS := $(shell uname -s)
@@ -41,12 +42,7 @@ ifeq ($(OS), Darwin)
 	CFLAGS_MKL = -I${MKLROOT}/include
 	LIBS_MKL = -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread $(LIBS) -ldl
 else ifeq ($(OS), Linux)
-	ifeq ($(MKLROOT),)
-		MKLROOT="/mnt/c/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/"
-	endif
-	MKL_DIR = ${MKLROOT}
-	CFLAGS_MKL = -m64 -I${MKL_DIR}/include
-	LIBS_MKL =  -L${MKL_DIR}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -ldl
+	LIBS_MATH = -L/usr/lib/x86_64-linux-gnu -lm -lblas -llapack -llapacke
 else
 	# MKL_DIR = "c:/Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win"
 	#Program Files (x86)/IntelSWTools/compilers_and_libraries_2020.4.311/windows/mkl/lib/intel64_win
@@ -62,57 +58,57 @@ endif
 $(shell mkdir -p obj/)
 
 $(TARGET):obj/main.o obj/rand.o obj/reps.o obj/utils.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/checks.o obj/logmetrics.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o $(LIBS_MKL) obj/linalg.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(TARGET) obj/main.o obj/reps.o obj/utils.o obj/rand.o obj/sampling.o obj/constants.o obj/printfuns.o obj/mt19937ar.o obj/logmetrics.o obj/checks.o obj/memory.o obj/qecc.o obj/decode.o obj/effective.o obj/benchmark.o obj/hybrid.o obj/linalg.o $(LIBS_MATH)
 
 obj/main.o: $(SRC_DIR)/main.c Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o obj/main.o $(LIBS_MATH)
 
-obj/mt19937ar.o: $(SRC_DIR)/mt19937/mt19937ar.c $(SRC_DIR)/mt19937/mt19937ar.h Makefile
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/mt19937/mt19937ar.c -o obj/mt19937ar.o $(LIBS_MATH)
+obj/mt19937ar.o: mt19937/mt19937ar.c mt19937/mt19937ar.h Makefile
+	$(CC) $(CFLAGS) -c mt19937/mt19937ar.c -o obj/mt19937ar.o $(LIBS_MATH)
 
-obj/rand.o: $(SRC_DIR)/rand.c $(SRC_DIR)/rand.h Makefile
+obj/rand.o: $(SRC_DIR)/rand.c $(INCLUDE_DIR)/rand.h Makefile
 	$(CC) $(CFLAGS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/rand.c -o obj/rand.o $(LIBS_MATH)
 
-obj/linalg.o: $(SRC_DIR)/linalg.c $(SRC_DIR)/linalg.h Makefile
+obj/linalg.o: $(SRC_DIR)/linalg.c $(INCLUDE_DIR)/linalg.h Makefile
 	$(CC) $(CFLAGS) $(CFLAGS_MKL) $(LIBS_MKL) -c $(SRC_DIR)/linalg.c -o obj/linalg.o $(LIBS_MATH)
 
-obj/benchmark.o: $(SRC_DIR)/benchmark.c $(SRC_DIR)/benchmark.h Makefile
+obj/benchmark.o: $(SRC_DIR)/benchmark.c $(INCLUDE_DIR)/benchmark.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/benchmark.c -o obj/benchmark.o $(LIBS_MATH)
 
-obj/hybrid.o: $(SRC_DIR)/hybrid.c $(SRC_DIR)/hybrid.h Makefile
+obj/hybrid.o: $(SRC_DIR)/hybrid.c $(INCLUDE_DIR)/hybrid.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/hybrid.c -o obj/hybrid.o $(LIBS_MATH)
 
-obj/effective.o: $(SRC_DIR)/effective.c $(SRC_DIR)/effective.h Makefile
+obj/effective.o: $(SRC_DIR)/effective.c $(INCLUDE_DIR)/effective.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/effective.c -o obj/effective.o $(LIBS_MATH)
 
-obj/memory.o: $(SRC_DIR)/memory.c $(SRC_DIR)/memory.h Makefile
+obj/memory.o: $(SRC_DIR)/memory.c $(INCLUDE_DIR)/memory.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/memory.c -o obj/memory.o $(LIBS_MATH)
 
-obj/qecc.o: $(SRC_DIR)/qecc.c $(SRC_DIR)/qecc.h Makefile
+obj/qecc.o: $(SRC_DIR)/qecc.c $(INCLUDE_DIR)/qecc.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/qecc.c -o obj/qecc.o $(LIBS_MATH)
 
-obj/decode.o: $(SRC_DIR)/decode.c $(SRC_DIR)/decode.h Makefile
+obj/decode.o: $(SRC_DIR)/decode.c $(INCLUDE_DIR)/decode.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/decode.c -o obj/decode.o $(LIBS_MATH)
 
-obj/logmetrics.o: $(SRC_DIR)/logmetrics.c $(SRC_DIR)/logmetrics.h Makefile
+obj/logmetrics.o: $(SRC_DIR)/logmetrics.c $(INCLUDE_DIR)/logmetrics.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/logmetrics.c -o obj/logmetrics.o $(LIBS_MATH)
 
-obj/checks.o: $(SRC_DIR)/checks.c $(SRC_DIR)/checks.h Makefile
+obj/checks.o: $(SRC_DIR)/checks.c $(INCLUDE_DIR)/checks.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/checks.c -o obj/checks.o $(LIBS_MATH)
 
-obj/printfuns.o: $(SRC_DIR)/printfuns.c $(SRC_DIR)/printfuns.h Makefile
+obj/printfuns.o: $(SRC_DIR)/printfuns.c $(INCLUDE_DIR)/printfuns.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/printfuns.c -o obj/printfuns.o $(LIBS_MATH)
 
-obj/constants.o: $(SRC_DIR)/constants.c $(SRC_DIR)/constants.h Makefile
+obj/constants.o: $(SRC_DIR)/constants.c $(INCLUDE_DIR)/constants.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/constants.c -o obj/constants.o $(LIBS_MATH)
 
-obj/utils.o: $(SRC_DIR)/utils.c $(SRC_DIR)/utils.h Makefile
+obj/utils.o: $(SRC_DIR)/utils.c $(INCLUDE_DIR)/utils.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/utils.c -o obj/utils.o $(LIBS_MATH)
 
-obj/reps.o: $(SRC_DIR)/reps.c $(SRC_DIR)/reps.h Makefile
+obj/reps.o: $(SRC_DIR)/reps.c $(INCLUDE_DIR)/reps.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/reps.c -o obj/reps.o $(LIBS_MATH)
 
-obj/sampling.o: $(SRC_DIR)/sampling.c $(SRC_DIR)/sampling.h Makefile
+obj/sampling.o: $(SRC_DIR)/sampling.c $(INCLUDE_DIR)/sampling.h Makefile
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/sampling.c -o obj/sampling.o $(LIBS_MATH)
 
 clean:

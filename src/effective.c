@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "mt19937/mt19937ar.h"
+#include "../mt19937/mt19937ar.h"
 #include "constants.h"
 #include "printfuns.h"
 #include "utils.h"

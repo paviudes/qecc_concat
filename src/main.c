@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include <complex.h>
-#include "mt19937/mt19937ar.h" // Random number generator
+#include "../mt19937/mt19937ar.h" // Random number generator
 #include "rand.h"
 #include "printfuns.h"
 #include "utils.h"
@@ -508,7 +508,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int iscorr = 0;
+			int iscorr = 3;
 			// ===
 
 			// ===
@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 1;
+			int importance = 0;
 			printf("Importance = %d\n", importance);
 			// ===
 

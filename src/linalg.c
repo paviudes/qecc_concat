@@ -4,9 +4,9 @@
 #include <string.h> // Only for testing purposes
 #include <math.h>
 #include <complex.h>
-#include "mkl_lapacke.h"
-#include "mkl_cblas.h"
-#include "mt19937/mt19937ar.h"
+#include "cblas.h"
+#include "lapacke.h"
+#include "../mt19937/mt19937ar.h"
 #include "printfuns.h" // Only for testing purposes
 #include "utils.h"
 #include "linalg.h"
@@ -87,15 +87,15 @@ double DiagGDotIntV(double **matA, int *vecB, int rowsA, int colsA, int sizeB){
 double DiagGDotV(double **matA, double *vecB, int rowsA, int colsA, int sizeB){
 	// Given a matrix A and a vector v, compute the dot product: diag(A).v where diag(A) referes to the 1D vector containing the diagonal of A.
 	// The vector is provided as a 1D array (row vector), but we intend to use it as a column vector and multiply it to the right of the given matrix.
-	// For high-performance, we will use the cblas_ddot function of the BLAS library.
+	// For high-performance, we will use the ddot function of the BLAS library.
 	// See https://software.intel.com/en-us/mkl-developer-reference-c-cblas-dot.
 	const double atol = 1E-12;
 	double prod = 0;
 	if ((rowsA != colsA) && (colsA != sizeB))
 		printf("Cannot multiply a matrix of shape (%d x %d) to a vector of shape (%d x 1).\n", rowsA, colsA, sizeB);
 	else{
-		MKL_INT n = rowsA;
-		const MKL_INT incx = 1, incy = 1;
+		int n = rowsA;
+		const int incx = 1, incy = 1;
 		double x[n], y[n];
 		int i;
 		for (i = 0; i < rowsA; i ++)
@@ -118,7 +118,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm .
 		The dgemm function is defined with the following parameters.
-		extern cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -135,7 +135,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 	if (colsA != sizeB)
 		printf("Cannot multiply a matrix of shape (%d x %d) to a vector of shape (%d x 1).\n", rowsA, colsA, sizeB);
 	else{
-		MKL_INT m = rowsA, n = 1, k = colsA;
+		int m = rowsA, n = 1, k = colsA;
 		double A[rowsA * colsA], B[sizeB], C[rowsA], alpha, beta;
 		int i;
 		for (i = 0; i < rowsA * colsA; i ++)
@@ -160,7 +160,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm .
 		The dgemm function is defined with the following parameters.
-		extern cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -177,7 +177,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 	if (colsA != rowsB)
 		printf("Cannot multiply matrices of shape (%d x %d) and (%d x %d).\n", rowsA, colsA, rowsB, colsB);
 	else{
-		MKL_INT m = rowsA, n = colsB, k = colsA;
+		int m = rowsA, n = colsB, k = colsA;
 		double A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
 		int i;
 		for (i = 0; i < rowsA * colsA; i ++)
@@ -299,20 +299,18 @@ void ZEigH(double complex **mat, int dim, double complex *eigvals, int iseigvecs
 		See: http://icl.cs.utk.edu/lapack-forum/archives/lapack/msg01352.html.
 	*/
 
-	MKL_INT n = dim, lda = dim, info;
+	int n = dim, lda = dim, info;
 	double w[dim];
-	MKL_Complex16 a[dim * dim];
+	double complex a[dim * dim];
 	int i, j;
 	for (i = 0; i < dim; i ++){
 		for (j = 0; j < dim; j ++){
-			a[i * dim + j].real = (creal(mat[i][j]));
-			a[i * dim + j].imag = (cimag(mat[i][j]));
+			a[i * dim + j] = mat[i][j];
 		}
 	}
 	for (i = 0; i < dim; i ++){
 		for (j = i + 1; j < dim; j ++){
-			a[i * dim + j].real = 0;
-			a[i * dim + j].imag = 0;
+			a[i * dim + j] = 0 + 0 * I;
 		}
 	}
 
@@ -326,7 +324,7 @@ void ZEigH(double complex **mat, int dim, double complex *eigvals, int iseigvecs
 			eigvals[i] = w[i] + 0 * I;
 			if (iseigvecs == 1){
 				for (j = 0; j < dim; j ++)
-					eigvecs[i][j] = a[i * dim + j].real + a[i * dim + j].imag * I;
+					eigvecs[i][j] = a[i * dim + j];
 			}
 		}
 	}
@@ -405,7 +403,7 @@ void ZDot(double complex **matA, double complex **matB, double complex **prod, i
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/node/520775 .
 		The zgemm function is defined with the following parameters.
-		extern cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -422,31 +420,27 @@ void ZDot(double complex **matA, double complex **matB, double complex **prod, i
 	if (colsA != rowsB)
 		printf("Cannot multiply matrices of shape (%d x %d) and (%d x %d).\n", rowsA, colsA, rowsB, colsB);
 	else{
-		MKL_INT m = rowsA, n = colsB, k = colsA;
-		MKL_Complex16 A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
+		int m = rowsA, n = colsB, k = colsA;
+		double complex A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
 		int i, j;
 		for (i = 0; i < rowsA; i ++){
 			for (j = 0; j < colsA; j ++){
-				A[i * colsA + j].real = creal(matA[i][j]);
-				A[i * colsA + j].imag = cimag(matA[i][j]);
+				A[i * colsA + j] = matA[i][j];
 			}
 		}
 		for (i = 0; i < rowsB; i ++){
 			for (j = 0; j < colsB; j ++){
-				B[i * colsB + j].real = creal(matB[i][j]);
-				B[i * colsB + j].imag = cimag(matB[i][j]);
+				B[i * colsB + j] = matB[i][j];
 			}
 		}
-		alpha.real = 1;
-		alpha.imag = 0;
-		beta.real = 0;
-		beta.imag = 0;
+		alpha = 1 + 0 * I;
+		beta = 0 + 0 * I;
 		// Call the BLAS function.
 		cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, &alpha, A, k, B, n, &beta, C, n);
 		// Load the product
 		for (i = 0; i < rowsA; i ++)
 			for (j = 0; j < colsB; j ++)
-				prod[i][j] = C[i * colsB + j].real + C[i * colsB + j].imag * I;
+				prod[i][j] = C[i * colsB + j];
 	}
 }
 
@@ -488,14 +482,13 @@ void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int is
 		https://software.intel.com/sites/products/documentation/doclib/mkl_sa/11/mkl_lapack_examples/lapacke_zgeev_row.c.htm
 	*/
 
-	MKL_INT n = dim, lda = dim, lvdl = dim, lvdr = dim, info;
-	MKL_Complex16 w[dim], vl[dim * dim], vr[dim * dim];
-	MKL_Complex16 a[dim * dim];
+	int n = dim, lda = dim, lvdl = dim, lvdr = dim, info;
+	double complex w[dim], vl[dim * dim], vr[dim * dim];
+	double complex a[dim * dim];
 	int i, j;
 	for (i = 0; i < dim; i ++){
 		for (j = 0; j < dim; j ++){
-			a[i * dim + j].real = (creal(mat[i][j]));
-			a[i * dim + j].imag = (cimag(mat[i][j]));
+			a[i * dim + j] = mat[i][j];
 		}
 	}
 	info = LAPACKE_zgeev(LAPACK_ROW_MAJOR, 'V', 'V', n, a, lda, w, vl, lvdl, vr, lvdr);
@@ -505,10 +498,10 @@ void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int is
 		printf("Error in the the %d-th input parameter.\n", -1 * info);
 	else{
 		for (i = 0; i < dim; i ++){
-			eigvals[i] = w[i].real + w[i].imag * I;
+			eigvals[i] = w[i];
 			if (iseigvecs == 1){
 				for (j = 0; j < dim; j ++)
-					eigvecs[i][j] = vr[i * dim + j].real + vr[i * dim + j].imag * I;
+					eigvecs[i][j] = vr[i * dim + j];
 			}
 		}
 	}

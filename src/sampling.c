@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "mt19937/mt19937ar.h"
+#include "../mt19937/mt19937ar.h"
 // #include "printfuns.h" // only for testing
 #include "utils.h"
 #include "sampling.h"
@@ -103,7 +103,7 @@ int WhereInWindow(double number, double window[2]){
 	return 0;
 }
 
-double PowerSearch(long double *dist, int size, double *window, double *searchin){
+double PowerSearch(long double *dist, int size, double window[2], double searchin[2]){
 	// Search for an exponent k such that according to normalized distribution of P(s)^k, the probability of isincluded errors is within a desired window.
 	// the array searchin provides the exponent k in that: k = (searchin[0] + searchin[1])/2.
 	// One of the three cases can occur for the distribution P(s)^k where k = (searchin[0] + searchin[1])/2.

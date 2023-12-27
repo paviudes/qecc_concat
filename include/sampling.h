@@ -42,7 +42,7 @@ extern int SampleCumulative(long double *cumulative, int size);
 	Determine is a number is within, below or above a window.
 	If it is within, return 0, if it is above, return 1 and if below, return -1.
 */
-extern int WhereInWindow(double number, double *window);
+extern int WhereInWindow(double number, double window[2]);
 
 /*
 	Search for an exponent k such that according to normalized distribution of P(s)^k, the probability of isincluded errors is within a desired window.

@@ -13,7 +13,7 @@
 #include "constants.h"
 #include "utils.h"
 #include "reps.h"
-#include "mt19937/mt19937ar.h" // Only for testing purposes
+#include "../mt19937/mt19937ar.h" // Only for testing purposes
 #include "printfuns.h" // Only for testing purposes
 #include "linalg.h"
 #include "checks.h"

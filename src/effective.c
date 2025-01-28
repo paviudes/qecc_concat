@@ -92,6 +92,10 @@ void UpdateMetrics(int level, long double bias, long double history, int isfinal
 			PrintLongDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
 		}
 		*/
+		
+		// printf("Level = %d, Bias = %.3Le\n", level, bias);
+		// PrintLongDoubleArray1D(avg, "Avg Metric values and channels", sim->nmetrics + qcode->nlogs * qcode->nlogs);
+
 		// Average of metrics.
 		for (m = 0; m < sim->nmetrics; m++) {
 			(sim->metricValues)[level + 1][m] += bias * avg[m];
@@ -162,7 +166,7 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 		The pre-computation is to avoid re-computing level-1 syndromes for every new top-level syndrome.
 		Load the physical channels on to the simulation structure and perform single shot quantum error correction.
 	*/
-	// printf("Function: ComputeLevelOneChannels\n");
+	// printf("Function: ComputeLevelOneChannels with decoder %d\n", decoder);
 	int q, i, j, isPauli = 1, synd_threshold;
 	synd_threshold = Min(OrderOfMagnitude(consts->min_syndprob, 10), OrderOfMagnitude(1/((long double) sim->nstats), 10));
 	AllocSimParamsQECC(sim, qcode->N, qcode->K);
@@ -172,8 +176,10 @@ void ComputeLevelOneChannels(struct simul_t *sim, struct qecc_t *qcode, struct c
 	if (sim->nlevels == 1)
 		sim->skipsyndromes = 1;
 
-	if ((sim->decoders)[0] == 3)
+	if ((sim->decoders)[0] == 3){
 		ComputeCosetProbsLevelOne(sim->mpinfo, qcode->nlogs, qcode->nstabs, sim->cosetprobs);
+		// PrintLongDoubleArray2D(sim->cosetprobs, "Coset probabilities", 64, 4);
+	}
 
 	if ((sim->iscorr == 0) || (sim->iscorr == 2)) {
 		for (q = 0; q < qcode->N; q++) {

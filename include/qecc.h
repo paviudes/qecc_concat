@@ -27,8 +27,7 @@ extern void FreeQECC(struct qecc_t *qecc);
 // Explicitly set the full process matrix of a correlated channel
 extern void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *process, int isPauli);
 
-// Compute the effective logical channel, when error correction is applied over
-// a set of input physical channels.
-extern void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed);
+// Compute the effective logical channel, when error correction is applied over a set of input physical channels.
+extern void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed, int synd_threshold);
 
 #endif /* QECC_H */

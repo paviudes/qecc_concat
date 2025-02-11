@@ -3,11 +3,13 @@
 #include <math.h>
 #include <string.h>
 #include <complex.h>
+#include "reps.h"
 #include "linalg.h"
 #include "constants.h"
 #include "memory.h"
 #include "logmetrics.h"
 
+/*
 void ProcessToChoi(double **process, double complex **choi, int nlogs, double complex ***pauli){
 	// Convert from the process matrix to the Choi matrix.
 	// J = 1/K * sum_P (E(P) o P^T)
@@ -15,6 +17,7 @@ void ProcessToChoi(double **process, double complex **choi, int nlogs, double co
 	// and E is the error channel. E(P) = 1/K * sum_Q G_(P,Q) Q where G(P, Q) =
 	// Tr(E(P).Q) is the process matrix and Q runs over Pauli operators. hence we
 	// have: J = 1/K sum_(P, Q) G_(P,Q) Q o P^T
+	// printf("Function: ProcessToChoi.\n");
 	int v, i, j, p, q;
 	for (v = 0; v < nlogs * nlogs; v++)
 		choi[v / nlogs][v % nlogs] = 0;
@@ -27,6 +30,7 @@ void ProcessToChoi(double **process, double complex **choi, int nlogs, double co
 	}
 	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
 }
+*/
 
 
 double Entropy(double **ptm, struct constants_t *consts){
@@ -38,7 +42,7 @@ double Entropy(double **ptm, struct constants_t *consts){
 	AllocateDoubleComplexArray2D(choi, 4, 4);
 	ProcessToChoi(ptm, choi, 4, consts->pauli);
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(choi, 4, eigvals, 0, NULL);
+	DiagonalizeD(choi, 4, eigvals, 0, NULL);
 	int i;
 	double entropy = 0;
 	for (i = 0; i < 4; i ++)
@@ -69,7 +73,7 @@ double TraceDistance(double **ptm, struct constants_t *consts){
 	chandiff[3][0] -= 0.5; chandiff[3][3] -= 0.5;
 	// Compute the sigular values of E - id.
 	double complex *singvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(chandiff, 4, singvals, 0, NULL);
+	DiagonalizeD(chandiff, 4, singvals, 0, NULL);
 	double trn = 0;
 	for (i = 0; i < 4; i ++)
 		trn += cabs(singvals[i]);
@@ -83,11 +87,10 @@ double TraceDistance(double **ptm, struct constants_t *consts){
 }
 
 double Infidelity(double **ptm){
-	// Compute the Infidelity between the input Choi matrix and the Choi matrix corresponding to the identity state.
-	// Choi matrix for the identity is: 0.5 * [[1,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,1]].
-	// Returns 1-fidelity.
-	// double infidelity = 1 - 0.5 * (creal(choi[0][0] + choi[3][0] + choi[0][3] + choi[3][3]));
-	double infidelity = 1 - Trace(ptm, 4)/4;
+	// Compute the Infidelity between the input PTM the identity matrix.
+	// Infidelity is given by 1 - Tr(PTM)/dimension.
+	// Also works for PTM with trace less than 1, where "1" in the above expression needs to be replaced by PTM[0,0].
+	double infidelity = ptm[0][0] - Trace(ptm, 4)/4;
 	return infidelity;
 }
 
@@ -160,7 +163,9 @@ double NonPauliness(double complex **choi, struct constants_t *consts){
 }
 */
 
-void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts){
+
+
+void _ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, double **ptm, char *chname, struct constants_t *consts){
 	// Compute all the metrics for a given channel, in the Choi matrix form.
 	// printf("Metrics for channel %s.\n", chname);
 	int m;
@@ -171,9 +176,12 @@ void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, doub
 		else if (strncmp(metricsToCompute[m], "infid", 5) == 0){
 			metvals[m] = Infidelity(ptm);
 		}
-		// else if (strncmp(metricsToCompute[m], "np1", 3) == 0){
-		// 	metvals[m] = NonPauliness(choi, consts);
-		// }
+		else if (strncmp(metricsToCompute[m], "dnorm", 3) == 0){
+			if (strncmp(chname, "rtz", 3) == 0)
+				metvals[m] = sqrt(Infidelity(ptm));
+			else
+				metvals[m] = 0;
+		}
 		else if (strncmp(metricsToCompute[m], "entropy", 7) == 0){
 			metvals[m] = Entropy(ptm, consts);
 		}
@@ -186,4 +194,19 @@ void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, doub
 			metvals[m] = 0;
 		}
 	}
+}
+
+
+void ComputeMetrics(double *metvals, int nmetrics, char **metricsToCompute, long double **ptm, char *chname, struct constants_t *consts){
+	double **ptmd = malloc(sizeof(double *)*4);
+	int i,j;
+	for (i=0; i<4 ; i++){
+		ptmd[i] = malloc(sizeof(double)*4);
+		for (j=0; j<4 ; j++)
+			ptmd[i][j] = (double) ptm[i][j];
+	}
+	_ComputeMetrics(metvals, nmetrics, metricsToCompute, ptmd, chname, consts);
+	for (i=0; i<4 ; i++)
+		free(ptmd[i]);
+	free(ptmd);
 }

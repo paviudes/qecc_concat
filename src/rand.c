@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "mt19937/mt19937ar.h"
+#include "../mt19937/mt19937ar.h"
 
 int RandomRangeInt(int from, int to)
 {

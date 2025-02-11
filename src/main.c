@@ -4,9 +4,10 @@
 #include <string.h>
 #include <math.h>
 #include <complex.h>
-#include "mt19937/mt19937ar.h" // Random number generator
+#include "../mt19937/mt19937ar.h" // Random number generator
 #include "rand.h"
 #include "printfuns.h"
+#include "utils.h"
 #include "linalg.h"
 #include "constants.h"
 #include "memory.h"
@@ -18,7 +19,7 @@
 
 int main(int argc, char **argv)
 {
-	/* 
+	/*
 	This function is simply to test all the C functions in the converted/ folder.
 	*/
 	clock_t begin = clock();
@@ -31,6 +32,10 @@ int main(int argc, char **argv)
 	double complex **mat = malloc(sizeof(double complex) * 4);
 	for (i = 0; i < 4; i ++)
 		mat[i] = malloc(sizeof(double complex) * 4);
+
+	long double **matLD = malloc(sizeof(long double) * 4);
+	for (i = 0; i < 4; i ++)
+		matLD[i] = malloc(sizeof(long double) * 4);
 	/* Creating a random number generator.
 		See https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c on why not to use the in-built rand() function.
 		Instead, we use the Mersenne Twister random number generator explained in http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/emt19937ar.html .
@@ -51,19 +56,19 @@ int main(int argc, char **argv)
 			printf("Testing ConstructCumulative.\n");
 			int size = 10;
 			// Creating a test cumulative distribution.
-			double *dist = malloc(sizeof(double) * size);
+			long double *dist = malloc(sizeof(long double) * size);
 			int i;
-			double sum = 0;
+			long double sum = 0;
 			for (i = 0; i < size; i ++){
-				dist[i] = genrand_real3();
+				dist[i] = (long double) genrand_real3();
 				sum += dist[i];
 			}
 			for (i = 0; i < size; i ++)
 				dist[i] = dist[i]/sum;
-			PrintDoubleArray1D(dist, "True Distribution", size);
-			double *cumul = malloc(sizeof(double) * size);
+			PrintLongDoubleArray1D(dist, "True Distribution", size);
+			long double *cumul = malloc(sizeof(long double) * size);
 			ConstructCumulative(dist, cumul, size);
-			PrintDoubleArray1D(cumul, "Cumulative distribution", size);
+			PrintLongDoubleArray1D(cumul, "Cumulative distribution", size);
 			// free memory
 			free(dist);
 			free(cumul);
@@ -73,25 +78,25 @@ int main(int argc, char **argv)
 			printf("Function: PowerSearch.\n");
 			int size = 10;
 			// Creating a test cumulative distribution.
-			double *dist = malloc(sizeof(double) * size);
+			long double *dist = malloc(sizeof(long double) * size);
 			int i;
-			dist[0] = genrand_real3();
-			double sum = dist[0];
+			dist[0] = (long double) genrand_real3();
+			long double sum = dist[0];
 			for (i = 1; i < size; i ++){
-				dist[i] = 0.01 * genrand_real3();
+				dist[i] = 0.01 * (long double) genrand_real3();
 				sum += dist[i];
 			}
 			for (i = 0; i < size; i ++)
 				dist[i] = dist[i]/sum;
 			double window[2] = {0.45, 0.5};
 			double searchin[2] = {0, 1};
-			PrintDoubleArray1D(dist, "Probability distribution: P", size);
+			PrintLongDoubleArray1D(dist, "Probability distribution: P", size);
 			printf("Searching for k in [%g, %g] such that (P^k)[0] > %g.\n", searchin[0], searchin[1], window[0]);
 			double exponent = PowerSearch(dist, size, window, searchin);
 			printf("k = %g.\n", exponent);
-			double *powerdist = malloc(sizeof(double) * size);
+			long double *powerdist = malloc(sizeof(long double) * size);
 			ConstructImportanceDistribution(dist, powerdist, size, exponent);
-			PrintDoubleArray1D(powerdist, "New distribution", size);
+			PrintLongDoubleArray1D(powerdist, "New distribution", size);
 			// free memory
 			free(dist);
 			free(powerdist);
@@ -112,14 +117,13 @@ int main(int argc, char **argv)
 
 	if (strncmp(file, "checks", 5) == 0){
 		// Testing functions in checks.c.
-		double complex **mat = malloc(sizeof(double complex) * 4);
 		for (i = 0; i < 4; i ++)
 			for (j = 0; j < 4; j ++)
 				mat[i][j] = genrand_real3() + genrand_real3() * I;
 		if (strncmp(argv[1], "IsPositive", 10) == 0){
 			printf("Function: IsPositive.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int ispos = IsPositive(mat);
+			int ispos = IsPositive(mat, 1E-12);
 			if (ispos == 1)
 				printf("is positive.\n");
 			else{
@@ -134,7 +138,7 @@ int main(int argc, char **argv)
 					}
 				}
 				PrintComplexArray2D(matP, "M . M^\\dag", 4, 4);
-				ispos = IsPositive(matP);
+				ispos = IsPositive(matP, 1E-12);
 				if (ispos == 1)
 					printf("is positive.\n");
 				else
@@ -148,7 +152,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsHermitian", 11) == 0){
 			printf("Function: IsHermitian.\n");
 			PrintComplexArray2D(mat, "Matrix M", 4, 4);
-			int isherm = IsHermitian(mat);
+			int isherm = IsHermitian(mat, 1E-12);
 			if (isherm == 1)
 				printf("is Hermitian.\n");
 			else{
@@ -160,7 +164,7 @@ int main(int argc, char **argv)
 						matH[i][j] = mat[i][j] + conj(mat[j][i]);
 				}
 				PrintComplexArray2D(matH, "M + M^\\dag", 4, 4);
-				isherm = IsHermitian(matH);
+				isherm = IsHermitian(matH, 1E-12);
 				if (isherm == 1)
 					printf("is Hermitian.\n");
 				else
@@ -174,7 +178,7 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsTraceOne", 10) == 0){
 			printf("Function: IsTraceOne.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int istrone = IsTraceOne(mat);
+			int istrone = IsTraceOne(mat, 1E-12);
 			if (istrone == 1)
 				printf("has unit trace.\n");
 			else{
@@ -190,7 +194,7 @@ int main(int argc, char **argv)
 					matN[i][i] = creal(matN[i][i]);
 				}
 				PrintComplexArray2D(matN, "M/trace", 4, 4);
-				istrone = IsTraceOne(matN);
+				istrone = IsTraceOne(matN, 1E-12);
 				if (istrone == 1)
 					printf("has unit trace.\n");
 				else
@@ -204,25 +208,25 @@ int main(int argc, char **argv)
 		if (strncmp(argv[1], "IsState", 7) == 0){
 			printf("Function: IsState.\n");
 			PrintComplexArray2D(mat, "Matrix", 4, 4);
-			int isstate = IsState(mat);
+			int isstate = IsState(mat, 1E-12, 1, 0);
 			if (isstate == 0)
 				printf("is not a state.\n");
 			else
 				printf("is a state.\n");
 		}
 		if (strncmp(argv[1], "IsPDF", 5) == 0){
-			double sum = 0;
-			double *dist = malloc(sizeof(double) * 100);
+			long double sum = 0;
+			long double *dist = malloc(sizeof(long double) * 100);
 			for (i = 0; i < 100; i ++){
-				dist[i] = genrand_real3();
+				dist[i] = (long double) genrand_real3();
 				sum += dist[i];
 			}
-			PrintDoubleArray1D(dist, "Un-normalized distribution", 100);
+			PrintLongDoubleArray1D(dist, "Un-normalized distribution", 100);
 			int ispdf = IsPDF(dist, 100);
 			printf("has ispdf = %d.\n", ispdf);
 			for (i = 0; i < 100; i ++)
 				dist[i] = dist[i]/sum;
-			PrintDoubleArray1D(dist, "And after normalization", 100);
+			PrintLongDoubleArray1D(dist, "And after normalization", 100);
 			ispdf = IsPDF(dist, 100);
 			printf("it has ispdf = %d.\n", ispdf);
 			// Free memory
@@ -238,7 +242,7 @@ int main(int argc, char **argv)
 			// Name of the channel
 			char *chname = malloc(sizeof(char) * 100);
 			sprintf(chname, "Random Channel");
-			
+
 			// Assign names of metrics whose values must be computed.
 			int nmetrics = 6;
 			char **metrics = malloc(sizeof(char *) * nmetrics);
@@ -250,26 +254,26 @@ int main(int argc, char **argv)
 			sprintf(metrics[3], "trn");
 			sprintf(metrics[4], "entropy");
 			sprintf(metrics[5], "np1");
-			
+
 			// Create an error channel -- any complex matrix which is positive definte matrix and has unit trace, can be the input channel's Choi matrix.
 			// Create a random matrix M and declare (M + M^dag)/(2 * trace(M)) to be the input Choi matrix.
 			for (i = 0; i < 4; i ++)
 				for (j = 0; j < 4; j ++)
-					mat[i][j] = genrand_real3() + genrand_real3() * I;
+					matLD[i][j] = (long double) genrand_real3();
 			// Initialize the constants
 			struct constants_t *consts_logmetrics = malloc(sizeof(struct constants_t));
 			InitConstants(consts_logmetrics);
-			
+
 			// Initialize an array to hold the output metric values
 			double *metvals = malloc(sizeof(double) * nmetrics);
-			
+
 			// Call function to compute the metric values.
-			ComputeMetrics(metvals, nmetrics, metrics, (double **) mat, chname, consts_logmetrics);
-			
+			ComputeMetrics(metvals, nmetrics, metrics, matLD, chname, consts_logmetrics);
+
 			// Print metric values
 			for (i = 0; i < nmetrics; i ++)
 				printf("%s = %g\n", metrics[i], metvals[i]);
-			
+
 			// Free memory
 			free(chname);
 			for (i = 0; i < nmetrics; i ++)
@@ -304,6 +308,33 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (strncmp(file, "utils", 4) == 0){
+		// Test the functions in the rand.c file.
+		printf("Testing functions to perform simple arethematic operations.\n");
+		if (strncmp(func, "Divide", 6) == 0){
+			long double numerator, denominator, naive, ours, scale = 30;
+			int t, trials = 10;
+			for (t = 0; t < trials; t ++){
+				numerator = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, scale));
+				denominator = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, scale));
+				printf("%d). A = %.15Le, B = %.15Le.\n", t + 1, numerator, denominator);
+				naive = numerator/denominator;
+				ours = Divide(numerator, denominator);
+				printf("Naive A/B = %.15Le and our A/B = %.15Le. Difference: %.15Le.\n", naive, ours, fabsl(naive - ours));
+			}
+		}
+		if (strncmp(func, "Order", 5) == 0){
+			// Test the function to compute the order of magnitude of a number.
+			const int base = 10, max_expo = 50;
+			long double num;
+			int t, trials = 10;
+			for (t = 0; t < trials; t ++){
+				num = powl(-1, (long double) RandomRangeInt(0, 2)) * ldexpl((long double) genrand_real3(), (-1) * RandomRangeInt(0, max_expo));
+				printf("%d). The order of magnitude of %.5Le is %d.\n", t + 1, num, OrderOfMagnitude(num, base));
+			}
+		}
+	}
+
 	if (strncmp(file, "rand", 4) == 0){
 		// Test the functions in the rand.c file.
 		printf("Testing functions to generate random patterns.\n");
@@ -323,6 +354,30 @@ int main(int argc, char **argv)
 	}
 
 	if (strncmp(file, "linalg", 6) == 0){
+		if (strncmp(func, "Diagonalize", 11) == 0){
+			int dim = 4;
+			for (i = 0; i < 4; i ++)
+				for (j = 0; j < 4; j ++)
+					mat[i][j] = genrand_real3() + genrand_real3() * I;
+			double complex *eigvals = malloc(sizeof(double complex) * dim);
+			double complex **eigvecs = malloc(sizeof(double complex *) * dim);
+			for (i = 0; i < 4; i ++)
+				eigvecs[i] = malloc(sizeof(double complex) * dim);
+
+			PrintComplexArray2D(mat, "M", dim, dim);
+			// DiagonalizeD(mat, dim, eigvals, 1, eigvecs);
+			ZEigH(mat, dim, eigvals, 1, eigvecs);
+			PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+
+			printf("Check with Python:\n");
+			PrintPythonComplexArray2D(mat, "M", dim, dim);
+			
+			// Free memory
+			free(eigvals);
+			for (i = 0; i < 4; i ++)
+				free(eigvecs[i]);
+			free(eigvecs);
+		}
 		if (strncmp(func, "BinaryDot", 9) == 0){
 			int max = 64;
 			int a = RandomRangeInt(0, max);
@@ -334,6 +389,62 @@ int main(int argc, char **argv)
 			printf("Number of non-orthogonal numbers = %d\n", SumInt(parity, max));
 			free(parity);
 		}
+		if (strncmp(func, "FixPositivity", 13) == 0){
+			// Test the function that, when given M, computes M' such that M' has the positive eigenspectrum of M.
+			double complex **nonpsd_mat = malloc(sizeof(double complex *) * 4);
+			double complex **psd_mat = malloc(sizeof(double complex *) * 4);
+			double complex **herm_mat = malloc(sizeof(double complex *) * 4);
+			for (i = 0; i < 4; i ++){
+				nonpsd_mat[i] = malloc(sizeof(double complex) * 4);
+				psd_mat[i] = malloc(sizeof(double complex) * 4);
+				herm_mat[i] = malloc(sizeof(double complex) * 4);
+			}
+			const int trials = 1, scale = 20;
+			const double violation = 1E-3;
+			double real_part, imag_part;
+			int t, success;
+			for (t = 0; t < trials; t ++){
+				printf("%d).\n", t + 1);
+				for (i = 0; i < 4; i ++){
+					for (j = 0; j < 4; j ++){
+						real_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+						imag_part = pow(-1, RandomRangeInt(0, 2)) * ldexp(genrand_real3(), (-1) * RandomRangeInt(scale - 4, scale));
+						nonpsd_mat[i][j] = real_part + I * imag_part;
+						psd_mat[i][j] = 0;
+						herm_mat[i][j] = 0;
+					}
+				}
+				// Force the complex non-psd matrix to be Hermitian.
+				// M -> M + M^\dag
+				for (i = 0; i < 4; i ++)
+					for (j = 0; j < 4; j ++)
+						herm_mat[i][j] = nonpsd_mat[i][j] + conj(nonpsd_mat[j][i]);
+
+				printf("Non-Positive matrix M\n");
+				PrintComplexArray2D(herm_mat, "M", 4, 4);
+				PrintPythonComplexArray2D(herm_mat, "M", 4, 4);
+				success = FixPositivity(herm_mat, psd_mat, 4, violation);
+				if (success == 1){
+					printf("Positive semidefinite matrix M_+\n");
+					PrintComplexArray2D(psd_mat, "M_+", 4, 4);
+					PrintPythonComplexArray2D(psd_mat, "M_+", 4, 4);
+					printf("||M - M_+||_2 = %.5e.\n", ZFroNorm(herm_mat, psd_mat, 4, 4));
+				}
+				else
+					printf("Matrix is not even approximately CP, within a tolerance of %.2e.\n", violation);
+				printf("xxxxxxxxxx\n");
+			}
+
+			// Free memory
+			for (i = 0; i < 4; i ++){
+				free(nonpsd_mat[i]);
+				free(herm_mat[i]);
+				free(psd_mat[i]);
+			}
+			free(nonpsd_mat);
+			free(herm_mat);
+			free(psd_mat);
+		}
 	}
 
 	if (strncmp(file, "benchmark", 9) == 0){
@@ -341,55 +452,63 @@ int main(int argc, char **argv)
 		printf("Testing the entire benchmarking functionality.\n");
 		// The array inputs for this function's test are in the folder: ./../input/debug_test/
 		if (strncmp(func, "Benchmark", 9) == 0){
-			int nlevels = 2;
-			
+			int nlevels = 3;
+
 			// ===
 			int *nkd = malloc(nlevels * 3 * sizeof(int));
 			LoadIntArray1D(nkd, "./../chflow/input/debug_testing/nkd.txt", nlevels * 3);
 			PrintIntArray1D(nkd, "nkd", nlevels * 3);
 			// ===
-
+			// Compute the code parameters
+			int n, k, l, nstabs, nlogs, stabsize = 0, normsize = 0, normph_size = 0, dclookup_size = 0, lst_size = 0;
+			for (l = 0; l < nlevels; l ++){
+				n = nkd[3 * l + 0];
+				k = nkd[3 * l + 1];
+				nstabs = (int) pow(2, (n - k));
+				nlogs = (int) pow(4, k);
+				printf("l = %d, nstabs = %d, nlogs = %d.\n", l + 1, nstabs, nlogs);
+				stabsize += nstabs * nstabs;
+				normsize += nstabs * nlogs * n;
+				normph_size += nstabs * nlogs;
+				dclookup_size += nstabs;
+				lst_size += nstabs * nlogs * nstabs * n;
+			}
 			// ===
-			int n = nkd[0], k = nkd[1];
-			int nstabs = (int) pow(2, (n - k)), nlogs = (int) pow(4, k);
-			printf("nstabs = %d, nlogs = %d.\n", nstabs, nlogs);
+			
 			// ===
-
-			// ===
-			int *SS = malloc(nlevels * nstabs * nstabs * sizeof(int));
-			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", nlevels * nstabs * nstabs);
+			int *SS = malloc(stabsize * sizeof(int));
+			LoadIntArray1D(SS, "./../chflow/input/debug_testing/SS.txt", stabsize);
 			printf("_/ Loaded SS.\n");
 			// PrintIntArray1D(SS, "SS", nlevels * nstabs * nstabs);
 			// ===
 
-			// ===
-			int *normalizer = malloc(nlevels * nlogs * nstabs * n * sizeof(int));
-			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", nlevels * nlogs * nstabs * n);
+			int *normalizer = malloc(normsize * sizeof(int));
+			LoadIntArray1D(normalizer, "./../chflow/input/debug_testing/normalizer.txt", normsize);
 			printf("_/ Loaded normalizer.\n");
 			// PrintIntArray1D(normalizer, "normalizer", nlevels * nlogs * nstabs * n);
 			// ===
 
 			// ===
-			double *normphases_real = malloc(nlevels * nlogs * nstabs * sizeof(double));
-			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", nlevels * nlogs * nstabs);
+			double *normphases_real = malloc(normph_size * sizeof(double));
+			LoadDoubleArray1D(normphases_real, "./../chflow/input/debug_testing/normphases_real.txt", normph_size);
 			printf("_/ Loaded normphases_real.\n");
-			// PrintDoubleArray1D(normphases_real, "normphases_real", nlevels * nlogs * nstabs);
+			// PrintDoubleArray1D(normphases_real, "normphases_real", normph_size);
 			// ===
 
 			// ===
-			double *normphases_imag = malloc(nlevels * nlogs * nstabs * sizeof(double));
-			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", nlevels * nlogs * nstabs);
+			double *normphases_imag = malloc(normph_size * sizeof(double));
+			LoadDoubleArray1D(normphases_imag, "./../chflow/input/debug_testing/normphases_imag.txt", normph_size);
 			printf("_/ Loaded normphases_imag.\n");
 			// PrintDoubleArray1D(normphases_imag, "normphases_imag", nlevels * nlogs * nstabs);
 			// ===
 
 			// ===
 			char *chname = malloc(100 * sizeof(char));
-			sprintf(chname, "dp");
+			sprintf(chname, "bpauli");
 			// ===
 
 			// ===
-			int iscorr = 1;
+			int iscorr = 3;
 			// ===
 
 			// ===
@@ -423,12 +542,12 @@ int main(int argc, char **argv)
 			// ===
 			int *decoders = malloc(nlevels * sizeof(int));
 			for (i = 0; i < nlevels; i ++)
-				decoders[i] = 3;
+				decoders[i] = 1;
 			PrintIntArray1D(decoders, "Decoders", nlevels);
-			int *dclookups = malloc(nlevels * nstabs * sizeof(int));
-			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", nlevels * nstabs);
-			int *operators_LST = malloc(nlevels * nstabs * nlogs * nstabs * n * sizeof(int));
-			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", nlevels * nstabs * nlogs * nstabs * n);
+			int *dclookups = malloc(dclookup_size * sizeof(int));
+			LoadIntArray1D(dclookups, "./../chflow/input/debug_testing/lookup.txt", dclookup_size);
+			int *operators_LST = malloc(lst_size * sizeof(int));
+			LoadIntArray1D(operators_LST, "./../chflow/input/debug_testing/lst.txt", lst_size);
 			double *mpinfo = malloc((int)pow(4, n) * sizeof(double));
 			LoadDoubleArray1D(mpinfo, "./../chflow/input/debug_testing/mpinfo.txt", (int)pow(4, n));
 			// PrintDoubleArray1D(mpinfo, "Message passing initialize", (int)pow(4, n));
@@ -450,7 +569,8 @@ int main(int argc, char **argv)
 
 			// ===
 			long *stats = malloc(nbreaks * sizeof(long));
-			stats[0] = 2;
+			stats[0] = 10;
+			printf("Stats = %ld\n", stats[0]);
 			// ===
 
 			// ===
@@ -459,7 +579,8 @@ int main(int argc, char **argv)
 			// ===
 
 			// ===
-			int importance = 1;
+			int importance = 0;
+			printf("Importance = %d\n", importance);
 			// ===
 
 			// ===
@@ -471,7 +592,7 @@ int main(int argc, char **argv)
 			// ===
 
 			//
-			double infidelity = 0.00425652874761;
+			double infidelity = 0.020499323636302913;
 			//
 
 			// Calling the Benchmark function
@@ -502,6 +623,9 @@ int main(int argc, char **argv)
 	for (i = 0; i < 4; i ++)
 		free(mat[i]);
 	free(mat);
+	for (i = 0; i < 4; i ++)
+		free(matLD[i]);
+	free(matLD);
 	free(file);
 	free(func);
 
@@ -511,6 +635,6 @@ int main(int argc, char **argv)
 	printf("***********\n");
 	printf("All testing done in %d seconds.\n", (int) runtime);
 	printf("***********\n");
-	
+
 	return 0;
 }

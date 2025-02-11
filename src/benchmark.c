@@ -73,7 +73,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			   3. Number of distinct (bins) channels at each intermediate
 	level: int *ndecoderbins
 	*/
-	
+
 	/*
 		iscorr
 		physical
@@ -82,6 +82,9 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		importance
 		infidelity
 	*/
+
+	printf("\033[35mbmark: source last compiled on %s at %s.\n\033[0m", __DATE__, __TIME__);
+
 	struct constants_t *consts = malloc(sizeof(struct constants_t));
 	InitConstants(consts);
 
@@ -92,6 +95,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	for (l = 0; l < nlevels; l++)
 	{
 		// printf("l = %d\n", l);
+		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, nkd[3*l], nkd[3*l+1], nkd[3*l+2]);
 		qcode[l] = malloc(sizeof(struct qecc_t));
 		qcode[l]->N = nkd[3 * l];
 		qcode[l]->K = nkd[3 * l + 1];
@@ -101,6 +105,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			for (g = 0; g < qcode[l]->nstabs; g++)
 				(qcode[l]->projector)[s][g] = SS[ss_count + s * qcode[l]->nstabs + g];
 		ss_count += qcode[l]->nstabs * qcode[l]->nstabs;
+
+		// PrintIntArray2D(qcode[l]->projector, "projector", qcode[l]->nstabs, qcode[l]->nstabs);
 
 		// printf("ss_count = %d\n", ss_count);
 
@@ -121,6 +127,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			for (s = 0; s < qcode[l]->nstabs; s++)
 				(qcode[l]->phases)[i][s] = normphases_real[norm_phcount + i * qcode[l]->nstabs + s] + I * normphases_imag[norm_phcount + i * qcode[l]->nstabs + s];
 
+		// PrintComplexArray2D(qcode[l]->phases, "Phases", qcode[l]->nlogs, qcode[l]->nstabs);
 		// printf("norm_phcount = %d\n", norm_phcount);
 
 		if (decoders[l] == 1){
@@ -129,7 +136,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 				(qcode[l]->dclookup)[s] = dclookups[s_count + s];
 			s_count += qcode[l]->nstabs;
 		}
-		else;
+		else{};
 
 		norm_phcount += qcode[l]->nlogs * qcode[l]->nstabs;
 
@@ -139,7 +146,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 					for (q = 0; q < qcode[l]->N; q ++)
 						(qcode[l]->LST)[log][s][t][q] = operators_LST[lst_count + log * qcode[l]->nstabs * qcode[l]->nstabs * qcode[l]->N + s * qcode[l]->nstabs * qcode[l]->N + t * qcode[l]->N + q];
 		lst_count += (int) pow(4, qcode[l]->N) * qcode[l]->N;
-		
+
 		// PrintIntArray2D((qcode[l]->TLS)[0][0], "T_0 L_0 S", qcode[l]->nstabs, qcode[l]->N);
 
 		// printf("Code at level %d: N = %d, K = %d, D = %d.\n", l, qcode[l]->N, qcode[l]->K, qcode[l]->D);
@@ -147,13 +154,15 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	// printf("QECC assigned.\n");
 
-	// if (iscorr == 0)
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
-	// else if (iscorr == 1)
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
-	// else
-	// 	PrintDoubleArray1D(physical, "physical channel", qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs);
-
+	/*
+	if (iscorr == 0)
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nlogs);
+	else if (iscorr == 1)
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->nlogs * qcode[0]->nstabs);
+	else
+		PrintDoubleArray1D(physical, "physical channel", qcode[0]->N * qcode[0]->nlogs * qcode[0]->nlogs);
+	*/
+	
 	// Record the number of physical qubits -- this is for setting the sizes of the decoder bins.
 	int *nphys = malloc(sizeof(int) * nlevels);
 	for (l = 0; l < nlevels; l++)
@@ -162,8 +171,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 	CountIndepLogicalChannels(chans, nphys, nlevels);
 	// Parameters that are specific to the Montecarlo simulations to estimate the logical error rate.
 
-	double *mpinfo_file, *physical_file;
-	double diff;
+	// double *mpinfo_file, *physical_file;
+	// double diff;
 
 	struct simul_t **sims = malloc(sizeof(struct simul_t *) * (1 + (int)(decoders[0] == 2)));
 	int m, j, c, chan_count = 0;
@@ -242,7 +251,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 			if (sims[s]->iscorr == 0)
 				(sims[s]->logical)[0][i / (qcode[0]->nlogs)][i % (qcode[0]->nlogs)] = (sims[s]->physical)[i];
 		}
-		
+
 		// printf("Loading %d metrics to be computed.\n", nmetrics);
 
 		for (m = 0; m < nmetrics; m++)
@@ -258,17 +267,11 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(sims[s]->runstats)[i] = stats[i];
 
-		// Setting outlier syndrome probabilities.
-		// Upper and lower limits for the probability of the outlier syndromes.
-		// We will assume that the probability of the outlier syndromes is not more than p^d/2 and not less than 80% of p^d/2
-		// For a physical noise process whose Pauli transfer matrix is G, we will define p = 0.5 + 0.5 * (4 - tr(G))/4.
-		// Additionally, we want to make sure that 0.5 <= p <= 1. This is safe for the importance sampler since p ~ 0 will lead to an indefinite search in PowerSearch(...) in sampling.c.
-		// We will follow the definition of infidelity in eq. 5.16 of https://arxiv.org/abs/1109.6887.pdf.
 		// printf("infidelity = %g.\n", infidelity);
 		if (infidelity == -1)
-			infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
-		(sims[s]->outlierprobs)[1] = Max(0.4, infidelity);
-		(sims[s]->outlierprobs)[0] = 0.80 * (sims[s]->outlierprobs)[1];
+			sims[s]->infidelity = (4 - TraceFlattened(sims[s]->physical, qcode[0]->nlogs))/((double) 4);
+		else
+			sims[s]->infidelity = infidelity;
 
 		// printf("infidelity = %g, Outlier probabilities lie in the range: [%g, %g].\n", infidelity, (sims[s]->outlierprobs)[0], (sims[s]->outlierprobs)[1]);
 
@@ -282,34 +285,34 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		if ((sims[s]->decoders)[0] == 3)
 			for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
 				(sims[s]->mpinfo)[i] = mpinfo[i];
-		mpinfo_file = malloc((int)pow(4, qcode[0]->N) * sizeof(double));
-		LoadDoubleArray1D(mpinfo_file, "./../input/debug_testing/mpinfo.txt", (int)pow(4, qcode[0]->N));
-		diff = 0;
-		for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
-			diff += fabs(mpinfo[i] - mpinfo_file[i]);
-		printf("Disparity in mpinfo = %g.\n", diff);
-		free(mpinfo_file);
-
-		physical_file = malloc(nparams * sizeof(double));
-		LoadDoubleArray1D(physical_file, "./../input/debug_testing/physical.txt", nparams);
-		diff = 0;
-		for (i = 0; i < nparams; i ++)
-			diff += fabs(physical[i] - physical_file[i]);
-		printf("Disparity in physical = %g.\n", diff);
-		free(physical_file);
+		// mpinfo_file = malloc((int)pow(4, qcode[0]->N) * sizeof(double));
+		// LoadDoubleArray1D(mpinfo_file, "./../input/debug_testing/mpinfo.txt", (int)pow(4, qcode[0]->N));
+		// diff = 0;
+		// for (i = 0; i < (int) pow(4, qcode[0]->N); i ++)
+		// 	diff += fabs(mpinfo[i] - mpinfo_file[i]);
+		// printf("Disparity in mpinfo = %g.\n", diff);
+		// free(mpinfo_file);
+		// physical_file = malloc(nparams * sizeof(double));
+		// LoadDoubleArray1D(physical_file, "./../input/debug_testing/physical.txt", nparams);
+		// diff = 0;
+		// for (i = 0; i < nparams; i ++)
+		// 	diff += fabs(physical[i] - physical_file[i]);
+		// // printf("Disparity in physical = %g.\n", diff);
+		// free(physical_file);
 	}
 
-
+	/*
 	printf("**************************************\n");
 	printf("INPUTS:\n");
 	printf("iscorr = %d\n", iscorr);
 	printf("nparams = %d\n", nparams);
-	// PrintDoubleArray1D(physical, "Physical channel", nparams);
+	PrintDoubleArray1D(physical, "Physical channel", nparams);
 	PrintIntArray1D(decoders, "Decoders", nlevels);
-	// PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
+	PrintDoubleArray1D(mpinfo, "Message passing information", (int)pow(4, qcode[0]->N));
 	printf("importance = %d\n", importance);
 	printf("infidelity = %.14f\n", infidelity);
 	printf("**************************************\n");
+	*/
 
 	// printf("Going to start Performance.\n");
 
@@ -339,8 +342,8 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 
 	for (l = 0; l < nlevels + 1; l++)
 	{
-		printf("l = %d\n", l);
-		PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
+		// printf("l = %d\n", l);
+		// PrintDoubleArray2D((sims[0]->logical)[l], "logical channel", nlogs, nlogs);
 		for (i = 0; i < nlogs; i++)
 		{
 			for (j = 0; j < nlogs; j++)
@@ -365,7 +368,7 @@ struct BenchOut Benchmark(int nlevels, int *nkd, int *SS, int *normalizer, doubl
 		for (i = 0; i < nbreaks; i++)
 			(bout.running)[m * nbreaks + i] = (sims[0]->runavg)[m][i + 1];
 	}
-	PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
+	// PrintDoubleArray1D((bout.logerrs), "Metric values", nmetrics * (nlevels + 1));
 	// PrintDoubleArray1D((bout.running), "Running average", nmetrics * nbreaks);
 
 	// ######################################

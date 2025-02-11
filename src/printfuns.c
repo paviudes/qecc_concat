@@ -4,6 +4,21 @@
 #include <complex.h>
 #include "printfuns.h"
 
+void PrintSpectralDecomposition(complex double *eigvals, complex double **eigvecs, char *name, int dim){
+	// Print the eigenvalues and eigenvectors of a matrix.
+	int i, j;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (i = 0; i < dim; i ++){
+		printf("e_%d = %g + i %g\n", i + 1, creal(eigvals[i]), cimag(eigvals[i]));
+		printf("v_%d\n", i + 1);
+		for (j = 0; j < dim - 1; j ++)
+			printf("(%g + i %g), ", creal(eigvecs[i][j]), cimag(eigvecs[i][j]));
+		printf("(%g + i %g)\n", creal(eigvecs[i][dim - 1]), cimag(eigvecs[i][dim - 1]));
+	}
+	printf("-----\n");
+}
+
 void PrintComplexArray1D(complex double *array, char *name, int nrows){
 	// Print a complex 2D array.
 	int r;
@@ -13,6 +28,36 @@ void PrintComplexArray1D(complex double *array, char *name, int nrows){
 		printf("    %g + i %g", creal(array[r]), cimag(array[r]));
 	printf("\n");
 	printf("-----\n");
+	fflush(stdout);
+}
+
+void PrintLongComplexArray1D(long complex double *array, char *name, int nrows){
+	// Print a complex 2D array.
+	int r;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++)
+		printf("    %.15Lf + i %.15Lf", creall(array[r]), cimagl(array[r]));
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
+
+void PrintPythonComplexArray2D(complex double **array, char *name, int nrows, int ncols){
+	// Print a complex 2D array in a format that can be loaded into a Python console.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	printf("[");
+	for (r = 0; r < nrows; r ++){
+		printf("[");
+		for (c = 0; c < ncols - 1; c ++)
+			printf("%.15f + 1j * %.15f, ", creal(array[r][c]), cimag(array[r][c]));
+		printf("%.15f + 1j * %.15f], ", creal(array[r][ncols - 1]), cimag(array[r][ncols - 1]));
+	}
+	printf("]");
+	printf("\n-----\n");
+	fflush(stdout);
 }
 
 void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncols){
@@ -22,12 +67,53 @@ void PrintComplexArray2D(complex double **array, char *name, int nrows, int ncol
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++){
 		for (c = 0; c < ncols; c ++)
-			printf("    %g + i %g", creal(array[r][c]), cimag(array[r][c]));
+			printf("    %.15f + i %.15f", creal(array[r][c]), cimag(array[r][c]));
 		printf("\n");
 	}
 	printf("-----\n");
+	fflush(stdout);
 }
 
+void PrintLongComplexArray2D(long complex double **array, char *name, int nrows, int ncols){
+	// Print a complex 2D array.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++)
+			printf("    %.15Lf + i %.15Lf", creall(array[r][c]), cimagl(array[r][c]));
+		printf("\n");
+	}
+	printf("-----\n");
+	fflush(stdout);
+}
+
+
+void PrintDoubleColumn(double **array, char *name, int nrows, int col){
+	// Print a column of a double 2D array.
+	int r;
+	printf("-----\n");
+	printf("Column %d of the array: %s\n", col, name);
+	for (r = 0; r < nrows; r ++){
+		printf("    %.12f", (array[r][col]));
+	}
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
+
+void PrintDoubleRow(double **array, char *name, int ncols, int row){
+	// Print a row of a double 2D array.
+	int c;
+	printf("-----\n");
+	printf("Row %d of the array: %s\n", row, name);
+	for (c = 0; c < ncols; c ++){
+		printf("    %.12f", (array[row][c]));
+	}
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
 
 void PrintDoubleArrayDiag(double **array, char *name, int nrows){
 	// Print the diagonal of a double 2D array.
@@ -39,6 +125,19 @@ void PrintDoubleArrayDiag(double **array, char *name, int nrows){
 	}
 	printf("\n");
 	printf("-----\n");
+	fflush(stdout);
+}
+void PrintLongDoubleArrayDiag(long double **array, char *name, int nrows){
+	// Print the diagonal of a long double 2D array.
+	int r;
+	printf("-----\n");
+	printf("Diagonal array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		printf("    %.12Lf", (array[r][r]));
+	}
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
 }
 
 void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
@@ -52,7 +151,23 @@ void PrintDoubleArray2D(double **array, char *name, int nrows, int ncols){
 		printf("\n");
 	}
 	printf("-----\n");
+	fflush(stdout);
 }
+
+void PrintLongDoubleArray2D(long double **array, char *name, int nrows, int ncols){
+	// Print a double 2D array.
+	int r, c;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++){
+		for (c = 0; c < ncols; c ++)
+			printf("    %.16Lf", (array[r][c]));
+		printf("\n");
+	}
+	printf("-----\n");
+	fflush(stdout);
+}
+
 
 void CopyDoubleArray2D(double **from, double **to, int nrows, int ncols){
 	// Copy the elements of one array into another.
@@ -73,10 +188,24 @@ void PrintDoubleArray1D(double *array, char *name, int nrows){
 	printf("-----\n");
 	printf("Array name: %s\n", name);
 	for (r = 0; r < nrows; r ++)
-		printf("    %.16f", (array[r]));
+		printf("    %.15e", (array[r]));
 	printf("\n");
 	printf("-----\n");
+	fflush(stdout);
 }
+
+void PrintLongDoubleArray1D(long double *array, char *name, int nrows){
+	// Print a double 1D array.
+	int r;
+	printf("-----\n");
+	printf("Array name: %s\n", name);
+	for (r = 0; r < nrows; r ++)
+		printf("    %.15Lf", (array[r]));
+	printf("\n");
+	printf("-----\n");
+	fflush(stdout);
+}
+
 
 void PrintIntArray2D(int **array, char *name, int nrows, int ncols){
 	// Print a int 2D array.
@@ -89,6 +218,7 @@ void PrintIntArray2D(int **array, char *name, int nrows, int ncols){
 		printf("\n");
 	}
 	printf("-----\n");
+	fflush(stdout);
 }
 
 void PrintIntArray1D(int *array, char *name, int nrows){
@@ -100,6 +230,7 @@ void PrintIntArray1D(int *array, char *name, int nrows){
 		printf("    %d", (array[r]));
 	printf("\n");
 	printf("-----\n");
+	fflush(stdout);
 }
 
 void PrintLongArray2D(long **array, char *name, int nrows, int ncols){
@@ -113,6 +244,7 @@ void PrintLongArray2D(long **array, char *name, int nrows, int ncols){
 		printf("\n");
 	}
 	printf("-----\n");
+	fflush(stdout);
 }
 
 void PrintLongArray1D(long *array, char *name, int nrows){
@@ -124,6 +256,7 @@ void PrintLongArray1D(long *array, char *name, int nrows){
 		printf("    %ld", (array[r]));
 	printf("\n");
 	printf("-----\n");
+	fflush(stdout);
 }
 
 void LoadDoubleArray1D(double *array, char *fname, int size){

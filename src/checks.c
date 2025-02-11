@@ -10,30 +10,31 @@
 #include <string.h> // Only for testing purposes
 #include <math.h>
 #include <complex.h>
-#include "mt19937/mt19937ar.h" // Only for testing purposes
+#include "constants.h"
+#include "utils.h"
+#include "reps.h"
+#include "../mt19937/mt19937ar.h" // Only for testing purposes
 #include "printfuns.h" // Only for testing purposes
 #include "linalg.h"
 #include "checks.h"
 
-int IsDiagonal(double **matrix, int size){
+int IsDiagonal(long double **matrix, int size){
 	// Check if the input matrix is diagonal or not.
-	const double atol = 10E-15;
+	const long double atol = 10E-15;
 	int i, j;
 	for (i = 0; i < size; i ++)
 		for (j = 0; j < size; j ++)
 			if (i != j)
-				if (fabs(matrix[i][j]) > atol)
+				if (fabsl(matrix[i][j]) > atol)
 					return 0;
 	return 1;
 }
 
-int IsPositive(double complex **choi){
+int IsPositive(double complex **choi, double atol){
 	// Test if an input complex 4x4 matrix is completely positive.
 	// A completely positive matrix has only non-negative eigenvalues.
 	double complex *eigvals = malloc(sizeof(double complex) * 4);
-	Diagonalize(choi, 4, eigvals, 0, NULL);
-	PrintComplexArray1D(eigvals, "eigenvalues", 4);
-	const double atol = 10E-8;
+	DiagonalizeD(choi, 4, eigvals, 0, NULL);
 	int i, ispos = 1;
 	for (i = 0; i < 4; i ++){
 		if (cimag(eigvals[i]) > atol)
@@ -41,70 +42,149 @@ int IsPositive(double complex **choi){
 		if (creal(eigvals[i]) < -1 * atol)
 			ispos = 0;
 	}
+	if (ispos == 0){
+		PrintComplexArray2D(choi, "Choi", 4, 4);
+		PrintComplexArray1D(eigvals, "eigenvalues", 4);
+	}
+	// PrintComplexArray1D(eigvals, "eigenvalues", 4);
 	// Free memory
 	free(eigvals);
 	return ispos;
 }
 
-int IsHermitian(double complex **choi){
+int IsHermitian(double complex **choi, double atol){
 	// Check is a complex 4x4 matrix is Hermitian.
 	// For a Hermitian matrix A, we have: A[i][j] = (A[j][i])^*.
 	int i, j;
-	const double atol = 10E-8;
-	for (i = 0; i < 4; i ++){
-		for (j = 0; j < 4; j ++){
-			if (cabs(choi[i][j] - conj(choi[j][i])) > atol){
+	for (i = 0; i < 4; i ++)
+		for (j = 0; j < i; j ++)
+			if (cabs(choi[i][j] - conj(choi[j][i])) > atol)
 				return 0;
-			}
-		}
+	return 1;
+}
+
+int IsTraceOne(double complex **choi, double atol){
+	// Check if the trace of a complex 4x4 matrix is 1.
+	int i;
+	double complex trace = 0 + 0 * I;
+	for (i = 0; i < 4; i ++)
+		trace = trace + choi[i][i];
+	// printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
+	if (fabs(cimag(trace)) > atol){
+		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
+		return 0;
+	}
+	if (fabs(creal(trace)  -  1.0) > atol){
+		printf("trace = %.15f + i %.15f.\n", creal(trace), cimag(trace));
+		return 0;
 	}
 	return 1;
 }
 
-int IsTraceOne(double complex **choi){
-	// Check if the trace of a complex 4x4 matrix is 1.
-	int i;
-	const double atol = 10E-8;
-	double complex trace = 0 + 0 * I;
-	for (i = 0; i < 4; i ++)
-		trace = trace + choi[i][i];
-	printf("trace = %g + i %g.\n", creal(trace), cimag(trace));
-	if (fabsl(cimagl(trace)) > atol)
-		return 0;
-	if (fabsl(creall(trace)  -  1.0) > atol)
-		return 0;
-	return 1;
-}
-
-int IsState(double complex **choi){
+int IsState(double complex **choi, double atol, int checktp, int restore){
 	// Check is a 4 x 4 matrix is a valid density matrix.
 	// It must be Hermitian, have trace 1 and completely positive.
 	int isstate = 0, ishermitian = 0, ispositive = 0, istrace1 = 0;
-	ishermitian = IsHermitian(choi);
+	complex double **cp_choi = malloc(sizeof(complex double *) * 4);
+	int i;
+	for (i = 0; i < 4; i ++)
+		cp_choi[i] = malloc(sizeof(complex double) * 4);
+	
+	ishermitian = IsHermitian(choi, atol);
 	if (ishermitian == 0)
 		printf("Not Hermitian.\n");
-	ispositive = IsPositive(choi);
+	
+	if (restore == 1){
+		ispositive = FixPositivity(choi, cp_choi, 4, atol);
+		ZOverwriteArray(choi, cp_choi, 4, 4);
+	}
+	else
+		ispositive = IsPositive(choi, atol);
 	if (ispositive == 0)
 		printf("Not Positive.\n");
-	istrace1 = IsTraceOne(choi);
+
+	if (checktp == 1)
+		istrace1 = IsTraceOne(choi, atol);
+	else
+		istrace1 = 1;
 	if (istrace1 == 0)
 		printf("Not Unit trace.\n");
+	
 	isstate = ishermitian * istrace1 * ispositive;
+	// Free memory
+	for (i = 0; i < 4; i ++)
+		free(cp_choi[i]);
+	free(cp_choi);
 	return isstate;
 }
 
-int IsPDF(double *dist, int size){
+int _IsChannel(double **ptm, struct constants_t *consts, double atol, int checktp, int restore){
+	// Check is a 4 x 4 matrix is a valid density matrix.
+	// We will convert it to a Choi matrix and test if the result is a density matrix.
+	double complex **choi = NULL;
+	int r, c, nlogs = 4;
+	choi = malloc(sizeof(double complex *) * nlogs);
+	for (r = 0; r < nlogs; r ++){
+		choi[r] = malloc(sizeof(double complex) * nlogs);
+		for (c = 0; c < nlogs; c ++){
+			choi[r][c] = 0 + 0 * I;
+		}
+	}
+	ProcessToChoi(ptm, choi, nlogs, consts->pauli);
+	// PrintLongDoubleArray2D(ptm, "PTM", nlogs, nlogs);
+	// PrintComplexArray2D(choi, "Choi", nlogs, nlogs);
+	int ischan = IsState(choi, atol, checktp, restore);
+	// The Choi matrix will be reconstructed from its positive spectral decomposition, i.e., a spectral decomposition wherein each eigenvalue is equal to the absolute value of its counterpart for the input Choi matrix.
+	// So we should contruct the PTM from the Choi matrix to adopt the reconstructed value.
+	if (restore == 1)
+		ChoiToProcess(ptm, choi, nlogs, consts->pauli);
+	if (ischan == 0)
+		PrintDoubleArray2D(ptm, "PTM", nlogs, nlogs);
+	for (r = 0; r < nlogs; r ++)
+		free(choi[r]);
+	free(choi);
+	return ischan;
+}
+
+int IsChannel(long double **ptm, struct constants_t *consts, double atol, int checktp, int restore){
+	// Check is a 4 x 4 matrix is a valid density matrix.
+	// We will convert it to a Choi matrix and test if the result is a density matrix.
+	double **ptmd = malloc(sizeof(double *) * 4);
+	int i, j;
+	for (i = 0; i < 4; i ++){
+		ptmd[i] = malloc(sizeof(double)*4);
+		for (j = 0; j < 4 ; j ++)
+			ptmd[i][j] = (double) ptm[i][j];
+	}
+	int ischan = _IsChannel(ptmd, consts, atol, checktp, restore);
+	// If there is a reconstruction of the channel, we need to rewrite the input variable.
+	if (restore == 1){
+		for (i = 0; i < 4; i ++)
+			for (j = 0; j < 4; j ++)
+				ptm[i][j] = (long double) ptmd[i][j];
+		// PrintLongDoubleArray2D(ptm, "reconstructed", 4, 4);
+		// if (IsChannel(ptm, consts, atol, checktp, 0))
+		// 	printf("Restoration was successful.\n");
+	}
+	for (i = 0; i < 4 ; i ++)
+		free(ptmd[i]);
+	free(ptmd);
+	return ischan;
+}
+
+
+int IsPDF(long double *dist, int size){
 	// Check if a given list of numbers is a normalized PDF.
-	const double atol = 10E-8;
+	const long double atol = 10E-8;
 	int i;
-	double norm = 0;
+	long double norm = 0;
 	for (i = 0; i < size; i ++){
 		norm = norm + dist[i];
 		if (dist[i] < 0){
 			return 0;
 		}
 	}
-	if (fabs(norm) - 1 > atol){
+	if (fabsl(norm) - 1 > atol){
 		return 0;
 	}
 	return 1;
@@ -209,7 +289,7 @@ int main(int argc, char const *argv[])
 	if (strncmp(argv[1], "IsState", 7) == 0){
 		printf("Function: IsState.\n");
 		PrintComplexArray2D(mat, "Matrix", 4, 4);
-		int isstate = IsState(mat);
+		int isstate = IsState(mat, 1, 0);
 		if (isstate == 0)
 			printf("is not a state.\n");
 		else

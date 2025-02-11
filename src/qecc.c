@@ -3,8 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "rand.h"
+#include "reps.h"
 #include "checks.h" // only for testing purposes.
+// #include "logmetrics.h" // only for testing purposes.
 #include "constants.h"
+#include "utils.h"
 #include "linalg.h"
 #include "memory.h"
 #include "printfuns.h"
@@ -88,33 +91,17 @@ void FreeQECC(struct qecc_t *qecc)
 	free(qecc->dclookup);
 }
 
-void ChoiToProcess(double **process, double complex **choi, double complex ***pauli)
-{
-	// Convert from the Choi matrix to the process matrix, of a quantum channel.
-	// CHI[a,b] = Trace( Choi * (Pb \otimes Pa^T) ).
-	int v, i, j, k;
-	double complex contribution;
-	// #pragma ivdep
-	for (v = 0; v < 16; v++)
-	{
-		j = v % 4;
-		i = v / 4;
-		contribution = 0;
-		for (k = 0; k < 16; k++)
-			contribution += choi[k / 4][k % 4] * pauli[j][(k % 4) / 2][(k / 4) / 2] * pauli[i][(k / 4) % 2][(k % 4) % 2];
-		process[i][j] = creal(contribution);
-	}
-}
-
 void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 {
 	// For each pair of logical operators, we only need the entries of the Chi
 	// matrix that correspond to Pauli operators from different logical classes.
 	// We construct the sections of the Chi matrices that correspond to rows and
-	// columns in the logical classes. printf("Function: GetFullProcessMatrix for
-	// isPauli = %d.\n", isPauli);
+	// columns in the logical classes.
+	// printf("Function: GetFullProcessMatrix for isPauli = %d.\n", isPauli);
 	int i, j, k, l, q;
-	double contribution = 1;
+	long double prod_val = 0;
+	long double prod = 1;
+	int prod_phase = 1;
 	if (isPauli == 0)
 	{
 		for (i = 0; i < qecc->nlogs; i++)
@@ -125,14 +112,26 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 				{
 					for (l = 0; l < qecc->nstabs; l++)
 					{
-						contribution = 1;
-						for (q = 0; q < qecc->N; q++)
-							contribution *= (sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]];
-						(sim->process)[i][j][k][l] = creal((qecc->phases)[i][k] * (qecc->phases)[j][l]) * contribution;
+						prod_val = 0;
+						prod_phase = 1;
+						// prod = 1;
+						for (q = 0; q < qecc->N; q++){
+							prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]);
+							if (prod_phase != 0)
+								prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]]));
+							// prod *= (sim->virtchan)[q][(qecc->action)[i][k][q]][(qecc->action)[j][l][q]];
+						}
+						if (prod_phase == 0)
+							prod = 0;
+						else
+							prod = (long double) prod_phase * powl(10, prod_val);
+						// printf("prod_val = %lf\n", prod_val);
+						(sim->process)[i][j][k][l] = (long double) creal((qecc->phases)[i][k] * (qecc->phases)[j][l]) * prod;
 					}
 				}
 			}
 		}
+		// PrintDoubleArray2D((sim->process)[0][2], "process[0][2]", qecc->nstabs, qecc->nstabs);
 	}
 	else
 	{
@@ -141,117 +140,108 @@ void GetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
 		{
 			for (j = 0; j < qecc->nstabs; j++)
 			{
-				contribution = 1;
-				for (q = 0; q < qecc->N; q++)
-					contribution *= (sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]];
-				(sim->process)[i][i][j][j] = creal((qecc->phases)[i][j] * (qecc->phases)[i][j]) * contribution;
+				prod_val = 0;
+				prod_phase = 1;
+				// prod = 1;
+				for (q = 0; q < qecc->N; q++){
+					prod_phase *= Sign((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]);
+					if (prod_phase != 0)
+						prod_val += log10l(fabsl((sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]]));
+					// prod *= (sim->virtchan)[q][(qecc->action)[i][j][q]][(qecc->action)[i][j][q]];
+				}
+				// printf("prod_val = %lf\n", prod_val);
+				if (prod_phase == 0)
+					prod = 0;
+				else
+					prod = (long double) prod_phase * powl(10, prod_val);
+				(sim->process)[i][i][j][j] = (long double) creal((qecc->phases)[i][j] * (qecc->phases)[i][j]) * prod;
+			}
+			// printf("Process[%d][%d]\n", i, i);
+			// PrintLongDoubleArrayDiag((sim->process)[i][i], "process", qecc->nstabs);
+		}
+	}
+	// printf("Done computing full process matrix: process[0][0][0][0] = %Lf.\n", (sim->process)[0][0][0][0]);
+}
+
+
+long double ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *sim, int isPauli){
+	// Compute the probability of all the syndromes in the qecc code, for the
+	// given error channel and input state. Sample a syndrome from the resulting
+	// probability distribution of the syndromes. Probability of a syndrome s,
+	// denoted by P(s) is given by the following expression. P(s) = 1/2^(n-k) *
+	// sum_(i,j: P_i and P_j are stabilizers) CHI[i,j] * (-1)^sign(P_j).
+	// Initialize syndrome probabilities
+	// if (isPauli == 0)
+	// 	(sim->syndprobs)[synd] = SumDotInt((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (long double)(qecc->nstabs);
+	// else
+	// 	(sim->syndprobs)[synd] = DiagGDotIntV((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (long double)(qecc->nstabs);
+	int s, sp;
+	long double prob = 0;
+	if (sim->skipsyndromes == 1){
+		// For the topmost level, we don't need to compute conditional channels accurately.
+		// Here, we will compute E_s * P_s as a single entity, i.e., we will not normalize E_s * P_s by P_s like we do usually for the lower levels.
+		/*
+		prob = 0;
+		for (s = 0; s < qecc->nstabs; s ++){
+			for (sp = 0; sp < qecc->nstabs; sp ++){
+				prob += (long double) ((qecc->projector)[synd][sp]) * (sim->process)[0][0][s][sp];
 			}
 		}
-		// PrintDoubleArrayDiag((sim->process)[1][1], "process[1][1]", qecc->nstabs);
+		if (prob < 0)
+			printf("Negative probability for P(%d) = %.7Le.\n", synd, prob);
+		*/
+		prob = 1;
 	}
-	if (sim->rc == 1)
-	{
-		// PrintIntArray1D(sim->rcpauli, "rcpauli", qecc->nstabs);
-		for (i = 0; i < qecc->nlogs; i++)
-		{
-			for (j = 0; j < qecc->nlogs; j++)
-			{
-				for (k = 0; k < qecc->nstabs; k++)
-				{
-					for (l = 0; l < qecc->nstabs; l++)
-					{
-						(sim->process)[i][j][k][l] *= pow(-1, (sim->rcpauli)[k]);
-					}
+	else{
+		if (isPauli == 0){
+			for (s = 0; s < qecc->nstabs; s ++){
+				for (sp = 0; sp < qecc->nstabs; sp ++){
+					prob += (long double) ((qecc->projector)[synd][sp]) * (sim->process)[0][0][s][sp];
 				}
 			}
 		}
-		// PrintDoubleArray2D((sim->process)[0][0], "process[0][0]", qecc->nstabs, qecc->nstabs);
+		else{
+			for (s = 0; s < qecc->nstabs; s ++)
+				prob += (long double) ((qecc->projector)[synd][s]) * (sim->process)[0][0][s][s];
+		}
+		prob /= (long double) (qecc->nstabs);
 	}
-	// printf("Done computing full process matrix: process[0][0][0][0] = %g.\n", (sim->process)[0][0][0][0]);
+	return prob;
 }
 
-
-void ComputeSyndromeProbability(int synd, struct qecc_t *qecc, struct simul_t *sim, int isPauli)
-{
+void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int isPauli, int synd_threshold){
 	// Compute the probability of all the syndromes in the qecc code, for the
 	// given error channel and input state. Sample a syndrome from the resulting
 	// probability distribution of the syndromes. Probability of a syndrome s,
 	// denoted by P(s) is given by the following expression. P(s) = 1/2^(n-k) *
 	// sum_(i,j: P_i and P_j are stabilizers) CHI[i,j] * (-1)^sign(P_j).
+	int s, expo;
 	// Initialize syndrome probabilities
-	if (isPauli == 0)
-		(sim->syndprobs)[synd] = SumDotInt((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (double)(qecc->nstabs);
-	else
-		(sim->syndprobs)[synd] = DiagGDotIntV((sim->process)[0][0], (qecc->projector)[synd], qecc->nstabs, qecc->nstabs, qecc->nstabs) / (double)(qecc->nstabs);
-}
-
-
-void ComputeSyndromeDistribution(struct qecc_t *qecc, struct simul_t *sim, int isPauli)
-{
-	// Compute the probability of all the syndromes in the qecc code, for the
-	// given error channel and input state. Sample a syndrome from the resulting
-	// probability distribution of the syndromes. Probability of a syndrome s,
-	// denoted by P(s) is given by the following expression. P(s) = 1/2^(n-k) *
-	// sum_(i,j: P_i and P_j are stabilizers) CHI[i,j] * (-1)^sign(P_j).
-	int s;
-	// Initialize syndrome probabilities
-	for (s = 0; s < qecc->nstabs; s++)
-		ComputeSyndromeProbability(s, qecc, sim, isPauli);
+	for (s = 0; s < qecc->nstabs; s++){
+		(sim->syndprobs)[s] = ComputeSyndromeProbability(s, qecc, sim, isPauli);
+		frexpl((sim->syndprobs)[s], &expo);
+		if (OrderOfMagnitude((sim->syndprobs)[s], 10) < synd_threshold)
+			(sim->syndprobs)[s] = 0;
+	}
 	// Construct the cumulative distribution
 	(sim->cumulative)[0] = (sim->syndprobs)[0];
 	for (s = 1; s < qecc->nstabs; s++)
 		(sim->cumulative)[s] = (sim->cumulative)[s - 1] + (sim->syndprobs)[s];
-	// PrintDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
-	// PrintDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+	// =====================
+	// Exit if any syndrome has probability less than 0.
+	for (s = 0; s < qecc->nstabs; s++){
+		if ((sim->syndprobs)[s] < 0){
+			PrintLongDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+			PrintLongDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
+			exit(0);
+		}
+	}
+	// PrintLongDoubleArray1D((sim->syndprobs), "Syndrome distribution", qecc->nstabs);
+	// PrintLongDoubleArray1D((sim->cumulative), "Cumulative Syndrome distribution", qecc->nstabs);
 }
 
 
-/*
-void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t
-*consts, int currentframe, int isPauli){
-	   // Perform maximum likelihood decoding.
-	   // Compute the probabilities of the logical classes, considitioned on a
-particular syndrome.
-	   // The ML Decoder picks the logical error which belongs to the class
-that has the maximum probability.
-	   // The probability of a logical class is P(L|s) = Tr( L r L . Ts PI_s
-E(r) PI_s Ts )/P(s) which can be simplified to
-	   // P(L|s) = 1/P(s) * sum_(u: Paulis) sum_(i: P_i is in the [u] logical
-class) sum_(j: Pj is in the [L u L] logical class) CHI[i,j] * (-1)^(P_j).
-	   // inputs: nqecc, kqecc, chi, algebra (conjugations).
-	   // printf("Function: MLDecoder\n");
-	   const double atol = 10E-10;
-	   int v, i, j, u, l, s;
-	   double prob, maxprob;
-	   for (s = 0; s < qecc->nstabs; s ++){
-			 if ((sim->syndprobs)[s] > atol){
-				    (sim->corrections)[s] = 0;
-				    maxprob = 0;
-				    for (l = 0; l < currentframe; l ++){
-						  prob = 0;
-						  if (isPauli == 0)
-								for (u = 0; u < qecc->nlogs; u ++)
-									   prob +=
-(consts->algebra)[1][l][u] *
-SumDotInt((sim->process)[u][(consts->algebra)[0][l][u]], (qecc->projector)[s],
-qecc->nstabs, qecc->nstabs, qecc->nstabs); else for (u = 0; u < qecc->nlogs; u
-++) if ((consts->algebra)[0][l][u] == u) prob += (consts->algebra)[1][l][u] *
-DiagGDotIntV((sim->process)[u][u], (qecc->projector)[s], qecc->nstabs,
-qecc->nstabs, qecc->nstabs); printf("s = %d, l = %d, prob = %g\n", s, l,
-prob/(qecc->nlogs * qecc->nstabs * (sim->syndprobs)[s])); if (prob > maxprob){
-								(sim->corrections)[s] = l;
-								maxprob = prob;
-						  }
-				    }
-				    printf("\n");
-			 }
-	   }
-	   PrintIntArray1D(sim->corrections, "sim->corrections", qecc->nstabs);
-}
-*/
-
-
-void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli)
+void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int currentframe, int isPauli, int synd_threshold)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -263,9 +253,9 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 	// (-1)^(P_j). inputs: nqecc, kqecc, chi, algebra (conjugations).
 	// printf("Function: MLDecodeSyndrome %d, dcalg = %d, currentframe = %d\n", synd, dcalg, currentframe);
 	int i, j, u, l;
-	double prob, maxprob, contrib;
+	long double prob, maxprob, contrib;
 	(sim->corrections)[synd] = 0;
-	if ((sim->syndprobs)[synd] > consts->atol)
+	if (OrderOfMagnitude((sim->syndprobs)[synd], 10) >= synd_threshold)
 	{
 		maxprob = 0;
 		for (l = 0; l < currentframe; l++)
@@ -302,7 +292,7 @@ void MLDecodeSyndrome(int synd, struct qecc_t *qecc, struct simul_t *sim, struct
 }
 
 
-void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int dcalg, int currentframe, int isPauli, int is_cosetprobs_computed)
+void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int dcalg, int currentframe, int isPauli, int is_cosetprobs_computed, int synd_threshold)
 {
 	// Perform maximum likelihood decoding.
 	// Compute the probabilities of the logical classes, considitioned on a
@@ -316,24 +306,31 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	// if (is_cosetprobs_computed == 0)
 	// 	PrintDoubleArray2D(sim->pauli_probs, "Pauli probs for the coset probs computation.", qecc->N, qecc->nlogs);
 	int s;
-	double *maxprobs = malloc(sizeof(double) * qecc->nstabs);
+	long double *maxprobs = malloc(sizeof(long double) * qecc->nstabs);
 	for (s = 0; s < qecc->nstabs; s++)
 	{
 		(sim->corrections)[s] = 0;
 		maxprobs[s] = 0;
-		if ((sim->syndprobs)[s] > consts->atol){
+		if (OrderOfMagnitude((sim->syndprobs)[s], 10) >= synd_threshold){
 			if (dcalg == 0)
-				MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli);
+				MLDecodeSyndrome(s, qecc, sim, consts, currentframe, isPauli, synd_threshold);
 			else if (dcalg == 1)
 				(sim->corrections)[s] = (qecc->dclookup)[s];
-			else{
+			else if (dcalg == 3){
 				if (is_cosetprobs_computed == 0)
 					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
 				(sim->corrections)[s] = ArgMax((sim->cosetprobs)[s], qecc->nlogs);
 				maxprobs[s] = (sim->cosetprobs)[s][(sim->corrections)[s]];
 				RotatePauli((sim->cosetprobs)[s], qecc->nlogs, (sim->corrections)[s]);
 			}
+			else if (dcalg == 4){
+				if (is_cosetprobs_computed == 0)
+					ComputeCosetProbs(s, sim->pauli_probs, qecc->LST, qecc->N, qecc->nlogs, qecc->nstabs, (sim->cosetprobs)[s]);
+				// No correction needs to be applied.
+			}
+			else{};
 		}
+		// (sim->corrections)[s] = 0; // ONLY FOR DEBUGGING
 		// printf("s = %d\n", s);
 		// printf("Sum of coset probabilities: %g, P(s) = %g, difference: %g.\n", SumDouble(sim->cosetprobs[s], qecc->nlogs), sim->syndprobs[s], sim->syndprobs[s] - SumDouble(sim->cosetprobs[s], qecc->nlogs));
 	}
@@ -345,65 +342,84 @@ void MLDecoder(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *con
 	free(maxprobs);
 }
 
-
-void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli){
+void EffChanSynd(int synd, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli, int synd_threshold){
 	// Compute the effective channel given a syndrome.
 	// The effective channel in the Pauli Liouville representation is given by:
 	// G_{L,L'} = \sum_S,S' G_{LS, L* L' L* S'}/P(s)
 	// where L* is the correction applied by the decoder.
-	// printf("Function: EffChanSynd\n");
-	int l, lp, s, sp;
-	int f1, f2, f3;
+	// printf("Function: isPauli = %d, EffChanSynd(%d,...), P(%d) = %.6Le\n", isPauli, synd, synd, (sim->syndprobs)[synd]);
+	int l, lp, s, sp, f3;
+	long double f1, f2;
+	int syndrome_order = OrderOfMagnitude((sim->syndprobs)[synd], 10);
+	int cp_threshold = synd_threshold - syndrome_order;
+	
 	// Initialization
 	for (l = 0; l < qecc->nlogs; l ++){
 		for (lp = 0; lp < qecc->nlogs; lp ++){
 			(sim->effprocess)[synd][l][lp] = 0;
 		}
 	}
-	// printf("Initialization done.\n");
-	if (isPauli == 0){
-		for (l = 0; l < qecc->nlogs; l ++){
-			for (lp = 0; lp < qecc->nlogs; lp ++){
-				for (s = 0; s < qecc->nstabs; s ++){
-					for (sp = 0; sp < qecc->nstabs; sp ++){
-						f1 = (qecc->projector)[synd][sp];
-						f2 = (consts->algebra)[1][(sim->corrections)[synd]][lp];
-						f3 = (consts->algebra)[0][(sim->corrections)[synd]][lp];
-						(sim->effprocess)[synd][l][lp] += f1 * f2 * (sim->process)[l][f3][s][sp];
+
+	if (syndrome_order >= synd_threshold){
+		if (isPauli == 0){
+			for (l = 0; l < qecc->nlogs; l ++){
+				for (lp = 0; lp < qecc->nlogs; lp ++){
+					(sim->effprocess)[synd][l][lp] = 0;
+					for (s = 0; s < qecc->nstabs; s ++){
+						for (sp = 0; sp < qecc->nstabs; sp ++){
+							f1 = (long double) ((qecc->projector)[synd][sp]);
+							f2 = (long double) ((consts->algebra)[1][(sim->corrections)[synd]][lp]);
+							f3 = ((consts->algebra)[0][(sim->corrections)[synd]][lp]);
+							(sim->effprocess)[synd][l][lp] += f1 * f2 * (sim->process)[l][f3][s][sp];
+						}
 					}
 				}
 			}
+			for (l = 0; l < qecc->nlogs; l ++)
+				for (lp = 0; lp < qecc->nlogs; lp ++)
+					(sim->effprocess)[synd][l][lp] = Divide((sim->effprocess)[synd][l][lp], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
 		}
+		else{
+			for (l = 0; l < qecc->nlogs; l ++){
+				(sim->effprocess)[synd][l][l] = 0;
+				for (s = 0; s < qecc->nstabs; s ++){
+					f1 = (long double) ((qecc->projector)[synd][s]);
+					f2 = (long double) ((consts->algebra)[1][(sim->corrections)[synd]][l]);
+					(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
+				}
+			}
+			
+			// Normalization
+			for (l = 0; l < qecc->nlogs; l ++)
+				(sim->effprocess)[synd][l][l] = Divide((sim->effprocess)[synd][l][l], powl(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
+			// Remove the following check after debugging.
+			/*
+			if (IsDiagonal((sim->effprocess)[synd], 4) == 0){
+				PrintLongDoubleArray2D((sim->effprocess)[synd], "E", 4, 4);
+				printf("Non Pauli channel, s = %d.\n", synd);
+				exit(0);
+			}
+			*/
+		}
+		// Check if the channel is valid
+		if (IsChannel((sim->effprocess)[synd], consts, pow(10, cp_threshold), 1 - sim->skipsyndromes, 1 - sim->skipsyndromes) == 0){
+			printf("!!!!!!!!!!\n");
+			printf("Function: EffChanSynd(%d,...), P(%d) = %.15Lf\n", synd, synd, (sim->syndprobs)[synd]);
+			PrintLongDoubleArray2D((sim->effprocess)[synd], "PTM", 4, 4);
+			printf("Invalid channel up to 1E%d.\n", cp_threshold);
+			printf("!!!!!!!!!!\n");
+			exit(0);
+		}
+		// printf("\\/\\/\\/\\/\\/\\/\\/\\/\\/\n");
 	}
 	else{
 		for (l = 0; l < qecc->nlogs; l ++){
-			for (s = 0; s < qecc->nstabs; s ++){
-				// printf("l = %d, s = %d\n",l,s);
-				f1 = (qecc->projector)[synd][s];
-				f2 = (consts->algebra)[1][(sim->corrections)[synd]][l];
-				(sim->effprocess)[synd][l][l] += f1 * f2 * (sim->process)[l][l][s][s];
-			}
+			(sim->effprocess)[synd][l][l] = 1;
 		}
 	}
-	// printf("Population done.\n");
-	// Normalization
-	for (l = 0; l < qecc->nlogs; l ++){
-		for (lp = 0; lp < qecc->nlogs; lp ++){
-			(sim->effprocess)[synd][l][lp] /= (pow(2, qecc->N - qecc->K) * (sim->syndprobs)[synd]);
-		}
-	}
-	// Consistency checks.
-	// 1. Check G[0,0] = 1
-	// printf("s = %d, P(s) = %.10f\nG[0][0] = %.18f\n", synd, (sim->syndprobs)[synd], (sim->effprocess)[synd][0][0]);
-	// // 2. First column of G should be all zeros
-	// for (l = 1; l < qecc->nlogs; l ++){
-	// 	printf("G[%d][0] = %.18f\n", l, (sim->effprocess)[synd][l][0]);
-	// }
-	// printf("-------\n");
 }
 
-
-void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli){
+void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int isPauli, int synd_threshold){
 	/*
 		Compute effective channels for all syndromes.
 		degeneracies = {l: [all syndromes for which l is the correction]}
@@ -416,8 +432,13 @@ void ComputeEffectiveChannels(struct qecc_t *qecc, struct simul_t *sim, struct c
 	*/
 	int s;
 	for (s = 0; s < qecc->nstabs; s++)
-		if ((sim->syndprobs)[s] > consts->atol)
-			EffChanSynd(s, qecc, sim, consts, isPauli);
+		EffChanSynd(s, qecc, sim, consts, isPauli, synd_threshold);
+	/*
+	for (s = 0; s < qecc->nstabs; s++){
+		printf("s = %d\n", s);
+		PrintDoubleArray2D(sim->effprocess[s], "process", qecc->nlogs, qecc->nlogs);
+	}
+	*/
 }
 
 
@@ -443,21 +464,25 @@ void SetFullProcessMatrix(struct qecc_t *qecc, struct simul_t *sim, double *proc
 			for (s1 = 0; s1 < nstabs; s1 ++)
 				(sim->process)[l1][l1][s1][s1] = process[l1 * nstabs + s1];
 	// printf("Full process matrix set for isPauli = %d.\n", isPauli);
+	// PrintLongDoubleArray2D((sim->process)[0][0], "FULL PTM", qecc->nstabs, qecc->nstabs);
+	// PrintLongDoubleArrayDiag((sim->process)[3][3], "Diagonal elements of FULL PTM LS x LS", qecc->nstabs);
 }
 
-void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed)
+void SingleShotErrorCorrection(int isPauli, int iscorr, int dcalg, int frame, struct qecc_t *qecc, struct simul_t *sim, struct constants_t *consts, int is_cosetprobs_computed, int synd_threshold)
 {
 	// Compute the effective logical channel, when error correction is applied over a set of input physical channels.
-	// printf("Constructing the full process matrix\n");
+	// printf("SingleShotErrorCorrection with isPauli = %d, iscorr = %d, N = %d, nstabs = %d, nlogs = %d.\n", isPauli, iscorr, qecc->N, qecc->nstabs, qecc->nlogs);
 	if ((iscorr == 0) || (iscorr == 2))
 		GetFullProcessMatrix(qecc, sim, isPauli);
 	// Compute the probabilities of all the syndromes.
-	ComputeSyndromeDistribution(qecc, sim, isPauli);
+	ComputeSyndromeDistribution(qecc, sim, isPauli, synd_threshold);
 	// Maximum Likelihood Decoding (MLD) -- For every syndrome, compute the
 	// probabilities of the logical classes and pick the one that is most likely.
 	// printf("Maximum likelihood decoding\n");
-	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli, is_cosetprobs_computed);
+	MLDecoder(qecc, sim, consts, dcalg, frame, isPauli, is_cosetprobs_computed, synd_threshold);
+	// Compute normalization, for balancing the non trace preserving nature of the channel.
+	// ComputeNormalization(qecc, sim);
 	// For every syndrome, apply the correction and compute the new effective channel.
 	// printf("Computing effective channel\n");
-	ComputeEffectiveChannels(qecc, sim, consts, isPauli);
+	ComputeEffectiveChannels(qecc, sim, consts, isPauli, synd_threshold);
 }

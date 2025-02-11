@@ -4,10 +4,11 @@
 #include <string.h> // Only for testing purposes
 #include <math.h>
 #include <complex.h>
-#include "mkl_lapacke.h"
-#include "mkl_cblas.h"
-#include "mt19937/mt19937ar.h"
+#include "cblas.h"
+#include "lapacke.h"
+#include "../mt19937/mt19937ar.h"
 #include "printfuns.h" // Only for testing purposes
+#include "utils.h"
 #include "linalg.h"
 
 /*
@@ -16,82 +17,6 @@
 		source /opt/intel/compilers_and_libraries_2019/mac/bin/compilervars.sh intel64
 		gcc mt19937/mt19937ar.c printfuns.c -m64 -I${MKLROOT}/include -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_rt -lpthread -lm -ldl linalg.c -o linalg.o
 */
-
-double Max(double a, double b){
-	// Compute the maximum of two numbers.
-	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
-	return (a > b) ? a:b;
-}
-
-double Min(double a, double b){
-	// Compute the minimum of two numbers.
-	// https://www.geeksforgeeks.org/conditional-or-ternary-operator-in-c-c/
-	return (a < b) ? a:b;
-}
-
-int SumInt(int *arr, int size){
-	// Compute the sum of numbers in an array.
-	int i, sum = 0;
-	for (i = 0; i < size; i ++)
-		sum += arr[i];
-	return sum;
-}
-
-double SumDouble(double *arr, int size){
-	// Compute the sum of numbers in an array.
-	int i;
-	double sum = 0;
-	for (i = 0; i < size; i ++)
-		sum += arr[i];
-	return sum;
-}
-
-void Normalize(double *arr, int size){
-	// Normalize the array.
-	// https://stackoverflow.com/questions/18069269/normalizing-a-list-of-very-small-double-numbers-likelihoods
-	int i;
-	double *logarr = malloc(sizeof(double) * size);
-	double maxlog = log10(arr[0]);
-	for (i = 0; i < size; i ++){
-		logarr[i] = log10(arr[i]);
-		if (maxlog <= logarr[i])
-			maxlog = logarr[i];
-	}
-	for (i = 0; i < size; i ++)
-		logarr[i] = logarr[i] - maxlog;
-	for (i = 0; i < size; i ++)
-		arr[i] = pow(10, logarr[i]);
-
-	double sum = SumDouble(arr, size);
-	for (i = 0; i < size; i ++)
-		arr[i] = arr[i]/sum;
-	
-	free(logarr);
-}
-
-int BitParity(int num){
-	// Compute the parity of the integer's binary representation.
-	int parity = 0;
-	if (num > 0){
-		int i, nbits = (int)(1 + (log(num)/log(2)));
-		// printf("log(%d) = %g, nbits = %d.\n", num, log(num), nbits);
-		int *seq = malloc(sizeof(int) * nbits);
-		for (i = nbits - 1; i >= 0; i --){
-			seq[i] = (int)(num/pow(2, i));
-			num = num % (int)(pow(2, i));
-		}
-		parity = SumInt(seq, nbits) % 2;
-		free(seq);
-	}
-	return parity;
-}
-
-int BinaryDot(int a, int b){
-	// Compute dot product modulo 2, between two integer's binary representations.
-	// https://stackoverflow.com/questions/43300462/most-efficient-way-to-evaluate-a-binary-scalar-product-mod-2
-	return BitParity(a & b);
-}
-
 
 double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
 	// This is a wrapper for SumDot where the vector has integers.
@@ -107,7 +32,7 @@ double SumDotInt(double **matA, int *vecB, int rowsA, int colsA, int rowsB){
 double SumDot(double **matA, double *vecB, int rowsA, int colsA, int rowsB){
 	// Given a matrix A and a vector v, compute the sum of entries in (A.v).
 	// The number of columns in A must be equal to the number of rows in B.
-	const double atol = 10E-12;
+	const double atol = 1E-16;
 	int i;
 	// Allocate memory for the product matrix
 	double *prod = malloc(sizeof(double *) * rowsA);
@@ -162,15 +87,15 @@ double DiagGDotIntV(double **matA, int *vecB, int rowsA, int colsA, int sizeB){
 double DiagGDotV(double **matA, double *vecB, int rowsA, int colsA, int sizeB){
 	// Given a matrix A and a vector v, compute the dot product: diag(A).v where diag(A) referes to the 1D vector containing the diagonal of A.
 	// The vector is provided as a 1D array (row vector), but we intend to use it as a column vector and multiply it to the right of the given matrix.
-	// For high-performance, we will use the cblas_ddot function of the BLAS library.
+	// For high-performance, we will use the ddot function of the BLAS library.
 	// See https://software.intel.com/en-us/mkl-developer-reference-c-cblas-dot.
 	const double atol = 1E-12;
 	double prod = 0;
 	if ((rowsA != colsA) && (colsA != sizeB))
 		printf("Cannot multiply a matrix of shape (%d x %d) to a vector of shape (%d x 1).\n", rowsA, colsA, sizeB);
 	else{
-		MKL_INT n = rowsA;
-		const MKL_INT incx = 1, incy = 1;
+		int n = rowsA;
+		const int incx = 1, incy = 1;
 		double x[n], y[n];
 		int i;
 		for (i = 0; i < rowsA; i ++)
@@ -193,7 +118,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm .
 		The dgemm function is defined with the following parameters.
-		extern cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -210,7 +135,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 	if (colsA != sizeB)
 		printf("Cannot multiply a matrix of shape (%d x %d) to a vector of shape (%d x 1).\n", rowsA, colsA, sizeB);
 	else{
-		MKL_INT m = rowsA, n = 1, k = colsA;
+		int m = rowsA, n = 1, k = colsA;
 		double A[rowsA * colsA], B[sizeB], C[rowsA], alpha, beta;
 		int i;
 		for (i = 0; i < rowsA * colsA; i ++)
@@ -218,7 +143,7 @@ void GDotV(double **matA, double *vecB, double *prod, int rowsA, int colsA, int 
 
 		for (i = 0; i < sizeB; i ++)
 			B[i] = vecB[i];
-		
+
 		alpha = 1;
 		beta = 0;
 		// Call the BLAS function.
@@ -235,7 +160,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm .
 		The dgemm function is defined with the following parameters.
-		extern cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -252,7 +177,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 	if (colsA != rowsB)
 		printf("Cannot multiply matrices of shape (%d x %d) and (%d x %d).\n", rowsA, colsA, rowsB, colsB);
 	else{
-		MKL_INT m = rowsA, n = colsB, k = colsA;
+		int m = rowsA, n = colsB, k = colsA;
 		double A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
 		int i;
 		for (i = 0; i < rowsA * colsA; i ++)
@@ -260,7 +185,7 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 
 		for (i = 0; i < rowsB * colsB; i ++)
 			B[i] = matB[i/colsB][i % colsB];
-		
+
 		alpha = 1;
 		beta = 0;
 		// Call the BLAS function.
@@ -271,13 +196,214 @@ void GDot(double **matA, double **matB, double **prod, int rowsA, int colsA, int
 	}
 }
 
+double ZFroNorm(double complex **matA, double complex **matB, int nrows, int ncols){
+	/*
+	Compute the Frobenious norm between two complex matrices.
+	||A||_2 = Tr( A^\dag A )
+ 		    = \sum_(ij) |A_ij|^2
+ 	*/
+	int i, j;
+	double norm = 0;
+	for (i = 0; i < nrows; i ++)
+		for (j = 0; j < ncols; j ++)
+			norm += creal((matA[i][j] - matB[i][j]) * conj(matA[i][j] - matB[i][j]));
+	return norm;
+}
+
+void ZOuter(double complex *vecA, double complex *vecB, double complex **prod, int lenA, int lenB){
+	/*
+		Perform an outer product of two vectors.
+		Given column vectors x and y, we want to perform: x.y^T.
+	*/
+	int i, j;
+	for (i = 0; i < lenA; i ++)
+		for (j = 0; j < lenB; j ++)
+			prod[i][j] = vecA[i] * conj(vecB[j]);
+	/*
+	double complex **matA, **matB;
+	int i;
+	matA = malloc(lenA * sizeof(double complex *));
+	for (i = 0; i < lenA; i ++){
+		matA[i] = malloc(sizeof(double complex));
+		matA[i][0] = vecA[i];
+	}
+	
+	matB = malloc(sizeof(double complex *));
+	matB[0] = malloc(lenB * sizeof(double complex));
+	for (i = 0; i < lenB; i ++)
+		matB[0][i] = conj(vecB[i]);
+	
+	ZDot(matA, matB, prod, lenA, 1, 1, lenB);
+	// Free memory for product.
+	for (i = 0; i < lenA; i ++)
+		free(matA[i]);
+	free(matA);
+	free(matB[0]);
+	free(matB);
+	*/
+}
+
+void ZAdd(double complex **matA, double complex **matB, double complex **sum, int rows, int cols){
+	/*
+		Add two matrices of equal dimensions.
+	*/
+	int i, j;
+	for (i = 0; i < rows; i ++)
+		for (j = 0; j < cols; j ++)
+			sum[i][j] = matA[i][j] + matB[i][j];
+}
+
+void ZMul(double complex **matA, double complex c, double complex **prod, int rows, int cols){
+	/*
+		Multiply every element of a complex matrix by a scalar.
+	*/
+	int i, j;
+	for (i = 0; i < rows; i ++)
+		for (j = 0; j < cols; j ++)
+			prod[i][j] = matA[i][j] * c;
+}
+
+
+void ZReconstruct(complex double *eigvals, complex double **eigvecs, complex double **recon, int dim){
+	/*
+		Reconstruct a matrix, given its eigenvalues and the corresponding eigen-vectors.
+		Given D, whose diagonal entires are the eigenvalues and U, a unitary matrix whose columns are the eigenvectors, we want to compute
+		M = U D U^\dag.
+		This can be simplified using explicit summation and the fact that D is a diagonal matrix.
+		M_(i,j) = \sum_l ( d_l  U_(i,l) (U_(j,l))^* )
+		where
+			d is the vector of eigenvalues,
+			U is the unitary matrix whose columns are eigenvectors of H
+			(.)^* is used to denote complex conjugate.
+	*/
+	int i, j, k;
+	for (i = 0; i < dim; i ++){
+		for (j = 0; j < dim; j ++){
+			recon[i][j] = 0 + 0 * I;
+			for (k = 0; k < dim; k ++)
+				recon[i][j] += eigvals[k] * eigvecs[i][k] * conj(eigvecs[j][k]);
+		}
+	}
+	// PrintComplexArray1D(eigvals, "D", 4);
+	// PrintComplexArray2D(eigvecs, "U", 4, 4);
+}
+
+void ZEigH(double complex **mat, int dim, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+	/*
+		Compute the eigenvalues and the right-eigenvectors of a complex Hermitian matrix.
+		We will use the LAPACK routine zheev to compute the eigenvalues. The LAPACK function is defined as follows.
+		There is a C wrapper to the LAPACK routine:
+		https://software.intel.com/sites/products/documentation/doclib/mkl_sa/11/mkl_lapack_examples/lapacke_zheev_row.c.htm
+		The eigenvalues of a Hermitian matrix are real, however, we will store them in a complex array, for compatibility.
+		We need this function for Hermitian matrices because th generic eigensolver has issues.
+		See: http://icl.cs.utk.edu/lapack-forum/archives/lapack/msg01352.html.
+	*/
+
+	int n = dim, lda = dim, info;
+	double w[dim];
+	double complex a[dim * dim];
+	int i, j;
+	for (i = 0; i < dim; i ++){
+		for (j = 0; j < dim; j ++){
+			a[i * dim + j] = mat[i][j];
+		}
+	}
+	for (i = 0; i < dim; i ++){
+		for (j = i + 1; j < dim; j ++){
+			a[i * dim + j] = 0 + 0 * I;
+		}
+	}
+
+	info = LAPACKE_zheev(LAPACK_ROW_MAJOR, 'V', 'L', n, a, lda, w);
+	if (info > 0)
+		printf("Eigenvalues %d to %d did not converge properly.\n", info, dim);
+	else if (info < 0)
+		printf("Error in the the %d-th input parameter.\n", -1 * info);
+	else{
+		for (i = 0; i < dim; i ++){
+			eigvals[i] = w[i] + 0 * I;
+			if (iseigvecs == 1){
+				for (j = 0; j < dim; j ++)
+					eigvecs[i][j] = a[i * dim + j];
+			}
+		}
+	}
+}
+
+void ZNormalize(double complex *vec, int size){
+	// Normalize the elements of a complex vector.
+	int i;
+	double complex sum = 0;
+	for (i = 0; i < size; i ++)
+		sum += vec[i];
+	for (i = 0; i < size; i ++)
+		vec[i] /= sum;
+}
+
+int ZPos(complex double *vec, int dim, const double atol){
+	// Check if an array of complex numbers is actually an array of non-negative numbers.
+	int d, success = 1;
+	for (d = 0; d < dim; d ++){
+		if (creal(vec[d]) <= (-1) * atol)
+			success = 0;
+		if (fabs(cimag(vec[d])) >= atol)
+			success = 0;
+	}
+	return success;
+}
+
+int FixPositivity(complex double **mat, complex double **cpmat, int dim, const double atol){
+	/*
+		Map a non positive semi-definite matrix to a positive semidefinite matrix.
+		If an input matrix M has negative eigenvalues, the output matrix M* will have positive eigenvalues whose magnitude are the same as those of M.
+		1. Compute the eigenvalues and eigenvectors of M
+		2. Compute the absolute value of all the eigenvalues.
+		3. Use reconstruct to define a matrix whose spectrum is given by (2).
+	*/
+	int success = 0;
+	double complex *eigvals, **eigvecs;
+	int d;
+	eigvals = malloc(sizeof(double complex) * dim);
+	eigvecs = malloc(sizeof(double complex *) * dim);
+	for (d = 0; d < dim; d ++)
+		eigvecs[d] = malloc(sizeof(double complex) * dim);
+
+	// printf("Before reconstruction.\n");
+	// PrintPythonComplexArray2D(mat, "M", 4, 4);
+	
+	ZEigH(mat, dim, eigvals, 1, eigvecs);
+	
+	// PrintSpectralDecomposition(eigvals, eigvecs, "Before reconstruction", 4);
+	// PrintPythonComplexArray2D(eigvecs, "Python eigen-vectors", 4, 4);
+
+	success = ZPos(eigvals, dim, atol);
+	
+	if (success == 1){
+		for (d = 0; d < dim; d ++)
+			eigvals[d] = cabs(eigvals[d]);
+		ZNormalize(eigvals, dim);
+		ZReconstruct(eigvals, eigvecs, cpmat, dim);
+	}
+	// printf("After reconstruction.\n");
+	// PrintPythonComplexArray2D(cpmat, "M_+", 4, 4);
+	// DiagonalizeD(cpmat, dim, eigvals, 1, eigvecs);
+	// PrintSpectralDecomposition(eigvals, eigvecs, "After reconstruction", 4);
+	// ====
+	for (d = 0; d < dim; d ++)
+		free(eigvecs[d]);
+	free(eigvecs);
+	free(eigvals);
+	return success;
+}
+
+
 void ZDot(double complex **matA, double complex **matB, double complex **prod, int rowsA, int colsA, int rowsB, int colsB){
 	/*
 		Multiply two complex matrices.
 		For high-performance, we will use the zgemm function of the BLAS library.
 		See https://software.intel.com/en-us/node/520775 .
 		The zgemm function is defined with the following parameters.
-		extern cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+		extern zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
 						   int m, // number of rows of A
 						   int n, // number of columns of B
 						   int k, // number of columns of A = number of rows of B
@@ -294,36 +420,46 @@ void ZDot(double complex **matA, double complex **matB, double complex **prod, i
 	if (colsA != rowsB)
 		printf("Cannot multiply matrices of shape (%d x %d) and (%d x %d).\n", rowsA, colsA, rowsB, colsB);
 	else{
-		MKL_INT m = rowsA, n = colsB, k = colsA;
-		MKL_Complex16 A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
+		int m = rowsA, n = colsB, k = colsA;
+		double complex A[rowsA * colsA], B[rowsB * colsB], C[rowsA * colsB], alpha, beta;
 		int i, j;
 		for (i = 0; i < rowsA; i ++){
 			for (j = 0; j < colsA; j ++){
-				A[i * colsA + j].real = creal(matA[i][j]);
-				A[i * colsA + j].imag = cimag(matA[i][j]);
+				A[i * colsA + j] = matA[i][j];
 			}
 		}
 		for (i = 0; i < rowsB; i ++){
 			for (j = 0; j < colsB; j ++){
-				B[i * colsB + j].real = creal(matB[i][j]);
-				B[i * colsB + j].imag = cimag(matB[i][j]);
+				B[i * colsB + j] = matB[i][j];
 			}
 		}
-		alpha.real = 1;
-		alpha.imag = 0;
-		beta.real = 0;
-		beta.imag = 0;
+		alpha = 1 + 0 * I;
+		beta = 0 + 0 * I;
 		// Call the BLAS function.
 		cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, &alpha, A, k, B, n, &beta, C, n);
 		// Load the product
 		for (i = 0; i < rowsA; i ++)
 			for (j = 0; j < colsB; j ++)
-				prod[i][j] = C[i * colsB + j].real + C[i * colsB + j].imag * I;
+				prod[i][j] = C[i * colsB + j];
 	}
 }
 
+void DiagonalizeLD(long double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+	complex double **matd = malloc(sizeof(complex double *)*4);
+	int i,j;
+	for (i=0; i<4 ; i++){
+		matd[i] = malloc(sizeof(complex double)*4);
+		for (j=0; j<4 ; j++)
+			matd[i][j] = (complex double) mat[i][j];
+	}
+	DiagonalizeD(matd, nrows, eigvals, iseigvecs, eigvecs);
+	for (i=0; i<4 ; i++)
+		free(matd[i]);
+	free(matd);
+}
 
-void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int iseigvecs, double complex **eigvecs){
+
+void DiagonalizeD(double complex **mat, int dim, double complex *eigvals, int iseigvecs, double complex **eigvecs){
 	/*
 		Compute the eigenvalues and the right-eigenvectors of a complex square matrix.
 		We will use the LAPACK routine zgeev to compute the eigenvalues. The LAPACK function is defined as follows.
@@ -341,32 +477,31 @@ void Diagonalize(double complex **mat, int nrows, double complex *eigvals, int i
 						  int* lwork, // Size of the array: work. If it is -1, then running the algorithm doesn't compute the eigenvalues but assigns the optimal size of the work array to lwork.
 						  double* rwork, // double precision array of size 2 * n
 						  int* info); // result. 0 if successful, -i if i-th argument has illegal value and +i if 1 to i eigen values of w have not converged.
-		
+
 		There is a C wrapper to the LAPACK routine:
 		https://software.intel.com/sites/products/documentation/doclib/mkl_sa/11/mkl_lapack_examples/lapacke_zgeev_row.c.htm
 	*/
 
-	MKL_INT n = nrows, lda = nrows, lvdl = nrows, lvdr = nrows, info;
-	MKL_Complex16 w[nrows], vl[nrows * nrows], vr[nrows * nrows];
-	MKL_Complex16 a[nrows * nrows];
+	int n = dim, lda = dim, lvdl = dim, lvdr = dim, info;
+	double complex w[dim], vl[dim * dim], vr[dim * dim];
+	double complex a[dim * dim];
 	int i, j;
-	for (i = 0; i < nrows; i ++){
-		for (j = 0; j < nrows; j ++){
-			a[i * nrows + j].real = creal(mat[i][j]);
-			a[i * nrows + j].imag = cimag(mat[i][j]);
+	for (i = 0; i < dim; i ++){
+		for (j = 0; j < dim; j ++){
+			a[i * dim + j] = mat[i][j];
 		}
 	}
 	info = LAPACKE_zgeev(LAPACK_ROW_MAJOR, 'V', 'V', n, a, lda, w, vl, lvdl, vr, lvdr);
 	if (info > 0)
-		printf("Eigenvalues %d to %d did not converge properly.\n", info, nrows);
+		printf("Eigenvalues %d to %d did not converge properly.\n", info, dim);
 	else if (info < 0)
 		printf("Error in the the %d-th input parameter.\n", -1 * info);
 	else{
-		for (i = 0; i < nrows; i ++){
-			eigvals[i] = w[i].real + w[i].imag * I;
+		for (i = 0; i < dim; i ++){
+			eigvals[i] = w[i];
 			if (iseigvecs == 1){
-				for (j = 0; j < nrows; j ++)
-					eigvecs[i][j] = vr[i * nrows + j].real + vr[i * nrows + j].imag * I;
+				for (j = 0; j < dim; j ++)
+					eigvecs[i][j] = vr[i * dim + j];
 			}
 		}
 	}
